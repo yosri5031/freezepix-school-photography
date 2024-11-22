@@ -737,12 +737,16 @@ const FreezePIXRegistration = () => {
             >
               {t('buttons.previous')}
             </button>
+
+            {paymentMethod === 'interac' && (
             <button 
               type="submit"
               className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
             >
               {t('buttons.submit')} (${packageSelected.price.toFixed(2)})
             </button>
+            )}
+
           </div>
         </form>
       </div>
