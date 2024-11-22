@@ -96,7 +96,7 @@ const FreezePIXRegistration = () => {
       interac: 'Interac E-Transfer',
       credit: 'Credit Card Payment',
       send: 'Send payment to:',
-      placing: 'After compliting the registration, complete the Interac E-Transfer to the provided email.',
+      placing: 'After completing the registration, complete the Interac E-Transfer to the provided email.',
       credit_c: 'Credit Card Payment',
       message_c : 'Please complete your payment to place the order'
 
