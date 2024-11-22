@@ -257,7 +257,7 @@ const FreezePIXRegistration = () => {
       setPostalCodeError('');
       
       if (value && !validatePostalCode(value, selectedCountry)) {
-        setPostalCodeError(t('checkout.invalidPostalCode'));
+        setPostalCodeError("Invalid Post Code");
       }
     };
   
@@ -276,13 +276,13 @@ const FreezePIXRegistration = () => {
   
       // Validate postal code
       if (!postalCode) {
-        setPostalCodeError(t('checkout.postalCodeRequired'));
+        setPostalCodeError("Post Code Required");
         setProcessing(false);
         return;
       }
   
       if (!validatePostalCode(postalCode, selectedCountry)) {
-        setPostalCodeError(t('checkout.invalidPostalCode'));
+        setPostalCodeError("Invalid Post Code");
         setProcessing(false);
         return;
       }
@@ -338,7 +338,7 @@ const FreezePIXRegistration = () => {
           {/* Card Number */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('checkout.cardNumber')}
+             Card Number
             </label>
             <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
               <CardNumberElement options={cardElementOptions} />
@@ -349,7 +349,7 @@ const FreezePIXRegistration = () => {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('checkout.expiryDate')}
+                Expiry Date
               </label>
               <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                 <CardExpiryElement options={cardElementOptions} />
@@ -358,8 +358,7 @@ const FreezePIXRegistration = () => {
   
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('checkout.cvc')}
-              </label>
+CVC              </label>
               <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                 <CardCvcElement options={cardElementOptions} />
               </div>
@@ -369,7 +368,7 @@ const FreezePIXRegistration = () => {
           {/* Postal Code */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {selectedCountry === 'USA' ? t('checkout.zipCode') : t('checkout.postalCode')}
+              {selectedCountry === 'USA' ? "Zip Code"  : "Postal Code"}
             </label>
             <input
               type="text"
@@ -397,7 +396,7 @@ const FreezePIXRegistration = () => {
                     onClick={() => window.location.reload()}
                     className="ml-2 text-blue-600 hover:text-blue-800 underline text-sm"
                   >
-                    {t('checkout.tryAgain')}
+                   Try Again
                   </button>
                 </div>
               )}
@@ -416,11 +415,10 @@ const FreezePIXRegistration = () => {
             {processing || isProcessing ? (
               <div className="flex items-center justify-center">
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                {t('checkout.processing')}
+                Processing....
               </div>
             ) : (
-              t('checkout.payNow')
-            )}
+"Pay Now"            )}
           </button>
         </div>
       </form>
