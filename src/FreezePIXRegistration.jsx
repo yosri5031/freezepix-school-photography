@@ -98,8 +98,7 @@ const FreezePIXRegistration = () => {
       send: 'Send payment to:',
       placing: 'After placing the order, complete the Interac E-Transfer to the provided email.',
       credit_c: 'Credit Card Payment',
-      message_c : 'Please complete your payment to place the order',
-      register : "Register my child"
+      message_c : 'Please complete your payment to place the order'
 
     }
     },
@@ -128,9 +127,7 @@ const FreezePIXRegistration = () => {
         send: 'Envoyer le paiement à :',
         placing: 'Après avoir passé la commande, veuillez effectuer le virement Interac à l\'adresse e-mail fournie.',
         credit_c: 'Paiement par carte de crédit',
-        message_c : 'Veuillez effectuer votre paiement pour passer la commande',
-              register : "Register my child"
-
+        message_c : 'Veuillez effectuer votre paiement pour passer la commande'
     }
     }
   };
@@ -152,15 +149,6 @@ const FreezePIXRegistration = () => {
 
   // Country Selection Component
   const CountrySelection = () => {
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const [buttonColor, setButtonColor] = useState('black');
-  
-    const handleCountrySelect = (country) => {
-      setSelectedCountry(country.value);
-      setButtonColor('white');
-      nextStep();
-    };
-  
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -173,7 +161,10 @@ const FreezePIXRegistration = () => {
               className={`border rounded-lg p-4 cursor-pointer ${
                 selectedCountry === country.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
               }`}
-              onClick={() => handleCountrySelect(country)}
+              onClick={() => {
+                setSelectedCountry(country.value);
+                nextStep();
+              }}
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -183,13 +174,6 @@ const FreezePIXRegistration = () => {
             </div>
           ))}
         </div>
-        {selectedCountry && (
-          <button 
-            className={`bg-${buttonColor} text-black py-2 px-4 rounded-lg`}
-          >
-            {t('canada.register')}
-          </button>
-        )}
       </div>
     );
   };
