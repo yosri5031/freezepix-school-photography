@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useRef} from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -14,6 +14,24 @@ const FreezePIXRegistration = () => {
   const [language, setLanguage] = useState('en');
   const [selectedPackage, setSelectedPackage] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
+  const [showIntro, setShowIntro] = useState(true);
+    const [selectedPhotos, setSelectedPhotos] = useState([]); // Correct
+    const [activeStep, setActiveStep] = useState(0);
+
+    const [orderSuccess, setOrderSuccess] = useState(false);
+    const [isBillingAddressSameAsShipping, setIsBillingAddressSameAsShipping] = useState(true);
+    const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+    const [showBookingPopup, setShowBookingPopup] = useState(false);
+    const fileInputRef = useRef(null);
+    const [error, setError] = useState(null);
+    const [discountCode, setDiscountCode] = useState('');
+    const [discountError, setDiscountError] = useState('');
+    const [orderNote, setOrderNote] = useState('');
+    const [showPolicyPopup, setShowPolicyPopup] = useState(false);
+    const [currentOrderNumber, setCurrentOrderNumber] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isInteracProcessing, setIsInteracProcessing] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
 
   // Translations (kept the same as in the previous version)
@@ -150,6 +168,223 @@ const FreezePIXRegistration = () => {
     );
   };
 
+  const CheckoutForm = ({ onSubmit, selectedCountry, isProcessing }) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const { t } = useTranslation();
+    
+    const [cardError, setCardError] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const [postalCodeError, setPostalCodeError] = useState('');
+    const [processing, setProcessing] = useState(false);
+    const [serverError, setServerError] = useState('');
+  
+    const cardElementOptions = {
+      style: {
+        base: {
+          fontSize: '16px',
+          color: '#424770',
+          '::placeholder': {
+            color: '#aab7c4',
+          },
+          ':-webkit-autofill': {
+            color: '#424770',
+          },
+        },
+        invalid: {
+          color: '#9e2146',
+          iconColor: '#9e2146',
+        },
+      },
+      hidePostalCode: true,
+    };
+  
+    const validatePostalCode = (code, country) => {
+      if (!code) return false;
+      
+      if (country === 'USA') {
+        return /^\d{5}(-\d{4})?$/.test(code.trim());
+      } else if (country === 'CAN') {
+        return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(code.trim());
+      }
+      return true;
+    };
+  
+    const handlePostalCodeChange = (e) => {
+      const value = e.target.value;
+      setPostalCode(value);
+      setPostalCodeError('');
+      
+      if (value && !validatePostalCode(value, selectedCountry)) {
+        setPostalCodeError(t('checkout.invalidPostalCode'));
+      }
+    };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      if (isProcessing || processing || !stripe || !elements) {
+        return;
+      }
+  
+      // Reset all errors
+      setCardError('');
+      setPostalCodeError('');
+      setServerError('');
+      setProcessing(true);
+  
+      // Validate postal code
+      if (!postalCode) {
+        setPostalCodeError(t('checkout.postalCodeRequired'));
+        setProcessing(false);
+        return;
+      }
+  
+      if (!validatePostalCode(postalCode, selectedCountry)) {
+        setPostalCodeError(t('checkout.invalidPostalCode'));
+        setProcessing(false);
+        return;
+      }
+  
+      try {
+        // First validate the card details with Stripe
+        const { error: cardValidationError, paymentMethod } = await stripe.createPaymentMethod({
+          type: 'card',
+          card: elements.getElement(CardNumberElement),
+          billing_details: {
+            address: {
+              postal_code: postalCode,
+            },
+          },
+        });
+  
+        if (cardValidationError) {
+          setCardError(cardValidationError.message);
+          setProcessing(false);
+          return;
+        }
+  
+        // Proceed with payment submission
+        try {
+          await onSubmit(paymentMethod.id, postalCode);
+        } catch (error) {
+          // Handle specific error types
+          if (error.response?.status === 500) {
+            setServerError(t('checkout.serverError'));
+          } else if (error.name === 'AxiosError') {
+            setServerError(t('checkout.networkError'));
+          } else {
+            setCardError(error.message || t('checkout.paymentProcessingError'));
+          }
+          
+          // Clear the form fields on server error
+          if (error.response?.status === 500) {
+            elements.getElement(CardNumberElement).clear();
+            elements.getElement(CardExpiryElement).clear();
+            elements.getElement(CardCvcElement).clear();
+          }
+        }
+      } catch (err) {
+        setCardError(t('checkout.paymentProcessingError'));
+      } finally {
+        setProcessing(false);
+      }
+    };
+  
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="p-4 border rounded-lg bg-white shadow-sm">
+          {/* Card Number */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('checkout.cardNumber')}
+            </label>
+            <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+              <CardNumberElement options={cardElementOptions} />
+            </div>
+          </div>
+  
+          {/* Expiry and CVC */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('checkout.expiryDate')}
+              </label>
+              <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                <CardExpiryElement options={cardElementOptions} />
+              </div>
+            </div>
+  
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('checkout.cvc')}
+              </label>
+              <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                <CardCvcElement options={cardElementOptions} />
+              </div>
+            </div>
+          </div>
+  
+          {/* Postal Code */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {selectedCountry === 'USA' ? t('checkout.zipCode') : t('checkout.postalCode')}
+            </label>
+            <input
+              type="text"
+              value={postalCode}
+              onChange={handlePostalCodeChange}
+              className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                postalCodeError ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder={selectedCountry === 'USA' ? '12345' : 'A1A 1A1'}
+            />
+            {postalCodeError && (
+              <p className="mt-1 text-sm text-red-600">{postalCodeError}</p>
+            )}
+          </div>
+  
+          {/* Error Messages */}
+          {(cardError || serverError) && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              {cardError && <p className="text-sm text-red-600">{cardError}</p>}
+              {serverError && (
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-red-600">{serverError}</p>
+                  <button 
+                    type="button"
+                    onClick={() => window.location.reload()}
+                    className="ml-2 text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    {t('checkout.tryAgain')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+  
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={!stripe || processing || isProcessing}
+            className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors
+              ${(processing || isProcessing) 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700'}`}
+          >
+            {processing || isProcessing ? (
+              <div className="flex items-center justify-center">
+                <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                {t('checkout.processing')}
+              </div>
+            ) : (
+              t('checkout.payNow')
+            )}
+          </button>
+        </div>
+      </form>
+    );
+  };
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
   };
