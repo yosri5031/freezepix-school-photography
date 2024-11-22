@@ -100,6 +100,22 @@ const FreezePIXRegistration = () => {
       credit_c: 'Credit Card Payment',
       message_c : 'Please complete your payment to place the order'
 
+    },
+    
+    checkout: {
+      cardNumber: "Card Number",
+    expiryDate: "Expiry Date", 
+    cvc: "CVC",
+    zipCode: "Zip Code",
+    postalCode: "Postal Code",
+    postalCodeRequired: "Postal code is required",
+    invalidPostalCode: "Invalid postal code for the selected country",
+    serverError: "An error occurred on our server. Please try again.",
+    networkError: "Network error. Please check your connection.",
+    paymentProcessingError: "Unable to process payment. Please try again.",
+    processing: "Processing...",
+    payNow: "Pay Now",
+    tryAgain: "Try Again"
     }
     },
     fr: {
@@ -128,7 +144,22 @@ const FreezePIXRegistration = () => {
         placing: 'Après avoir terminé l\'inscription, veuillez compléter le virement Interac à l\'adresse e-mail fournie.',
         credit_c: 'Paiement par carte de crédit',
         message_c : 'Veuillez effectuer votre paiement pour passer la commande'
-    }
+    },
+    checkout: {
+      cardNumber: "Numéro de carte",
+      expiryDate: "Date d'expiration",
+      cvc: "CVC",
+      zipCode: "Code postal",
+      postalCode: "Code postal",
+      postalCodeRequired: "Le code postal est requis",
+      invalidPostalCode: "Code postal invalide pour le pays sélectionné",
+      serverError: "Une erreur s'est produite sur notre serveur. Veuillez réessayer.",
+      networkError: "Erreur réseau. Veuillez vérifier votre connexion.",
+      paymentProcessingError: "Impossible de traiter le paiement. Veuillez réessayer.",
+      processing: "En cours de traitement...",
+      payNow: "Payer maintenant",
+      tryAgain: "Réessayer"
+  }
     }
   };
 
