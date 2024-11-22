@@ -44,10 +44,12 @@ const FreezePIXRegistration = () => {
         submit: 'Complete Registration'
       },
       form: {
-        firstName: 'First Name',
-        lastName: 'Last Name',
+        firstName: 'Parent First Name',
+        lastName: 'Parent Last Name',
+        studentName: 'Student First Name',
+        studentLastName: 'Student Last Name',
         parentEmail: 'Parent Email',
-        studentName: 'Student Name'
+        
       },
       packages: {
         basic: 'Basic Package',
@@ -289,6 +291,7 @@ const FreezePIXRegistration = () => {
       lastName: '',
       parentEmail: '',
       studentName: '',
+      studentLastName: '',
       paymentMethod: 'interac'
     });
 
@@ -358,15 +361,6 @@ const FreezePIXRegistration = () => {
             required
           />
           <input
-            type="email"
-            name="parentEmail"
-            placeholder={t('form.parentEmail')}
-            value={formData.parentEmail}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            required
-          />
-          <input
             type="text"
             name="studentName"
             placeholder={t('form.studentName')}
@@ -375,20 +369,90 @@ const FreezePIXRegistration = () => {
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             required
           />
+          <input
+            type="text"
+            name="studentLastName"
+            placeholder={t('form.studentLastName')}
+            value={formData.studentLastName}
+            onChange={handleInputChange}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            required
+          />
+          <input
+            type="email"
+            name="parentEmail"
+            placeholder={t('form.parentEmail')}
+            value={formData.parentEmail}
+            onChange={handleInputChange}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            required
+          />
+          
 
           {/* Payment Method Selection */}
-          <div>
-            <label className="block mb-2 font-semibold">Payment Method</label>
-            <select
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            >
-              <option value="interac">Interac e-Transfer</option>
-              <option value="stripe">Credit Card (Stripe)</option>
-            </select>
-          </div>
+          <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-4">{t('canada.options')}</h3>
+                  
+                  {/* Sélection du mode de paiement */}
+                  <div className="mb-4">
+                    <h4 className="font-medium">{t('canada.select')}</h4>
+                    <label className="block">
+                      <input
+                        type="radio"
+                        value="interac"
+                        checked={paymentMethod === 'interac'}
+                        onChange={handlePaymentMethodChange}
+                        className="mr-2"
+                      />
+                      {t('canada.interac')}
+                    </label>
+                    <label className="block">
+                      <input
+                        type="radio"
+                        value="credit"
+                        checked={paymentMethod === 'credit'}
+                        onChange={handlePaymentMethodChange}
+                        className="mr-2"
+                      />
+                      {t('canada.credit')}
+                    </label>
+                  </div>
+      
+                  {/* Option de paiement Interac */}
+                  {paymentMethod === 'interac' && (
+                    <div className="border rounded-lg p-4 mb-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">{t('canada.interac')}</h4>
+                          <p className="text-sm text-gray-600">{t('canada.send')}</p>
+                          <p className="font-bold">Info@freezepix.com</p>
+                        </div>
+                        <img 
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp9FibB-R9ac8XXEootfuHyEdTuaeJ9bZiQQ&s" 
+                          alt="Interac E-Transfer" 
+                          className="h-12 w-auto"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {t('canada.placing')}
+                      </p>
+                      {/* Bouton de commande pour Interac */}
+                      
+                    </div>
+                  )}
+      
+                  {/* Option de paiement par carte de crédit */}
+                  {paymentMethod === 'credit' && (
+  <Elements stripe={stripePromise}>
+    <CheckoutForm
+      onSubmit={handleOrderSuccess}
+      processing={isProcessingOrder}
+    />
+  </Elements>
+)}
+                </div>
+              </div>
 
           <div className="flex justify-between space-x-4">
             <button 
