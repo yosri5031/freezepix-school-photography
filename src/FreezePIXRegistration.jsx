@@ -155,6 +155,9 @@ const FreezePIXRegistration = () => {
     const [selectedCountry, setSelectedCountry] = useState(null);
     const [buttonColor, setButtonColor] = useState('black');
   
+    // Define countries directly or ensure proper translation access
+    const countries = translations[language]?.countries || translations['en'].countries;
+  
     const handleCountrySelect = (country) => {
       setSelectedCountry(country.value);
       setButtonColor('white');
@@ -167,7 +170,7 @@ const FreezePIXRegistration = () => {
           {t('steps.country')}
         </h2>
         <div className="space-y-4">
-          {t('countries').map((country) => (
+          {countries.map((country) => (
             <div 
               key={country.value}
               className={`border rounded-lg p-4 cursor-pointer ${
