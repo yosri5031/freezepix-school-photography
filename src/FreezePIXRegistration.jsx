@@ -96,7 +96,7 @@ const FreezePIXRegistration = () => {
       interac: 'Interac E-Transfer',
       credit: 'Credit Card Payment',
       send: 'Send payment to:',
-      placing: 'After placing the order, complete the Interac E-Transfer to the provided email.',
+      placing: 'After compliting the registration, complete the Interac E-Transfer to the provided email.',
       credit_c: 'Credit Card Payment',
       message_c : 'Please complete your payment to place the order'
 
@@ -125,7 +125,7 @@ const FreezePIXRegistration = () => {
         interac: 'Virement Interac',
         credit: 'Paiement par carte de crédit',
         send: 'Envoyer le paiement à :',
-        placing: 'Après avoir passé la commande, veuillez effectuer le virement Interac à l\'adresse e-mail fournie.',
+        placing: 'Après avoir terminé l\'inscription, veuillez compléter le virement Interac à l\'adresse e-mail fournie.',
         credit_c: 'Paiement par carte de crédit',
         message_c : 'Veuillez effectuer votre paiement pour passer la commande'
     }
