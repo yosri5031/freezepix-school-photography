@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign } from 'lucide-react';
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
+
 
 const FreezePIXRegistration = () => {
   // State management for multi-step registration
@@ -9,6 +13,8 @@ const FreezePIXRegistration = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
   const [language, setLanguage] = useState('en');
   const [selectedPackage, setSelectedPackage] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
+
 
   // Translations (kept the same as in the previous version)
   const translations = {
@@ -55,7 +61,18 @@ const FreezePIXRegistration = () => {
         basic: 'Basic Package',
         premium: 'Premium Package',
         halloween: 'Halloween Special'
-      }
+      },
+      canada : {
+      options: 'Payment Options for Canada',
+      select : 'Select Payment Method:',
+      interac: 'Interac E-Transfer',
+      credit: 'Credit Card Payment',
+      send: 'Send payment to:',
+      placing: 'After placing the order, complete the Interac E-Transfer to the provided email.',
+      credit_c: 'Credit Card Payment',
+      message_c : 'Please complete your payment to place the order'
+
+    }
     },
     fr: {
       // French translations remain the same as in the original code
@@ -73,7 +90,17 @@ const FreezePIXRegistration = () => {
         basic: 'Forfait de Base',
         premium: 'Forfait Premium',
         halloween: 'Offre Spéciale Halloween'
-      }
+      },
+      canada: {
+        options: 'Options de paiement pour le Canada',
+        select : 'Sélectionnez le mode de paiement :',
+        interac: 'Virement Interac',
+        credit: 'Paiement par carte de crédit',
+        send: 'Envoyer le paiement à :',
+        placing: 'Après avoir passé la commande, veuillez effectuer le virement Interac à l\'adresse e-mail fournie.',
+        credit_c: 'Paiement par carte de crédit',
+        message_c : 'Veuillez effectuer votre paiement pour passer la commande'
+    }
     }
   };
 
@@ -121,6 +148,10 @@ const FreezePIXRegistration = () => {
         </div>
       </div>
     );
+  };
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
   };
 
   // School Selection Component
@@ -446,8 +477,7 @@ const FreezePIXRegistration = () => {
                   {paymentMethod === 'credit' && (
   <Elements stripe={stripePromise}>
     <CheckoutForm
-      onSubmit={handleOrderSuccess}
-      processing={isProcessingOrder}
+      
     />
   </Elements>
 )}
