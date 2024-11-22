@@ -1,6 +1,16 @@
-import React, { useState,useRef} from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign } from 'lucide-react';
+import { memo, useState, useRef, useCallback, useEffect } from 'react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  Elements,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useTranslation } from 'react-i18next';
+
 
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
 
