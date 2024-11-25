@@ -537,8 +537,8 @@ CVC              </label>
   );
 
   const calculatePackagePrice = (basePrice) => {
-    // Assuming 1 USD ≈ 3 TND (you can update this exchange rate)
-    return selectedCountry === 'tunisia' ? basePrice * 0.5 : basePrice;
+    const price = selectedCountry === 'tunisia' ? basePrice * 0.5 : basePrice;
+    return parseFloat(price.toFixed(2)); // Ensure two decimal places
   };
 
   // Packages object
