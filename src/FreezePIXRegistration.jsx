@@ -585,7 +585,6 @@ CVC              </label>
         </div>
         {selectedCountry === 'tunisia' && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
-            <p>{t('tunisia.paymentNote')}</p>
             <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
           </div>
         )}
@@ -690,16 +689,18 @@ CVC              </label>
         
         {/* Package Summary */}
         <div className="bg-gray-100 rounded-lg p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="font-semibold">{packageSelected.name}</h3>
-              <p className="text-sm text-gray-600">{packageSelected.description}</p>
-            </div>
-            <div className="font-bold text-xl text-green-600">
-              ${packageSelected.price.toFixed(2)}
-            </div>
-          </div>
-        </div>
+  <div className="flex justify-between items-center">
+    <div>
+      <h3 className="font-semibold">{packageSelected.name}</h3>
+      <p className="text-sm text-gray-600">{packageSelected.description}</p>
+    </div>
+    <div className="font-bold text-xl text-green-600">
+      {selectedCountry === 'tunisia' 
+        ? `${packageSelected.price} TND` 
+        : `$${packageSelected.price.toFixed(2)}`}
+    </div>
+  </div>
+</div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -784,7 +785,6 @@ CVC              </label>
               {t('tunisia.daycarePayment')}
             </h4>
             <p className="text-sm text-yellow-600">
-              {t('tunisia.paymentNote')}
             </p>
           </div>
 )
