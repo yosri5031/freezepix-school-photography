@@ -25,23 +25,8 @@ const FreezePIXRegistration = () => {
   const [selectedPackage, setSelectedPackage] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
-    const [selectedPhotos, setSelectedPhotos] = useState([]); // Correct
-    const [activeStep, setActiveStep] = useState(0);
+  const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
 
-    const [orderSuccess, setOrderSuccess] = useState(false);
-    const [isBillingAddressSameAsShipping, setIsBillingAddressSameAsShipping] = useState(true);
-    const [isProcessingOrder, setIsProcessingOrder] = useState(false);
-    const [showBookingPopup, setShowBookingPopup] = useState(false);
-    const fileInputRef = useRef(null);
-    const [error, setError] = useState(null);
-    const [discountCode, setDiscountCode] = useState('');
-    const [discountError, setDiscountError] = useState('');
-    const [orderNote, setOrderNote] = useState('');
-    const [showPolicyPopup, setShowPolicyPopup] = useState(false);
-    const [currentOrderNumber, setCurrentOrderNumber] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isInteracProcessing, setIsInteracProcessing] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
 
 
   // Translations (kept the same as in the previous version)
@@ -55,7 +40,8 @@ const FreezePIXRegistration = () => {
       },
       countries: [
         { value: 'canada', name: 'Canada' },
-        { value: 'usa', name: 'United States' }
+        { value: 'usa', name: 'United States' },
+        { value: 'tunisia', name: 'Tunisia' }
       ],
       schools: {
         canada: [
@@ -65,6 +51,10 @@ const FreezePIXRegistration = () => {
         usa: [
           { value: 'riverside-high', name: 'Riverside High School', location: 'California' },
           { value: 'lincoln-elementary', name: 'Lincoln Elementary', location: 'New York' }
+        ],
+        tunisia: [
+          { value: 'tunis-daycare', name: 'Tunis International Daycare', location: 'Tunis' },
+          { value: 'sousse-kindergarten', name: 'Sousse Early Learning Center', location: 'Sousse' }
         ]
       },
       events: [
@@ -116,6 +106,12 @@ const FreezePIXRegistration = () => {
     processing: 'Processing...',
     payNow: 'Pay Now',
     tryAgain: 'Try Again'
+    },
+    tunisia: {
+      paymentNote: 'Prices are in TND at half the USD rate',
+      daycarePayment: 'Pay at Daycare',
+      confirmationTitle: 'Registration Successful!',
+      confirmationMessage: 'Your child is now registered.'
     }
     },
     fr: {
@@ -128,12 +124,21 @@ const FreezePIXRegistration = () => {
       },
       countries: [
         { value: 'canada', name: 'Canada' },
-        { value: 'usa', name: 'États-Unis' }
+        { value: 'usa', name: 'États-Unis' },
+        { value: 'tunisia', name: 'Tunisie' }
+
       ],
       packages: {
         basic: 'Forfait de Base',
         premium: 'Forfait Premium',
         halloween: 'Offre Spéciale Halloween'
+      },
+      schools: {
+        // ... [previous schools]
+        tunisia: [
+          { value: 'tunis-daycare', name: 'Garderie Internationale de Tunis', location: 'Tunis' },
+          { value: 'sousse-kindergarten', name: 'Centre d\'Apprentissage Précoce de Sousse', location: 'Sousse' }
+        ]
       },
       canada: {
         options: 'Options de paiement pour le Canada',
@@ -159,6 +164,12 @@ const FreezePIXRegistration = () => {
       processing: 'En cours de traitement...',
       payNow: 'Payer maintenant',
       tryAgain: 'Réessayer'
+  },
+  tunisia: {
+    paymentNote: 'Les prix sont en TND à la moitié du taux USD',
+    daycarePayment: 'Payer à la garderie',
+    confirmationTitle: 'Inscription Réussie !',
+    confirmationMessage: 'Votre enfant est maintenant inscrit.'
   }
     }
   };
@@ -525,24 +536,63 @@ CVC              </label>
     </div>
   );
 
+  const calculatePackagePrice = (basePrice) => {
+    // Assuming 1 USD ≈ 3 TND (you can update this exchange rate)
+    return selectedCountry === 'tunisia' ? basePrice * 1.5 : basePrice;
+  };
+
   // Packages object
-  const packages = {
+   const packages = {
     basic: {
       name: t('packages.basic'),
-      price: 29.99,
+      price: calculatePackagePrice(29.99),
       description: '1 Digital Photo, 1 Printed 8x10'
     },
     premium: {
       name: t('packages.premium'),
-      price: 49.99,
+      price: calculatePackagePrice(49.99),
       description: '3 Digital Photos, 2 Printed 8x10, Yearbook Inclusion'
     },
     halloween: {
       name: t('packages.halloween'),
-      price: 59.99,
+      price: calculatePackagePrice(59.99),
       description: 'Themed Photoshoot, 4 Digital Photos, 3 Printed 8x10, Costume Prop'
     }
   };
+
+  // Confirmation Page Component
+  const ConfirmationPage = () => {
+    const generateRegistrationId = () => {
+      return `FP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    };
+
+    return (
+      <div className="text-center space-y-6 p-6">
+        <CheckCircle className="mx-auto text-green-500 w-16 h-16" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          {t('tunisia.confirmationTitle')}
+        </h2>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-700 font-semibold">
+            {t('tunisia.confirmationMessage')}
+          </p>
+          <div className="mt-4">
+            <span className="font-bold">Registration ID:</span>
+            <span className="ml-2 bg-green-100 px-2 py-1 rounded">
+              {registrationConfirmation?.registrationId}
+            </span>
+          </div>
+        </div>
+        {selectedCountry === 'tunisia' && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
+            <p>{t('tunisia.paymentNote')}</p>
+            <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
 
 // Package Selection Component
   const PackageSelection = () => {
@@ -597,7 +647,7 @@ CVC              </label>
       parentEmail: '',
       studentName: '',
       studentLastName: '',
-      paymentMethod: 'interac'
+      paymentMethod: selectedCountry === 'tunisia' ? 'daycare' : 'interac'
     });
 
     const handleInputChange = (e) => {
@@ -609,20 +659,23 @@ CVC              </label>
       e.preventDefault();
       
       const totalCost = packages[selectedPackage].price;
+      const registrationId = `FP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      
       const registrationDetails = {
         ...formData,
         package: packages[selectedPackage],
         totalCost: totalCost,
         country: selectedCountry,
         school: selectedSchool,
-        event: selectedEvent
+        event: selectedEvent,
+        registrationId: registrationId
       };
 
-      // Placeholder for payment integration
-      console.log('Complete Registration Details:', registrationDetails);
+      // Set registration confirmation details
+      setRegistrationConfirmation(registrationDetails);
       
-      // Simulated payment processing
-      alert(`Processing payment of $${totalCost.toFixed(2)} via ${formData.paymentMethod}`);
+      // Move to confirmation page (which would be the last step)
+      setCurrentStep(6);
     };
 
     const packageSelected = packages[selectedPackage];
@@ -724,6 +777,19 @@ CVC              </label>
                     </label>
                   </div>
       
+{/* Option de paiement Tunisia */}
+{selectedCountry === 'tunisia' && (
+  <div className="p-4 bg-yellow-50 rounded-lg">
+            <h4 className="font-medium text-yellow-700">
+              {t('tunisia.daycarePayment')}
+            </h4>
+            <p className="text-sm text-yellow-600">
+              {t('tunisia.paymentNote')}
+            </p>
+          </div>
+)
+  }
+
                   {/* Option de paiement Interac */}
                   {paymentMethod === 'interac' && (
                     <div className="border rounded-lg p-4 mb-4">
@@ -803,7 +869,8 @@ CVC              </label>
             { icon: Camera, text: t('steps.school') },
             { icon: Calendar, text: t('steps.event') },
             { icon: Package, text: 'Select Package' },
-            { icon: CheckCircle, text: t('steps.registration') }
+            { icon: CheckCircle, text: t('steps.registration') },
+            { icon: CheckCircle, text: 'Confirmation' }
           ].map((step, index) => (
             <div 
               key={index} 
@@ -822,6 +889,7 @@ CVC              </label>
           {currentStep === 3 && <EventSelection />}
           {currentStep === 4 && <PackageSelection />}
           {currentStep === 5 && <RegistrationForm />}
+          {currentStep === 6 && <ConfirmationPage />}
         </div>
       </div>
     </div>
