@@ -538,7 +538,7 @@ CVC              </label>
 
   const calculatePackagePrice = (basePrice) => {
     // Assuming 1 USD ≈ 3 TND (you can update this exchange rate)
-    return selectedCountry === 'tunisia' ? basePrice * 1.5 : basePrice;
+    return selectedCountry === 'tunisia' ? basePrice * 0.5 : basePrice;
   };
 
   // Packages object
@@ -602,24 +602,26 @@ CVC              </label>
           Select Your Photo Package
         </h2>
         <div className="space-y-4">
-          {Object.entries(packages).map(([key, pkg]) => (
-            <div 
-              key={key}
-              className={`border rounded-lg p-4 cursor-pointer ${
-                selectedPackage === key ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-              }`}
-              onClick={() => setSelectedPackage(key)}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                  <p className="text-sm text-gray-600">{pkg.description}</p>
-                </div>
-                <div className="font-bold text-xl">${pkg.price.toFixed(2)}</div>
+        {Object.entries(packages).map(([key, pkg]) => (
+          <div 
+            key={key}
+            className={`border rounded-lg p-4 cursor-pointer ${
+              selectedPackage === key ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+            }`}
+            onClick={() => setSelectedPackage(key)}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                <p className="text-sm text-gray-600">{pkg.description}</p>
+              </div>
+              <div className="font-bold text-xl">
+                {selectedCountry === 'tunisia' ? `${pkg.price} TND` : `$${pkg.price.toFixed(2)}`}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
         <div className="flex justify-between space-x-4">
           <button 
             onClick={previousStep} 
@@ -749,34 +751,32 @@ CVC              </label>
 
           {/* Payment Method Selection */}
           <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                 {/* <h3 className="text-lg font-semibold mb-4">{t('canada.options')}</h3> */}
-                  
-                  {/* Sélection du mode de paiement */}
-                  <div className="mb-4">
-                    <h4 className="font-medium">{t('canada.select')}</h4>
-                    <label className="block">
-                      <input
-                        type="radio"
-                        value="interac"
-                        checked={paymentMethod === 'interac'}
-                        onChange={handlePaymentMethodChange}
-                        className="mr-2"
-                      />
-                      {t('canada.interac')}
-                    </label>
-                    <label className="block">
-                      <input
-                        type="radio"
-                        value="credit"
-                        checked={paymentMethod === 'credit'}
-                        onChange={handlePaymentMethodChange}
-                        className="mr-2"
-                      />
-                      {t('canada.credit')}
-                    </label>
-                  </div>
-      
+        <div className="p-4 bg-gray-50 rounded-lg">
+          {selectedCountry !== 'tunisia' && (
+            <div className="mb-4">
+              <h4 className="font-medium">{t('canada.select')}</h4>
+              <label className="block">
+                <input
+                  type="radio"
+                  value="interac"
+                  checked={paymentMethod === 'interac'}
+                  onChange={handlePaymentMethodChange}
+                  className="mr-2"
+                />
+                {t('canada.interac')}
+              </label>
+              <label className="block">
+                <input
+                  type="radio"
+                  value="credit"
+                  checked={paymentMethod === 'credit'}
+                  onChange={handlePaymentMethodChange}
+                  className="mr-2"
+                />
+                {t('canada.credit')}
+              </label>
+            </div>
+          )}
 {/* Option de paiement Tunisia */}
 {selectedCountry === 'tunisia' && (
   <div className="p-4 bg-yellow-50 rounded-lg">
@@ -789,7 +789,8 @@ CVC              </label>
           </div>
 )
   }
-
+ {selectedCountry !== 'tunisia' && (
+            <>
                   {/* Option de paiement Interac */}
                   {paymentMethod === 'interac' && (
                     <div className="border rounded-lg p-4 mb-4">
@@ -821,28 +822,40 @@ CVC              </label>
     />
   </Elements>
 )}
+ </>
+              )}
                 </div>
+               
               </div>
 
-          <div className="flex justify-between space-x-4">
-            <button 
-              type="button"
-              onClick={previousStep} 
-              className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-            >
-              {t('buttons.previous')}
-            </button>
+          
+      <div className="flex justify-between space-x-4">
+        <button 
+          type="button"
+          onClick={previousStep} 
+          className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+        >
+          {t('buttons.previous')}
+        </button>
 
-            {paymentMethod === 'interac' && (
-            <button 
-              type="submit"
-              className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
-            >
-              {t('buttons.submit')} (${packageSelected.price.toFixed(2)})
-            </button>
-            )}
+        {selectedCountry === 'tunisia' && (
+          <button 
+            type="submit"
+            className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
+          >
+            {t('buttons.submit')} ({packageSelected.price} TND)
+          </button>
+        )}
 
-          </div>
+        {selectedCountry !== 'tunisia' && paymentMethod === 'interac' && (
+          <button 
+            type="submit"
+            className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
+          >
+            {t('buttons.submit')} (${packageSelected.price.toFixed(2)})
+          </button>
+        )}
+      </div>
         </form>
       </div>
     );
