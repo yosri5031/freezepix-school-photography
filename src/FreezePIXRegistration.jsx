@@ -597,7 +597,6 @@ const ConfirmationPage = () => {
       </div>
       {selectedCountry === 'tunisia' && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
-          <p>{t('tunisia.paymentNote')}</p>
           <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
         </div>
       )}
