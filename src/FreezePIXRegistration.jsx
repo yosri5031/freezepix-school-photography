@@ -412,8 +412,11 @@ CVC              </label>
 
     // School Selection Component
     const SchoolSelection = () => {
-      const availableSchools = t('schools');
-  
+      const availableSchools = [
+        ...t('schools.canada'),
+        ...t('schools.usa'),
+        ...t('schools.tunisia')
+      ];  
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -428,6 +431,16 @@ CVC              </label>
                 }`}
                 onClick={() => {
                   setSelectedSchool(school.value);
+                  // Also set the country when school is selected
+                  const countryMap = {
+                    'springfield-elementary': 'canada',
+                    'oakwood-middle': 'canada',
+                    'riverside-high': 'usa',
+                    'lincoln-elementary': 'usa',
+                    'tunis-daycare': 'tunisia',
+                    'sousse-kindergarten': 'tunisia'
+                  };
+                  setSelectedCountry(countryMap[school.value]);
                   nextStep();
                 }}
               >
