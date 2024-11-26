@@ -668,7 +668,10 @@ const PackageSelection = () => {
             className={`border rounded-lg p-4 cursor-pointer ${
               selectedPackage === key ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
             }`}
-            onClick={() => setSelectedPackage(key)}
+            onClick={() => {
+              setSelectedPackage(key);
+              nextStep(); // Add this line
+            }}
           >
             <div className="flex justify-between items-center">
               <div>
@@ -676,7 +679,6 @@ const PackageSelection = () => {
                 <p className="text-sm text-gray-600">{pkg.description}</p>
               </div>
               <div className="font-bold text-xl">
-                {/* Dynamically show currency based on school location */}
                 {tunisianCities.some(city => 
                   translations[language].schools.tunisia.find(
                     school => school.value === selectedSchool
@@ -689,7 +691,6 @@ const PackageSelection = () => {
           </div>
         ))}
       </div>
-      {/* Rest of the component remains the same */}
     </div>
   );
 };
