@@ -907,7 +907,7 @@ const PackageSelection = () => {
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
-            {t('buttons.submit')} ({calculatePackagePrice(selectedPackage.price)} TND)
+            {t('buttons.submit')} ({calculatePackagePrice(packageSelected.price)} TND)
           </button>
         )}
 
