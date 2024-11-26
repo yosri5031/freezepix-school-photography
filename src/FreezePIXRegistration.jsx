@@ -410,89 +410,82 @@ CVC              </label>
     setPaymentMethod(event.target.value);
   };
 
-  // School Selection Component
-  const SchoolSelection = () => {
-    const availableSchools = t(`schools.${selectedCountry}`);
-
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          {t('steps.school')}
-        </h2>
+    // School Selection Component
+    const SchoolSelection = () => {
+      const availableSchools = t('schools');
+  
+      return (
         <div className="space-y-4">
-          {availableSchools.map((school) => (
-            <div 
-              key={school.value}
-              className={`border rounded-lg p-4 cursor-pointer ${
-                selectedSchool === school.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-              }`}
-              onClick={() => {
-                setSelectedSchool(school.value);
-                nextStep();
-              }}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{school.name}</h3>
-                  <p className="text-sm text-gray-600">{school.location}</p>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            {t('steps.school')}
+          </h2>
+          <div className="space-y-4">
+            {availableSchools.map((school) => (
+              <div 
+                key={school.value}
+                className={`border rounded-lg p-4 cursor-pointer ${
+                  selectedSchool === school.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+                }`}
+                onClick={() => {
+                  setSelectedSchool(school.value);
+                  nextStep();
+                }}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{school.name}</h3>
+                    <p className="text-sm text-gray-600">{school.location}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        <div className="flex justify-between space-x-4">
-          <button 
-            onClick={previousStep} 
-            className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-          >
-            {t('buttons.previous')}
-          </button>
-        </div>
-      </div>
-    );
-  };
+      );
+    };
 
-  // Event Selection Component
-  const EventSelection = () => {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          {t('steps.event')}
-        </h2>
+    const EventSelection = () => {
+      return (
         <div className="space-y-4">
-          {t('events').map((event) => (
-            <div 
-              key={event.value}
-              className={`border rounded-lg p-4 cursor-pointer ${
-                selectedEvent === event.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-              }`}
-              onClick={() => {
-                setSelectedEvent(event.value);
-                nextStep();
-              }}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{event.name}</h3>
-                  <p className="text-sm text-gray-600">{event.date}</p>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            {t('steps.event')}
+          </h2>
+          <div className="space-y-4">
+            {t('events').map((event) => (
+              <div 
+                key={event.value}
+                className={`border rounded-lg p-4 cursor-pointer ${
+                  selectedEvent === event.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+                }`}
+                onClick={() => {
+                  setSelectedEvent(event.value);
+                  nextStep();
+                }}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{event.name}</h3>
+                    <p className="text-sm text-gray-600">{event.date}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="flex justify-between space-x-4">
+            <button 
+              onClick={previousStep} 
+              className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+            >
+              {t('buttons.previous')}
+            </button>
+          </div>
         </div>
-        <div className="flex justify-between space-x-4">
-          <button 
-            onClick={previousStep} 
-            className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-          >
-            {t('buttons.previous')}
-          </button>
-        </div>
-      </div>
-    );
-  };
+      );
+    };
+  
+    
+  
 
-  // Packages, LanguageSelector, PackageSelection, and RegistrationForm components remain the same as in the previous code
   const LanguageSelector = () => (
     <div className="flex justify-center items-center space-x-2 mb-4">
       <Globe className="text-gray-600" size={20} />
@@ -513,20 +506,21 @@ CVC              </label>
   };
 
   // Packages object
-   const packages = {
+  // Packages with standard USD pricing
+  const packages = {
     basic: {
       name: t('packages.basic'),
-      price: calculatePackagePrice(29.99),
+      price: 29.99,
       description: '1 Digital Photo, 1 Printed 8x10'
     },
     premium: {
       name: t('packages.premium'),
-      price: calculatePackagePrice(49.99),
+      price: 49.99,
       description: '3 Digital Photos, 2 Printed 8x10, Yearbook Inclusion'
     },
     halloween: {
       name: t('packages.halloween'),
-      price: calculatePackagePrice(59.99),
+      price: 59.99,
       description: 'Themed Photoshoot, 4 Digital Photos, 3 Printed 8x10, Costume Prop'
     }
   };
