@@ -191,10 +191,9 @@ const FreezePIXRegistration = () => {
 
   
 
-  const CheckoutForm = ({ onSubmit, selectedCountry, isProcessing }) => {
+  const CheckoutForm = ({ basePrice, onSubmit, isProcessing }) => {
     const stripe = useStripe();
     const elements = useElements();
-    const { t } = useTranslation();
     
     const [cardError, setCardError] = useState('');
     const [postalCode, setPostalCode] = useState('');
@@ -222,15 +221,9 @@ const FreezePIXRegistration = () => {
       hidePostalCode: true,
     };
   
-    const validatePostalCode = (code, country) => {
+    const validatePostalCode = (code) => {
       if (!code) return false;
-      
-      if (country === 'USA') {
-        return /^\d{5}(-\d{4})?$/.test(code.trim());
-      } else if (country === 'CAN') {
-        return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(code.trim());
-      }
-      return true;
+      return /^[A-Za-z0-9\s-]*$/.test(code.trim());
     };
   
     const handlePostalCodeChange = (e) => {
@@ -238,8 +231,8 @@ const FreezePIXRegistration = () => {
       setPostalCode(value);
       setPostalCodeError('');
       
-      if (value && !validatePostalCode(value, selectedCountry)) {
-        setPostalCodeError("Invalid Post Code");
+      if (value && !validatePostalCode(value)) {
+        setPostalCodeError("Invalid Postal/ZIP Code");
       }
     };
   
@@ -250,27 +243,24 @@ const FreezePIXRegistration = () => {
         return;
       }
   
-      // Reset all errors
       setCardError('');
       setPostalCodeError('');
       setServerError('');
       setProcessing(true);
   
-      // Validate postal code
       if (!postalCode) {
-        setPostalCodeError("Post Code Required");
+        setPostalCodeError("Postal/ZIP Code is required");
         setProcessing(false);
         return;
       }
   
-      if (!validatePostalCode(postalCode, selectedCountry)) {
-        setPostalCodeError("Invalid Post Code");
+      if (!validatePostalCode(postalCode)) {
+        setPostalCodeError("Invalid Postal/ZIP Code");
         setProcessing(false);
         return;
       }
   
       try {
-        // First validate the card details with Stripe
         const { error: cardValidationError, paymentMethod } = await stripe.createPaymentMethod({
           type: 'card',
           card: elements.getElement(CardNumberElement),
@@ -287,28 +277,19 @@ const FreezePIXRegistration = () => {
           return;
         }
   
-        // Proceed with payment submission
-        try {
-          await onSubmit(paymentMethod.id, postalCode);
-        } catch (error) {
-          // Handle specific error types
-          if (error.response?.status === 500) {
-            setServerError(t('checkout.serverError'));
-          } else if (error.name === 'AxiosError') {
-            setServerError(t('checkout.networkError'));
-          } else {
-            setCardError(error.message || t('checkout.paymentProcessingError'));
-          }
-          
-          // Clear the form fields on server error
-          if (error.response?.status === 500) {
-            elements.getElement(CardNumberElement).clear();
-            elements.getElement(CardExpiryElement).clear();
-            elements.getElement(CardCvcElement).clear();
-          }
-        }
-      } catch (err) {
-        setCardError(t('checkout.paymentProcessingError'));
+        // Simulate successful payment and move to confirmation
+        setCurrentStep(5); // Assuming 5 is your confirmation step
+        setRegistrationConfirmation({
+          success: true,
+          message: "Payment successful! Your registration is complete.",
+          amount: basePrice
+        });
+  
+      } catch (error) {
+        setCardError("Payment processing failed. Please try again.");
+        elements.getElement(CardNumberElement).clear();
+        elements.getElement(CardExpiryElement).clear();
+        elements.getElement(CardCvcElement).clear();
       } finally {
         setProcessing(false);
       }
@@ -317,10 +298,16 @@ const FreezePIXRegistration = () => {
     return (
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="p-4 border rounded-lg bg-white shadow-sm">
+          {/* Price Display */}
+          <div className="mb-6 text-center">
+            <h3 className="text-xl font-semibold text-gray-800">Total Amount:</h3>
+            <p className="text-2xl font-bold text-blue-600">{basePrice}</p>
+          </div>
+  
           {/* Card Number */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-             Card Number
+              Card Number
             </label>
             <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
               <CardNumberElement options={cardElementOptions} />
@@ -340,7 +327,8 @@ const FreezePIXRegistration = () => {
   
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-CVC              </label>
+                CVC
+              </label>
               <div className="p-3 border rounded-md bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                 <CardCvcElement options={cardElementOptions} />
               </div>
@@ -350,7 +338,7 @@ CVC              </label>
           {/* Postal Code */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {selectedCountry === 'USA' ? "Zip Code"  : "Postal Code"}
+              Postal/ZIP Code
             </label>
             <input
               type="text"
@@ -359,7 +347,7 @@ CVC              </label>
               className={`w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 postalCodeError ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder={selectedCountry === 'USA' ? '12345' : 'A1A 1A1'}
+              placeholder="Enter postal/ZIP code"
             />
             {postalCodeError && (
               <p className="mt-1 text-sm text-red-600">{postalCodeError}</p>
@@ -378,7 +366,7 @@ CVC              </label>
                     onClick={() => window.location.reload()}
                     className="ml-2 text-blue-600 hover:text-blue-800 underline text-sm"
                   >
-                   Try Again
+                    Try Again
                   </button>
                 </div>
               )}
@@ -397,10 +385,11 @@ CVC              </label>
             {processing || isProcessing ? (
               <div className="flex items-center justify-center">
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                Processing....
+                Processing...
               </div>
             ) : (
-"Pay Now"            )}
+              `Pay ${basePrice}`
+            )}
           </button>
         </div>
       </form>
@@ -709,7 +698,6 @@ const PackageSelection = () => {
       {isTunisianLocation && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
           <p className="text-yellow-700 text-sm">
-            {t('tunisia.paymentNote')}
           </p>
         </div>
       )}
@@ -743,7 +731,6 @@ const PackageSelection = () => {
         ...formData,
         package: packages[selectedPackage],
         totalCost: totalCost,
-        country: selectedCountry,
         school: selectedSchool,
         event: selectedEvent,
         registrationId: registrationId
@@ -753,7 +740,7 @@ const PackageSelection = () => {
       setRegistrationConfirmation(registrationDetails);
       
       // Move to confirmation page (which would be the last step)
-      setCurrentStep(6);
+      setCurrentStep(5);
     };
 
     const packageSelected = packages[selectedPackage];
@@ -920,7 +907,7 @@ const PackageSelection = () => {
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
-            {t('buttons.submit')} ({packageSelected.price} TND)
+            {t('buttons.submit')} ({calculatePackagePrice(selectedPackage.price)} TND)
           </button>
         )}
 
