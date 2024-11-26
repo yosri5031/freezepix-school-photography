@@ -900,7 +900,7 @@ const ConfirmationPage = () => {
         {/* Registration Steps Indicator */}
         <div className="flex justify-center space-x-4 pb-4">
           {[
-            { icon: MapPin, text: t('steps.country') },
+            //{ icon: MapPin, text: t('steps.country') },
             { icon: Camera, text: t('steps.school') },
             { icon: Calendar, text: t('steps.event') },
             { icon: Package, text: 'Select Package' },
@@ -919,12 +919,11 @@ const ConfirmationPage = () => {
 
         {/* Registration Content */}
         <div className="p-6">
-          {currentStep === 1 && <CountrySelection />}
-          {currentStep === 2 && <SchoolSelection />}
-          {currentStep === 3 && <EventSelection />}
-          {currentStep === 4 && <PackageSelection />}
-          {currentStep === 5 && <RegistrationForm />}
-          {currentStep === 6 && <ConfirmationPage />}
+          {currentStep === 1 && <SchoolSelection />}
+          {currentStep === 2 && <EventSelection />}
+          {currentStep === 3 && <PackageSelection />}
+          {currentStep === 4 && <RegistrationForm />}
+          {currentStep === 5 && <ConfirmationPage />}
         </div>
       </div>
     </div>
