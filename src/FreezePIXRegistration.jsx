@@ -656,6 +656,13 @@ const PackageSelection = () => {
     }
   };
 
+  // Determine if the selected school is in a Tunisian city
+  const isTunisianLocation = tunisianCities.some(city => 
+    translations[language].schools.tunisia.find(
+      school => school.value === selectedSchool
+    )?.location.toLowerCase().includes(city)
+  );
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -670,7 +677,7 @@ const PackageSelection = () => {
             }`}
             onClick={() => {
               setSelectedPackage(key);
-              nextStep(); // Add this line
+              nextStep();
             }}
           >
             <div className="flex justify-between items-center">
@@ -679,11 +686,7 @@ const PackageSelection = () => {
                 <p className="text-sm text-gray-600">{pkg.description}</p>
               </div>
               <div className="font-bold text-xl">
-                {tunisianCities.some(city => 
-                  translations[language].schools.tunisia.find(
-                    school => school.value === selectedSchool
-                  )?.location.toLowerCase().includes(city)
-                ) 
+                {isTunisianLocation
                   ? `${pkg.price.toFixed(2)} TND` 
                   : `$${pkg.price.toFixed(2)}`}
               </div>
@@ -691,6 +694,25 @@ const PackageSelection = () => {
           </div>
         ))}
       </div>
+
+      {/* Previous Button */}
+      <div className="flex justify-between space-x-4">
+        <button 
+          onClick={previousStep} 
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+        >
+          {t('buttons.previous')}
+        </button>
+      </div>
+
+      {/* Optional Price Explanation for Tunisian Locations */}
+      {isTunisianLocation && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+          <p className="text-yellow-700 text-sm">
+            {t('tunisia.paymentNote')}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
