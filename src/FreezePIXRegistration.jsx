@@ -189,36 +189,7 @@ const FreezePIXRegistration = () => {
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const previousStep = () => setCurrentStep(prev => prev - 1);
 
-  // Country Selection Component
-  const CountrySelection = () => {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          {t('steps.country')}
-        </h2>
-        <div className="space-y-4">
-          {t('countries').map((country) => (
-            <div 
-              key={country.value}
-              className={`border rounded-lg p-4 cursor-pointer ${
-                selectedCountry === country.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-              }`}
-              onClick={() => {
-                setSelectedCountry(country.value);
-                nextStep();
-              }}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{country.name}</h3>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  
 
   const CheckoutForm = ({ onSubmit, selectedCountry, isProcessing }) => {
     const stripe = useStripe();
