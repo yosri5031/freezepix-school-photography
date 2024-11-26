@@ -587,14 +587,32 @@ const ConfirmationPage = () => {
 
 
 // Package Selection Component
-  const PackageSelection = () => {
-    return (
+const PackageSelection = () => {
+  const calculatedPackages = {
+    basic: {
+      name: t('packages.basic'),
+      price: calculatePackagePrice(29.99),
+      description: '1 Digital Photo, 1 Printed 8x10'
+    },
+    premium: {
+      name: t('packages.premium'),
+      price: calculatePackagePrice(49.99),
+      description: '3 Digital Photos, 2 Printed 8x10, Yearbook Inclusion'
+    },
+    halloween: {
+      name: t('packages.halloween'),
+      price: calculatePackagePrice(59.99),
+      description: 'Themed Photoshoot, 4 Digital Photos, 3 Printed 8x10, Costume Prop'
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+        Select Your Photo Package
+      </h2>
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          Select Your Photo Package
-        </h2>
-        <div className="space-y-4">
-        {Object.entries(packages).map(([key, pkg]) => (
+        {Object.entries(calculatedPackages).map(([key, pkg]) => (
           <div 
             key={key}
             className={`border rounded-lg p-4 cursor-pointer ${
@@ -614,24 +632,24 @@ const ConfirmationPage = () => {
           </div>
         ))}
       </div>
-        <div className="flex justify-between space-x-4">
-          <button 
-            onClick={previousStep} 
-            className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-          >
-            {t('buttons.previous')}
-          </button>
-          <button 
-            onClick={nextStep} 
-            disabled={!selectedPackage}
-            className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 disabled:opacity-50"
-          >
-            Proceed to Payment
-          </button>
-        </div>
+      <div className="flex justify-between space-x-4">
+        <button 
+          onClick={previousStep} 
+          className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+        >
+          {t('buttons.previous')}
+        </button>
+        <button 
+          onClick={nextStep} 
+          disabled={!selectedPackage}
+          className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 disabled:opacity-50"
+        >
+          Proceed to Payment
+        </button>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   // Registration Form Component
   const RegistrationForm = () => {
