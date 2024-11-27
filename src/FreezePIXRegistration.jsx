@@ -27,31 +27,24 @@ const FreezePIXRegistration = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
-  const [schools, setSchools] = useState([]);
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
   const useEvents = (selectedSchool) => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(false);
     const [eventsError, setEventsError] = useState(null);
     const [schools, setSchools] = useState([]);
     const [packages, setPackages] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-  
+    
     // Initial fetch for schools and packages
     useEffect(() => {
       const fetchInitialData = async () => {
         setLoading(true);
         try {
-          // Fetch schools
           const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-          console.log('Fetched schools:', schoolsResponse.data);
           setSchools(schoolsResponse.data);
   
-          // Fetch packages
           const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-          console.log('Fetched packages:', packagesResponse.data);
           setPackages(packagesResponse.data);
         } catch (err) {
           setError(err.message);
@@ -71,11 +64,9 @@ const FreezePIXRegistration = () => {
         setEventsLoading(true);
         try {
           const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
-          console.log('Fetched events:', response.data);
           setEvents(response.data);
           setEventsError(null);
         } catch (err) {
-          console.error('Error fetching events:', err);
           setEventsError(err.message);
           setEvents([]);
         } finally {
@@ -96,6 +87,7 @@ const FreezePIXRegistration = () => {
       error
     };
   };
+
 
   
 
@@ -500,9 +492,15 @@ const FreezePIXRegistration = () => {
       const {
         events,
         eventsLoading,
-        eventsError
+        eventsError,
+        schools,
+        packages,
+        loading,
+        error: fetchError  // Renamed to avoid conflict
       } = useEvents(selectedSchool);
     
+      if (loading) return <div className="text-center">Loading initial data...</div>;
+      if (fetchError) return <div className="text-center text-red-500">Error loading initial data: {fetchError}</div>;
       if (eventsLoading) return <div className="text-center">Loading events...</div>;
       if (eventsError) return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
       if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
@@ -1001,7 +999,14 @@ const PackageSelection = () => {
         {/* Registration Content */}
         <div className="p-6">
           {currentStep === 1 && <SchoolSelection />}
-          {currentStep === 2 && <EventSelection />}
+          {currentStep === 2 && <EventSelection
+  selectedSchool={selectedSchool}
+  setSelectedEvent={setSelectedEvent}
+  nextStep={nextStep}
+  previousStep={previousStep}
+  language={language}
+  t={t}
+/>}
           {currentStep === 3 && <PackageSelection />}
           {currentStep === 4 && <RegistrationForm />}
           {currentStep === 5 && <ConfirmationPage />}
