@@ -544,6 +544,7 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
                 </div>
               </div>
             </div>
+            
           ))
         ) : (
           <div className="text-center text-gray-500">No schools available</div>
@@ -563,7 +564,6 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
     const fetchEvents = async () => {
       setLoading(true);
       setError(null);
-      
       try {
         const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`, {
           headers: {
@@ -571,15 +571,27 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
             'Content-Type': 'application/json'
           }
         });
-
+    
         if (response.data && Array.isArray(response.data)) {
           setEvents(response.data);
         } else {
-          throw new Error('Invalid data format received from server');
+          throw new Error('No events found or invalid data format');
         }
       } catch (err) {
-        console.error('Detailed error:', err);
-        setError(err.message || 'Failed to load events');
+        console.error('Event Fetch Error:', err);
+        
+        // More specific error messaging
+        if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          setError(`Server Error: ${err.response.status} - ${err.response.data.message || 'Unknown error'}`);
+        } else if (err.request) {
+          // The request was made but no response was received
+          setError('Network Error: No response from server');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setError(`Error: ${err.message}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -626,13 +638,13 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
         ))}
       </div>
       <div className="flex justify-between space-x-4">
-        <button
-          onClick={previousStep}
-          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-        >
-          {t('buttons.previous')}
-        </button>
-      </div>
+  <button 
+    onClick={previousStep} 
+    className="px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+  >
+    {t('buttons.previous')}
+  </button>
+</div>
     </div>
   );
 };
