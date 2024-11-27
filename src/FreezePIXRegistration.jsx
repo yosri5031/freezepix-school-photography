@@ -38,11 +38,25 @@ const FreezePIXRegistration = () => {
         
         setEventsLoading(true);
         try {
+          console.log('Fetching events for school:', selectedSchool);
           const response = await axios.get(
             `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchool}`
           );
-          setEvents(response.data);
+          
+          console.log('Response data:', response.data);
+          
+          // Transform the data if needed
+          const formattedEvents = response.data.map(event => ({
+            _id: event._id,
+            name: event.name,
+            value: event.value,
+            date: event.date,
+            isActive: event.isActive
+          }));
+  
+          setEvents(formattedEvents);
         } catch (error) {
+          console.error('Error details:', error.response || error);
           setEventsError(error.message);
         } finally {
           setEventsLoading(false);
@@ -52,7 +66,16 @@ const FreezePIXRegistration = () => {
       fetchEvents();
     }, [selectedSchool]);
   
-    return { events, eventsLoading, eventsError };
+    return { 
+      events, 
+      eventsLoading, 
+      eventsError,
+      refreshEvents: () => {
+        setEventsError(null);
+        setEvents([]);
+        setEventsLoading(true);
+      }
+    };
   };
 
 // Add state for packages and schools
@@ -544,14 +567,31 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
     
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
-  const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
+  const { events, eventsLoading, eventsError, refreshEvents } = useEvents(selectedSchool);
 
   if (eventsLoading) {
-    return <div className="text-center">Loading events...</div>;
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader className="animate-spin h-8 w-8 text-blue-500" />
+        <span className="ml-2">Loading events...</span>
+      </div>
+    );
   }
 
   if (eventsError) {
-    return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
+    return (
+      <div className="text-center p-8">
+        <div className="text-red-500 mb-4">
+          Error loading events: {eventsError}
+        </div>
+        <button
+          onClick={refreshEvents}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Try Again
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -561,11 +601,11 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
       </h2>
       
       <div className="space-y-4">
-        {events.length > 0 ? (
+        {events && events.length > 0 ? (
           events.map((event) => (
             <div
               key={event._id}
-              className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
+              className="border rounded-lg p-4 cursor-pointer hover:bg-blue-50 transition-colors"
               onClick={() => {
                 setSelectedEvent(event._id);
                 nextStep();
@@ -574,16 +614,24 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-semibold text-lg">{event.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    <Calendar className="inline-block w-4 h-4 mr-2" />
-                    {new Date(event.date).toLocaleDateString()}
-                  </p>
+                  <div className="flex items-center text-sm text-gray-600 mt-1">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {new Date(event.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-500">No events available for this school</div>
+          <div className="text-center p-8 bg-gray-50 rounded-lg">
+            <Globe className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500">No events are currently available for this school</p>
+            <p className="text-sm text-gray-400 mt-2">School ID: {selectedSchool}</p>
+          </div>
         )}
       </div>
 
