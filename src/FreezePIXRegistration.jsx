@@ -31,33 +31,41 @@ const FreezePIXRegistration = () => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(false);
     const [eventsError, setEventsError] = useState(null);
-    const [schools, setSchools] = useState([]);
-    const [packages, setPackages] = useState([]);
+   
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // Initial fetch for schools and packages
-    useEffect(() => {
-      const fetchInitialData = async () => {
-        setLoading(true);
-        try {
-  
-          const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-          setPackages(packagesResponse.data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchInitialData();
-    }, []);
-  }
+   // Add state for packages and schools
+  const [packages, setPackages] = useState({
+    basic: {
+      name: 'Basic Package',
+      price: 19.99,
+      description: '1 Digital Photo'
+    }
+  });
+
+  const [schools, setSchools] = useState([]);
+
+  // Fetch packages and schools on component mount
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
+        setPackages(packagesResponse.data);
+
+        const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
+        setSchools(schoolsResponse.data);
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
+}
   
 
   
-
 
   // Translations (kept the same as in the previous version)
   const translations = {
@@ -819,7 +827,8 @@ const PackageSelection = () => {
     const handleSubmit = (e) => {
       e.preventDefault();
       
-      const totalCost = packages[selectedPackage].price;
+      const selectedPackageData = packages[selectedPackage];
+      const totalCost = selectedPackageData.price;
       const registrationId = `FP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       
       const registrationDetails = {
