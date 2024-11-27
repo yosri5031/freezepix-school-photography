@@ -1,5 +1,6 @@
 import { memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader } from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2} from 'lucide-react';
+import { School as CustomSchoolIcon } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
 import {
   CardNumberElement,
@@ -1072,11 +1073,11 @@ const PackageSelection = () => {
         <div className="flex justify-center space-x-4 pb-4">
           {[
             //{ icon: MapPin, text: t('steps.country') },
-            { icon: Camera, text: t('steps.school') },
+            { icon: CustomSchoolIcon, text: t('steps.school') },
             { icon: Calendar, text: t('steps.event') },
             { icon: Package, text: 'Select Package' },
             { icon: CheckCircle, text: t('steps.registration') },
-            { icon: CheckCircle, text: 'Confirmation' }
+            { icon: CalendarCheck2, text: 'Confirmation' }
           ].map((step, index) => (
             <div 
               key={index} 
