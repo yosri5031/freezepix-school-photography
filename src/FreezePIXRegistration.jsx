@@ -28,6 +28,10 @@ const FreezePIXRegistration = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const useEvents = (selectedSchool) => {
+    const [events, setEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(true);
+    const [eventsError, setEventsError] = useState(null);
+  
     useEffect(() => {
       const fetchEvents = async () => {
         // Extract the ID, handling both $oid and direct ID cases
@@ -55,7 +59,9 @@ const FreezePIXRegistration = () => {
         }
       };
   
-      fetchEvents();
+      if (selectedSchool) {
+        fetchEvents();
+      }
     }, [selectedSchool]);
   
     return { events, eventsLoading, eventsError };
@@ -492,9 +498,31 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
   }, []);
 
   const handleSchoolSelect = (school) => {
-    const schoolId = school._id.$oid || school._id;
-    setSelectedSchool({...school, _id: schoolId});
-    setSelectedCountry(school.country);
+    // First, ensure we have a valid school object
+    if (!school) return;
+  
+    // Handle different ID formats
+    let schoolId;
+    if (typeof school._id === 'object' && school._id.$oid) {
+      schoolId = school._id.$oid;
+    } else if (typeof school._id === 'string') {
+      schoolId = school._id;
+    } else {
+      console.error('Invalid school ID format');
+      return;
+    }
+  
+    // Create a clean school object with the processed ID
+    const processedSchool = {
+      ...school,
+      _id: schoolId
+    };
+  
+    // Update state
+    setSelectedSchool(processedSchool);
+    if (school.country) {
+      setSelectedCountry(school.country);
+    }
     setCurrentStep(prevStep => prevStep + 1);
   };
 
