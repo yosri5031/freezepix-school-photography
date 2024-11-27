@@ -26,7 +26,62 @@ const FreezePIXRegistration = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
+  const [schools, setSchools] = useState([]);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventsError, setEventsError] = useState(null);
 
+ // Fetch data when component mounts
+ useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch schools
+      const schoolsResponse = await fetch('/api/schools');
+      if (!schoolsResponse.ok) throw new Error('Failed to fetch schools');
+      const schoolsData = await schoolsResponse.json();
+      setSchools(schoolsData);
+
+      // Fetch packages
+      const packagesResponse = await fetch('/api/packages');
+      if (!packagesResponse.ok) throw new Error('Failed to fetch packages');
+      const packagesData = await packagesResponse.json();
+      setPackages(packagesData);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
+ // Add new useEffect for fetching events when school is selected
+ useEffect(() => {
+  const fetchEvents = async () => {
+    if (!selectedSchool) return;
+    
+    setEventsLoading(true);
+    setEventsError(null);
+    try {
+      const response = await fetch(`/api/events/${selectedSchool}`);
+      if (!response.ok) throw new Error('Failed to fetch events');
+      const eventsData = await response.json();
+      setEvents(eventsData);
+    } catch (err) {
+      setEventsError(err.message);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  fetchEvents();
+}, [selectedSchool]); // Dependency on selectedSchool
 
 
   // Translations (kept the same as in the previous version)
@@ -74,11 +129,6 @@ const FreezePIXRegistration = () => {
         studentLastName: 'Student Last Name',
         parentEmail: 'Parent Email',
         
-      },
-      packages: {
-        basic: 'Basic Package',
-        premium: 'Premium Package',
-        halloween: 'Halloween Special'
       },
       canada : {
       options: 'Payment Options for Canada',
@@ -128,11 +178,6 @@ const FreezePIXRegistration = () => {
         { value: 'tunisia', name: 'Tunisie' }
 
       ],
-      packages: {
-        basic: 'Forfait de Base',
-        premium: 'Forfait Premium',
-        halloween: 'Offre Spéciale Halloween'
-      },
       schools: {
         // ... [previous schools]
         tunisia: [
@@ -401,35 +446,24 @@ const FreezePIXRegistration = () => {
 
     // School Selection Component
     const SchoolSelection = () => {
-      const availableSchools = [
-        ...t('schools.canada'),
-        ...t('schools.usa'),
-        ...t('schools.tunisia')
-      ];  
+      if (loading) return <div className="text-center">Loading schools...</div>;
+      if (error) return <div className="text-center text-red-500">Error loading schools: {error}</div>;
+  
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
             {t('steps.school')}
           </h2>
           <div className="space-y-4">
-            {availableSchools.map((school) => (
+            {schools.map((school) => (
               <div 
-                key={school.value}
+                key={school._id}
                 className={`border rounded-lg p-4 cursor-pointer ${
-                  selectedSchool === school.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+                  selectedSchool === school._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
                 }`}
                 onClick={() => {
-                  setSelectedSchool(school.value);
-                  // Also set the country when school is selected
-                  const countryMap = {
-                    'springfield-elementary': 'canada',
-                    'oakwood-middle': 'canada',
-                    'riverside-high': 'usa',
-                    'lincoln-elementary': 'usa',
-                    'tunis-daycare': 'tunisia',
-                    'sousse-kindergarten': 'tunisia'
-                  };
-                  setSelectedCountry(countryMap[school.value]);
+                  setSelectedSchool(school._id);
+                  setSelectedCountry(school.country);
                   nextStep();
                 }}
               >
@@ -447,27 +481,36 @@ const FreezePIXRegistration = () => {
     };
 
     const EventSelection = () => {
+      if (eventsLoading) return <div className="text-center">Loading events...</div>;
+      if (eventsError) return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
+      if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
+  
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
             {t('steps.event')}
           </h2>
           <div className="space-y-4">
-            {t('events').map((event) => (
+            {events.map((event) => (
               <div 
-                key={event.value}
+                key={event._id}
                 className={`border rounded-lg p-4 cursor-pointer ${
-                  selectedEvent === event.value ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+                  selectedEvent === event._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
                 }`}
                 onClick={() => {
-                  setSelectedEvent(event.value);
+                  setSelectedEvent(event._id);
                   nextStep();
                 }}
               >
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="font-semibold text-lg">{event.name}</h3>
-                    <p className="text-sm text-gray-600">{event.date}</p>
+                    <p className="text-sm text-gray-600">
+                      {new Date(event.date).toLocaleDateString(
+                        language === 'fr' ? 'fr-FR' : 'en-US',
+                        { year: 'numeric', month: 'long', day: 'numeric' }
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -484,6 +527,7 @@ const FreezePIXRegistration = () => {
         </div>
       );
     };
+  
   
     
   
@@ -529,46 +573,20 @@ const FreezePIXRegistration = () => {
   ];
   
   const calculatePackagePrice = (basePrice) => {
-    // Check if the selected school's location is in a Tunisian city
-    const schoolLocation = translations[language].schools.tunisia.find(
-      school => school.value === selectedSchool
-    )?.location.toLowerCase();
-  
-    const isTunisianLocation = tunisianCities.some(city => 
-      schoolLocation && schoolLocation.includes(city)
-    );
-  
-    // If the location is in a Tunisian city, convert to TND at half the rate
-    if (isTunisianLocation) {
-      // Assuming 1 USD = ~3.10 TND (as of recent rates)
-      // Halve the price for local schools
+    const school = schools.find(s => s._id === selectedSchool);
+    
+    if (!school) return basePrice;
+
+    // Check if the school is in Tunisia
+    if (school.country.toLowerCase() === 'tunisia') {
       const tunisianPrice = (basePrice * 0.5);
-      return parseFloat(tunisianPrice.toFixed(2)); // Ensure two decimal places
+      return parseFloat(tunisianPrice.toFixed(2));
     }
-  
-    // For non-Tunisian locations, return the base price in USD
+
     return parseFloat(basePrice.toFixed(2));
   };
 
-  // Packages object
-  // Packages with standard USD pricing
-  const packages = {
-    basic: {
-      name: t('packages.basic'),
-      price: 29.99,
-      description: '1 Digital Photo, 1 Printed 8x10'
-    },
-    premium: {
-      name: t('packages.premium'),
-      price: 49.99,
-      description: '3 Digital Photos, 2 Printed 8x10, Yearbook Inclusion'
-    },
-    halloween: {
-      name: t('packages.halloween'),
-      price: 59.99,
-      description: 'Themed Photoshoot, 4 Digital Photos, 3 Printed 8x10, Costume Prop'
-    }
-  };
+
 
   // Confirmation Page Component
   // Confirmation Page Component
@@ -972,5 +990,4 @@ const PackageSelection = () => {
   );
 };
 
-// I've added the missing code for CountrySelection, SchoolSelection, and EventSelection components
-export default FreezePIXRegistration;
+export default memo(FreezePIXRegistration);

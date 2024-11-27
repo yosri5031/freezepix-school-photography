@@ -1,0 +1,351 @@
+I'll help you create the MongoDB architecture and API endpoints for the FreezePIX registration system. Here's what we'll build:
+
+First, let's create the MongoDB schemas:
+javascript
+
+Copier
+// models/School.js
+import mongoose from 'mongoose';
+
+const SchoolSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  value: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  country: {
+    type: String,
+    required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+});
+
+export default mongoose.model('School', SchoolSchema);
+
+// models/Event.js
+const EventSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  value: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  date: {
+    type: Date,
+    required: true
+  },
+  schoolId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'School'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+});
+
+export default mongoose.model('Event', EventSchema);
+
+// models/Package.js
+const PackageSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  value: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+});
+
+export default mongoose.model('Package', PackageSchema);
+
+// models/Registration.js
+const RegistrationSchema = new mongoose.Schema({
+  parentFirstName: {
+    type: String,
+    required: true
+  },
+  parentLastName: {
+    type: String,
+    required: true
+  },
+  parentEmail: {
+    type: String,
+    required: true
+  },
+  studentFirstName: {
+    type: String,
+    required: true
+  },
+  studentLastName: {
+    type: String,
+    required: true
+  },
+  schoolId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'School',
+    required: true
+  },
+  eventId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event',
+    required: true
+  },
+  packageId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Package',
+    required: true
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['credit', 'interac'],
+    required: true
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'completed', 'failed'],
+    default: 'pending'
+  },
+  registrationDate: {
+    type: Date,
+    default: Date.now
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  currency: {
+    type: String,
+    required: true,
+    enum: ['USD', 'TND']
+  }
+});
+
+export default mongoose.model('Registration', RegistrationSchema);
+
+ API endpoints:
+    // Get available events for a specific school
+    app.get('/api/events/:schoolId', async (req, res) => {
+      try {
+        const events = await Event.find({ 
+          school: req.params.schoolId, 
+          status: 'active',
+          date: { $gte: new Date() } 
+        }).populate('school photographer');
+        res.json(events);
+      } catch (error) {
+        res.status(500).json({ message: 'Error fetching events', error });
+      }
+    });
+  
+    // Create a new reservation
+    app.post('/api/reservations', async (req, res) => {
+      try {
+        const { 
+          eventId, 
+          parent, 
+          child, 
+          package: packageDetails, 
+          paymentMethod 
+        } = req.body;
+  
+        // Generate unique QR Code (use a library like uuid)
+        const uniqueQRCode = generateUniqueQRCode();
+  
+        const reservation = new Reservation({
+          event: eventId,
+          parent,
+          child,
+          package: packageDetails,
+          paymentMethod,
+          uniqueQRCode
+        });
+  
+        await reservation.save();
+  
+        // Trigger payment processing 
+        await processPayment(reservation);
+  
+        res.status(201).json({
+          message: 'Reservation created successfully', 
+          reservation,
+          qrCodeUrl: generateQRCodeImage(uniqueQRCode)
+        });
+      } catch (error) {
+        res.status(500).json({ message: 'Error creating reservation', error });
+      }
+    });
+  
+    // Get photographer's assigned events
+    app.get('/api/photographer/:photographerId/events', async (req, res) => {
+      try {
+        const events = await Event.find({ 
+          photographer: req.params.photographerId, 
+          status: 'active' 
+        }).populate('school');
+        
+        const eventsWithReservations = await Promise.all(
+          events.map(async (event) => {
+            const reservations = await Reservation.find({ 
+              event: event._id, 
+              photoStatus: 'not_taken' 
+            });
+            return { ...event.toObject(), reservations };
+          })
+        );
+  
+        res.json(eventsWithReservations);
+      } catch (error) {
+        res.status(500).json({ message: 'Error fetching photographer events', error });
+      }
+    });
+  
+    // Upload photo for a reservation
+    app.post('/api/reservations/:reservationId/upload', async (req, res) => {
+      try {
+        const { photoUrl } = req.body;
+        const reservation = await Reservation.findByIdAndUpdate(
+          req.params.reservationId,
+          { 
+            photoUrl, 
+            photoStatus: 'taken' 
+          },
+          { new: true }
+        );
+  
+        if (!reservation) {
+          return res.status(404).json({ message: 'Reservation not found' });
+        }
+  
+        res.json({ 
+          message: 'Photo uploaded successfully', 
+          reservation 
+        });
+      } catch (error) {
+        res.status(500).json({ message: 'Error uploading photo', error });
+      }
+    });
+  
+   app.get('/schools', async (req, res) => {
+      try {
+        const schools = await School.find({ isActive: true });
+        res.json(schools);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+    
+    // Get events by school
+    app.get('/events/:schoolId', async (req, res) => {
+      try {
+        const events = await Event.find({
+          schoolId: req.params.schoolId,
+          isActive: true,
+          date: { $gte: new Date() }
+        }).sort({ date: 1 });
+        res.json(events);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+    
+    // Get all packages
+    app.get('/packages', async (req, res) => {
+      try {
+        const packages = await Package.find({ isActive: true });
+        res.json(packages);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+    
+    // Create new registration
+    app.post('/register', async (req, res) => {
+      try {
+        const {
+          parentFirstName,
+          parentLastName,
+          parentEmail,
+          studentFirstName,
+          studentLastName,
+          schoolId,
+          eventId,
+          packageId,
+          paymentMethod
+        } = req.body;
+    
+        // Get package price
+        const packagename = await Package.findById(packageId);
+        const school = await School.findById(schoolId);
+    
+        // Calculate price based on location
+        let amount = packagename.price;
+        let currency = 'USD';
+        
+        if (school.country.toLowerCase() === 'tunisia') {
+          amount = packagename.price * 0.5;
+          currency = 'TND';
+        }
+    
+        const registration = new Registration({
+          parentFirstName,
+          parentLastName,
+          parentEmail,
+          studentFirstName,
+          studentLastName,
+          schoolId,
+          eventId,
+          packageId,
+          paymentMethod,
+          amount,
+          currency
+        });
+    
+        const newRegistration = await registration.save();
+        res.status(201).json(newRegistration);
+      } catch (error) {
+        res.status(400).json({ message: error.message });
+      }
+    });
+    
+    // Get registration by ID
+    app.get('/registration/:id', async (req, res) => {
+      try {
+        const registration = await Registration.findById(req.params.id)
+          .populate('schoolId')
+          .populate('eventId')
+          .populate('packageId');
+        res.json(registration);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+  
+ 
