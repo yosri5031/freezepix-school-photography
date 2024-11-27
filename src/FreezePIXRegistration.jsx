@@ -494,9 +494,9 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
   }, []);
 
   const handleSchoolSelect = (school) => {
-    setSelectedSchool(school._id);
+    setSelectedSchool(school);  // Pass the full school object, not just the ID
     setSelectedCountry(school.country);
-    setCurrentStep(prevStep => prevStep + 1); // Advance to next step
+    setCurrentStep(prevStep => prevStep + 1);
   };
 
   if (loading) {
