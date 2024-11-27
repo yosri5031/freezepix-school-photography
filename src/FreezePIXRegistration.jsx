@@ -871,10 +871,10 @@ const PackageSelection = () => {
     //const packageSelected = packages[selectedPackage];
     const pkg = {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
-      name: "Take Photo",
+      name: "Basic",
       value: "1 Digital Photo",
       price: 19.99,
-      description: "",
+      description: "1 Digital Photo",
       isActive: true
     };
 
@@ -888,14 +888,10 @@ const PackageSelection = () => {
           <p className="text-sm text-gray-600">{pkg.description}</p>
         </div>
         <div className="font-bold text-xl text-green-600">
-          {tunisianCities.some(city => 
-            translations[language].schools.tunisia.find(
-              school => school.value === selectedSchool
-            )?.location.toLowerCase().includes(city)
-          ) 
-            ? `${calculatePackagePrice(pkg.price).toFixed(2)} TND` 
-            : `$${pkg.price.toFixed(2)}`}
-        </div>
+  {selectedSchool.country === 'Tunisia' ? 
+    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
+    `$${pkg.price.toFixed(2)}`}
+</div>
       </div>
     </div>
 
@@ -1045,7 +1041,7 @@ const PackageSelection = () => {
           </button>
         )}
 
-        {selectedSchool.countryy !== 'Tunisia' && paymentMethod === 'interac' && (
+        {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
           <button 
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
