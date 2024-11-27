@@ -1014,9 +1014,10 @@ const PackageSelection = () => {
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && (
   <Elements stripe={stripePromise}>
-    <CheckoutForm
+    {/*<CheckoutForm
       
-    />
+    /> */}
+    <h2> We will add stripe checkout session ASAP</h2>
   </Elements>
 )}
  </>
