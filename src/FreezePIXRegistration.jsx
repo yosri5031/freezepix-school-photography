@@ -459,111 +459,99 @@ const FreezePIXRegistration = () => {
   };
 
     // School Selection Component
-    const SchoolSelection = ({ t = (key) => key }) => {
-      const [schools, setSchools] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
-      const [selectedSchool, setSelectedSchool] = useState(null);
-      const [selectedCountry, setSelectedCountry] = useState(null);
-    
-      useEffect(() => {
-        const fetchSchools = async () => {
-          console.log('Starting to fetch schools...');
-          setLoading(true);
-          setError(null);
-          
-          try {
-            const response = await axios.get(
-              'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
-              {
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-            
-            console.log('Raw response:', response);
-            console.log('Schools data:', response.data);
-            
-            if (response.data && Array.isArray(response.data)) {
-              console.log('Setting schools data:', response.data);
-              setSchools(response.data);
-            } else {
-              console.error('Invalid data format received:', response.data);
-              throw new Error('Invalid data format received from server');
+   // Modify the SchoolSelection component props to include setCurrentStep
+const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCountry, setCurrentStep }) => {
+  const [schools, setSchools] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSchools = async () => {
+      console.log('Starting to fetch schools...');
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await axios.get(
+          'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
             }
-          } catch (err) {
-            console.error('Detailed error:', err);
-            setError(err.message || 'Failed to load schools');
-          } finally {
-            setLoading(false);
           }
-        };
-    
-        fetchSchools();
-      }, []);
-    
-      const nextStep = () => {
-        console.log('Selected school:', selectedSchool);
-        console.log('Selected country:', selectedCountry);
-      };
-    
-      // Debug render state
-      console.log('Component state:', { loading, error, schoolsCount: schools.length });
-    
-      if (loading) {
-        return <div className="text-center">Loading schools... Please wait.</div>;
-      }
-    
-      if (error) {
-        return (
-          <div className="text-center">
-            <div className="text-red-500">Error loading schools: {error}</div>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Retry
-            </button>
-          </div>
         );
+        
+        if (response.data && Array.isArray(response.data)) {
+          setSchools(response.data);
+        } else {
+          throw new Error('Invalid data format received from server');
+        }
+      } catch (err) {
+        console.error('Detailed error:', err);
+        setError(err.message || 'Failed to load schools');
+      } finally {
+        setLoading(false);
       }
-    
-      return (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center">
-            Choose School
-          </h2>
-          <div className="space-y-4">
-            {Array.isArray(schools) && schools.length > 0 ? (
-              schools.map((school) => (
-                <div
-                  key={school._id}
-                  className={`border rounded-lg p-4 cursor-pointer ${
-                    selectedSchool === school._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-                  }`}
-                  onClick={() => {
-                    setSelectedSchool(school._id);
-                    setSelectedCountry(school.country);
-                    nextStep();
-                  }}
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-semibold text-lg">{school.name}</h3>
-                      <p className="text-sm text-gray-600">{school.location}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center text-gray-500">No schools available</div>
-            )}
-          </div>
-        </div>
-      );
     };
+
+    fetchSchools();
+  }, []);
+
+  const handleSchoolSelect = (school) => {
+    setSelectedSchool(school._id);
+    setSelectedCountry(school.country);
+    setCurrentStep(prevStep => prevStep + 1); // Advance to next step
+  };
+
+  if (loading) {
+    return <div className="text-center">Loading schools... Please wait.</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center">
+        <div className="text-red-500">Error loading schools: {error}</div>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+      t('steps.school')
+            </h2>
+      <div className="space-y-4">
+        {Array.isArray(schools) && schools.length > 0 ? (
+          schools.map((school) => (
+            <div
+              key={school._id}
+              className={`border rounded-lg p-4 cursor-pointer hover:bg-yellow-50 ${
+                selectedSchool === school._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+              }`}
+              onClick={() => handleSchoolSelect(school)}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-lg">{school.name}</h3>
+                  <p className="text-sm text-gray-600">{school.location}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500">No schools available</div>
+        )}
+      </div>
+    </div>
+  );
+};
     
 
     const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
@@ -1076,7 +1064,12 @@ const PackageSelection = () => {
 
         {/* Registration Content */}
         <div className="p-6">
-          {currentStep === 1 && <SchoolSelection />}
+          {currentStep === 1 &&  <SchoolSelection
+    t={t}
+    setSelectedSchool={setSelectedSchool}
+    setSelectedCountry={setSelectedCountry}
+    setCurrentStep={setCurrentStep}
+  />}
           {currentStep === 2 && <EventSelection
   selectedSchool={selectedSchool}
   setSelectedEvent={setSelectedEvent}
