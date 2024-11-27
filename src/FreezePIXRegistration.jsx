@@ -558,9 +558,8 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">
-      t('steps.school')
-            </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 text-center" style="font-size:16px;">
+      🏫</h2>
       <div className="space-y-4">
         {Array.isArray(schools) && schools.length > 0 ? (
           schools.map((school) => (
@@ -799,9 +798,9 @@ const PackageSelection = () => {
                 <p className="text-sm text-gray-600">{pkg.description}</p>
               </div>
               <div className="font-bold text-xl">
-                {isTunisianLocation
-                  ? `${pkg.price.toFixed(2)} TND` 
-                  : `$${pkg.price.toFixed(2)}`}
+  {selectedSchool.country === 'Tunisia' ? 
+    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
+    `$${pkg.price.toFixed(2)}`}
               </div>
             </div>
           </div>
