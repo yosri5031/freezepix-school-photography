@@ -34,11 +34,24 @@ const FreezePIXRegistration = () => {
   
     useEffect(() => {
       const fetchEvents = async () => {
-        // Extract the ID, handling both $oid and direct ID cases
-        const schoolId = selectedSchool?._id?.$oid || selectedSchool?._id;
+        // Extract the ID and format it correctly
+        let schoolId;
+        if (selectedSchool?._id) {
+          // Handle the ObjectId format
+          if (typeof selectedSchool._id === 'string') {
+            // If it's already a string ID
+            schoolId = selectedSchool._id;
+          } else if (selectedSchool._id.$oid) {
+            // If it's in $oid format
+            schoolId = selectedSchool._id.$oid;
+          } else if (selectedSchool._id.toString().includes('ObjectId')) {
+            // If it's in ObjectId format
+            schoolId = selectedSchool._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
+          }
+        }
         
         if (!schoolId) {
-          console.log('No school ID provided');
+          console.log('No valid school ID provided');
           return;
         }
   
@@ -498,15 +511,15 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
   }, []);
 
   const handleSchoolSelect = (school) => {
-    // First, ensure we have a valid school object
     if (!school) return;
   
-    // Handle different ID formats
     let schoolId;
-    if (typeof school._id === 'object' && school._id.$oid) {
-      schoolId = school._id.$oid;
-    } else if (typeof school._id === 'string') {
+    if (typeof school._id === 'string') {
       schoolId = school._id;
+    } else if (school._id.$oid) {
+      schoolId = school._id.$oid;
+    } else if (school._id.toString().includes('ObjectId')) {
+      schoolId = school._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
     } else {
       console.error('Invalid school ID format');
       return;
@@ -518,7 +531,6 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
       _id: schoolId
     };
   
-    // Update state
     setSelectedSchool(processedSchool);
     if (school.country) {
       setSelectedCountry(school.country);
