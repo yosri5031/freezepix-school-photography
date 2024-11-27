@@ -39,7 +39,7 @@ const FreezePIXRegistration = () => {
         setEventsLoading(true);
         try {
           const response = await axios.get(
-            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events?schoolId=${selectedSchool}`
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchool}`
           );
           setEvents(response.data);
         } catch (error) {
