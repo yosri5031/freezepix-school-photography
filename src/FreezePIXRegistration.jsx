@@ -554,65 +554,88 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
 };
     
 
-    const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
-      const {
-        events,
-        eventsLoading,
-        eventsError,
-        schools,
-        packages,
-        loading,
-        error: fetchError  // Renamed to avoid conflict
-      } = useEvents(selectedSchool);
-    
-      if (loading) return <div className="text-center">Loading initial data...</div>;
-      if (fetchError) return <div className="text-center text-red-500">Error loading initial data: {fetchError}</div>;
-      if (eventsLoading) return <div className="text-center">Loading events...</div>;
-      if (eventsError) return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
-      if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
-    
-      return (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center">
-            {t('steps.event')}
-          </h2>
-          <div className="space-y-4">
-            {events.map((event) => (
-              <div
-                key={event._id}
-                className={`border rounded-lg p-4 cursor-pointer ${
-                  selectedEvent === event._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-                }`}
-                onClick={() => {
-                  setSelectedEvent(event._id);
-                  nextStep();
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-semibold text-lg">{event.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {new Date(event.date).toLocaleDateString(
-                        language === 'fr' ? 'fr-FR' : 'en-US',
-                        { year: 'numeric', month: 'long', day: 'numeric' }
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between space-x-4">
-            <button
-              onClick={previousStep}
-              className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-            >
-              {t('buttons.previous')}
-            </button>
-          </div>
-        </div>
-      );
+const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.data && Array.isArray(response.data)) {
+          setEvents(response.data);
+        } else {
+          throw new Error('Invalid data format received from server');
+        }
+      } catch (err) {
+        console.error('Detailed error:', err);
+        setError(err.message || 'Failed to load events');
+      } finally {
+        setLoading(false);
+      }
     };
+
+    if (selectedSchool) {
+      fetchEvents();
+    }
+  }, [selectedSchool]);
+
+  if (loading) return <div className="text-center">Loading events... Please wait.</div>;
+  if (error) return <div className="text-center text-red-500">Error loading events: {error}</div>;
+  if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+        {t('steps.event')}
+      </h2>
+      <div className="space-y-4">
+        {events.map((event) => (
+          <div
+            key={event._id}
+            className={`border rounded-lg p-4 cursor-pointer ${
+              selectedEvent === event._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+            }`}
+            onClick={() => {
+              setSelectedEvent(event._id);
+              nextStep();
+            }}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-semibold text-lg">{event.name}</h3>
+                <p className="text-sm text-gray-600">
+                  {new Date(event.date).toLocaleDateString(
+                    language === 'fr' ? 'fr-FR' : 'en-US',
+                    { year: 'numeric', month: 'long', day: 'numeric' }
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between space-x-4">
+        <button
+          onClick={previousStep}
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+        >
+          {t('buttons.previous')}
+        </button>
+      </div>
+    </div>
+  );
+};
   
     
   
@@ -733,18 +756,8 @@ const PackageSelection = () => {
   const calculatedPackages = {
     basic: {
       name: t('packages.basic'),
-      price: calculatePackagePrice(29.99),
-      description: '1 Digital Photo, 1 Printed 8x10'
-    },
-    premium: {
-      name: t('packages.premium'),
-      price: calculatePackagePrice(49.99),
-      description: '3 Digital Photos, 2 Printed 8x10, Yearbook Inclusion'
-    },
-    halloween: {
-      name: t('packages.halloween'),
-      price: calculatePackagePrice(59.99),
-      description: 'Themed Photoshoot, 4 Digital Photos, 3 Printed 8x10, Costume Prop'
+      price: calculatePackagePrice(19.99),
+      description: '1 Digital Photo'
     }
   };
 
