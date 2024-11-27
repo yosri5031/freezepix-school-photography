@@ -739,7 +739,7 @@ const ConfirmationPage = () => {
           </span>
         </div>
       </div>
-      {selectedCountry === 'tunisia' && (
+      {selectedSchool.country === 'Tunisia' && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
           <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
         </div>
@@ -837,7 +837,7 @@ const PackageSelection = () => {
       parentEmail: '',
       studentName: '',
       studentLastName: '',
-      paymentMethod: selectedCountry === 'tunisia' ? 'daycare' : 'interac'
+      paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
     });
 
     const handleInputChange = (e) => {
@@ -950,7 +950,7 @@ const PackageSelection = () => {
           {/* Payment Method Selection */}
           <div className="space-y-4">
         <div className="p-4 bg-gray-50 rounded-lg">
-          {selectedCountry !== 'tunisia' && (
+          {selectedSchool.country !== 'Tunisia' && (
             <div className="mb-4">
               <h4 className="font-medium">{t('canada.select')}</h4>
               <label className="block">
@@ -976,7 +976,7 @@ const PackageSelection = () => {
             </div>
           )}
 {/* Option de paiement Tunisia */}
-{selectedCountry === 'tunisia' && (
+{selectedSchool.country === 'Tunisia' && (
   <div className="p-4 bg-yellow-50 rounded-lg">
             <h4 className="font-medium text-yellow-700">
               {t('tunisia.daycarePayment')}
@@ -986,7 +986,7 @@ const PackageSelection = () => {
           </div>
 )
   }
- {selectedCountry !== 'tunisia' && (
+ {selectedSchool.country !== 'Tunisia' && (
             <>
                   {/* Option de paiement Interac */}
                   {paymentMethod === 'interac' && (
@@ -1036,7 +1036,7 @@ const PackageSelection = () => {
           {t('buttons.previous')}
         </button>
 
-        {selectedCountry === 'tunisia' && (
+        {selectedSchool.country === 'Tunisia' && (
           <button 
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
@@ -1045,7 +1045,7 @@ const PackageSelection = () => {
           </button>
         )}
 
-        {selectedCountry !== 'tunisia' && paymentMethod === 'interac' && (
+        {selectedSchool.countryy !== 'Tunisia' && paymentMethod === 'interac' && (
           <button 
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
