@@ -868,7 +868,15 @@ const PackageSelection = () => {
       setCurrentStep(5);
     };
 
-    const packageSelected = packages[selectedPackage];
+    //const packageSelected = packages[selectedPackage];
+    const pkg = {
+      _id: { $oid: "6746d9b30d449c3529961fd2" },
+      name: "Take Photo",
+      value: "1 Digital Photo",
+      price: 19.99,
+      description: "",
+      isActive: true
+    };
 
     return (
       <div className="space-y-4">
@@ -876,8 +884,8 @@ const PackageSelection = () => {
     <div className="bg-gray-100 rounded-lg p-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="font-semibold">{packageSelected.name}</h3>
-          <p className="text-sm text-gray-600">{packageSelected.description}</p>
+          <h3 className="font-semibold">{pkg.name}</h3>
+          <p className="text-sm text-gray-600">{pkg.description}</p>
         </div>
         <div className="font-bold text-xl text-green-600">
           {tunisianCities.some(city => 
@@ -885,8 +893,8 @@ const PackageSelection = () => {
               school => school.value === selectedSchool
             )?.location.toLowerCase().includes(city)
           ) 
-            ? `${calculatePackagePrice(packageSelected.price).toFixed(2)} TND` 
-            : `$${packageSelected.price.toFixed(2)}`}
+            ? `${calculatePackagePrice(pkg.price).toFixed(2)} TND` 
+            : `$${pkg.price.toFixed(2)}`}
         </div>
       </div>
     </div>
@@ -1032,7 +1040,7 @@ const PackageSelection = () => {
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
-            {t('buttons.submit')} ({calculatePackagePrice(packageSelected.price)} TND)
+            {t('buttons.submit')} ({calculatePackagePrice(pkg.price)} TND)
           </button>
         )}
 
@@ -1041,7 +1049,7 @@ const PackageSelection = () => {
             type="submit"
             className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
-            {t('buttons.submit')} (${packageSelected.price.toFixed(2)})
+            {t('buttons.submit')} (${pkg.price.toFixed(2)})
           </button>
         )}
       </div>
