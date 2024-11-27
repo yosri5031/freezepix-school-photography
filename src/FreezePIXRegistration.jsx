@@ -27,22 +27,29 @@ const FreezePIXRegistration = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
-  const useEvents = (selectedSchool) => {
+  const useEvents = (selectedSchoolId) => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(false);
     const [eventsError, setEventsError] = useState(null);
   
     useEffect(() => {
       const fetchEvents = async () => {
-        if (!selectedSchool) return;
-        
+        if (!selectedSchoolId) {
+          console.log('No school ID provided');
+          return;
+        }
+  
         setEventsLoading(true);
         try {
+          console.log('Fetching events for school ID:', selectedSchoolId);
           const response = await axios.get(
-            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchool}`
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchoolId}`
           );
+          
+          console.log('Response received:', response.data);
           setEvents(response.data);
         } catch (error) {
+          console.error('Full error details:', error);
           setEventsError(error.message);
         } finally {
           setEventsLoading(false);
@@ -50,7 +57,7 @@ const FreezePIXRegistration = () => {
       };
   
       fetchEvents();
-    }, [selectedSchool]);
+    }, [selectedSchoolId]);
   
     return { events, eventsLoading, eventsError };
   };
