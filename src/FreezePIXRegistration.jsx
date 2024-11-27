@@ -544,7 +544,7 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
     
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
-  const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
+  const { events, eventsLoading, eventsError } = useEvents(selectedSchool._id);
 
   if (eventsLoading) {
     return <div className="text-center">Loading events...</div>;
