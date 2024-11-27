@@ -34,35 +34,36 @@ const FreezePIXRegistration = () => {
    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
-   // Add state for packages and schools
-  const [packages, setPackages] = useState({
-    basic: {
-      name: 'Basic Package',
-      price: 19.99,
-      description: '1 Digital Photo'
-    }
-  });
-
-  const [schools, setSchools] = useState([]);
-
-  // Fetch packages and schools on component mount
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-        setPackages(packagesResponse.data);
-
-        const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-        setSchools(schoolsResponse.data);
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-      }
-    };
-
-    fetchInitialData();
-  }, []);
+      
 }
+
+// Add state for packages and schools
+const [packages, setPackages] = useState({
+  basic: {
+    name: 'Basic Package',
+    price: 19.99,
+    description: '1 Digital Photo'
+  }
+});
+
+const [schools, setSchools] = useState([]);
+
+// Fetch packages and schools on component mount
+useEffect(() => {
+  const fetchInitialData = async () => {
+    try {
+      const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
+      setPackages(packagesResponse.data);
+
+      const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
+      setSchools(schoolsResponse.data);
+    } catch (error) {
+      console.error('Error fetching initial data:', error);
+    }
+  };
+
+  fetchInitialData();
+}, []);
   
 
   
