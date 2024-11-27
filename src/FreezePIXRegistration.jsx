@@ -40,13 +40,13 @@ const FreezePIXRegistration = () => {
     setLoading(true);
     try {
       // Fetch schools
-      const schoolsResponse = await fetch('/api/schools');
+      const schoolsResponse = await fetch('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
       if (!schoolsResponse.ok) throw new Error('Failed to fetch schools');
       const schoolsData = await schoolsResponse.json();
       setSchools(schoolsData);
 
       // Fetch packages
-      const packagesResponse = await fetch('/api/packages');
+      const packagesResponse = await fetch('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
       if (!packagesResponse.ok) throw new Error('Failed to fetch packages');
       const packagesData = await packagesResponse.json();
       setPackages(packagesData);
@@ -69,7 +69,7 @@ const FreezePIXRegistration = () => {
     setEventsLoading(true);
     setEventsError(null);
     try {
-      const response = await fetch(`/api/events/${selectedSchool}`);
+      const response = await fetch(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
       if (!response.ok) throw new Error('Failed to fetch events');
       const eventsData = await response.json();
       setEvents(eventsData);
