@@ -23,7 +23,7 @@ const FreezePIXRegistration = () => {
   const [selectedSchool, setSelectedSchool] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('');
   const [language, setLanguage] = useState('en');
-  const [selectedPackage, setSelectedPackage] = useState('');
+  const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
@@ -763,7 +763,7 @@ const ConfirmationPage = () => {
 const PackageSelection = () => {
   const calculatedPackages = {
     basic: {
-      name: t('packages.basic'),
+      name: 'basic',
       price: calculatePackagePrice(19.99),
       description: '1 Digital Photo'
     }
