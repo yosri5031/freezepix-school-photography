@@ -41,8 +41,6 @@ const FreezePIXRegistration = () => {
       const fetchInitialData = async () => {
         setLoading(true);
         try {
-          const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-          setSchools(schoolsResponse.data);
   
           const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
           setPackages(packagesResponse.data);
