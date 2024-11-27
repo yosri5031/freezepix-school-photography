@@ -30,58 +30,72 @@ const FreezePIXRegistration = () => {
   const [schools, setSchools] = useState([]);
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [events, setEvents] = useState([]);
-  const [eventsLoading, setEventsLoading] = useState(false);
-  const [eventsError, setEventsError] = useState(null);
-
- // Fetch data when component mounts
- useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      // Fetch schools
-    const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-    setSchools(schoolsResponse.data);
-
-    // Fetch packages
-    const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-    setPackages(packagesResponse.data);
+  const useEvents = (selectedSchool) => {
+    const [events, setEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(false);
+    const [eventsError, setEventsError] = useState(null);
+    const [schools, setSchools] = useState([]);
+    const [packages, setPackages] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
   
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // Initial fetch for schools and packages
+    useEffect(() => {
+      const fetchInitialData = async () => {
+        setLoading(true);
+        try {
+          // Fetch schools
+          const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
+          console.log('Fetched schools:', schoolsResponse.data);
+          setSchools(schoolsResponse.data);
+  
+          // Fetch packages
+          const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
+          console.log('Fetched packages:', packagesResponse.data);
+          setPackages(packagesResponse.data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchInitialData();
+    }, []);
+  
+    // Fetch events when school is selected
+    useEffect(() => {
+      const fetchEvents = async () => {
+        if (!selectedSchool) return;
+  
+        setEventsLoading(true);
+        try {
+          const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
+          console.log('Fetched events:', response.data);
+          setEvents(response.data);
+          setEventsError(null);
+        } catch (err) {
+          console.error('Error fetching events:', err);
+          setEventsError(err.message);
+          setEvents([]);
+        } finally {
+          setEventsLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, [selectedSchool]);
+  
+    return {
+      events,
+      eventsLoading,
+      eventsError,
+      schools,
+      packages,
+      loading,
+      error
+    };
   };
-
-  fetchData();
-}, []);
-
-// Add new useEffect for fetching events when school is selected
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      // Fetch schools
-      const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-      console.log('Fetched schools:', schoolsResponse.data);
-      setSchools(schoolsResponse.data);
-
-      // Fetch packages
-      const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-      console.log('Fetched packages:', packagesResponse.data);
-      setPackages(packagesResponse.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
 
   
 
@@ -482,11 +496,17 @@ useEffect(() => {
       );
     };
 
-    const EventSelection = () => {
+    const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
+      const {
+        events,
+        eventsLoading,
+        eventsError
+      } = useEvents(selectedSchool);
+    
       if (eventsLoading) return <div className="text-center">Loading events...</div>;
       if (eventsError) return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
       if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
-  
+    
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -494,7 +514,7 @@ useEffect(() => {
           </h2>
           <div className="space-y-4">
             {events.map((event) => (
-              <div 
+              <div
                 key={event._id}
                 className={`border rounded-lg p-4 cursor-pointer ${
                   selectedEvent === event._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
@@ -519,8 +539,8 @@ useEffect(() => {
             ))}
           </div>
           <div className="flex justify-between space-x-4">
-            <button 
-              onClick={previousStep} 
+            <button
+              onClick={previousStep}
               className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
             >
               {t('buttons.previous')}
@@ -529,7 +549,6 @@ useEffect(() => {
         </div>
       );
     };
-  
   
     
   
