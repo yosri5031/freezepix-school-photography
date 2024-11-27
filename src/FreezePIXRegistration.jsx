@@ -27,23 +27,22 @@ const FreezePIXRegistration = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
-  const useEvents = (selectedSchoolId) => {
-    const [events, setEvents] = useState([]);
-    const [eventsLoading, setEventsLoading] = useState(false);
-    const [eventsError, setEventsError] = useState(null);
-  
+  const useEvents = (selectedSchool) => {
     useEffect(() => {
       const fetchEvents = async () => {
-        if (!selectedSchoolId) {
+        // Extract the ID, handling both $oid and direct ID cases
+        const schoolId = selectedSchool?._id?.$oid || selectedSchool?._id;
+        
+        if (!schoolId) {
           console.log('No school ID provided');
           return;
         }
   
-        setEventsLoading(true);
+        console.log('Fetching events for school ID:', schoolId);
+        
         try {
-          console.log('Fetching events for school ID:', selectedSchoolId);
           const response = await axios.get(
-            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchoolId}`
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
           );
           
           console.log('Response received:', response.data);
@@ -57,11 +56,10 @@ const FreezePIXRegistration = () => {
       };
   
       fetchEvents();
-    }, [selectedSchoolId]);
+    }, [selectedSchool]);
   
     return { events, eventsLoading, eventsError };
   };
-
 // Add state for packages and schools
 const [packages, setPackages] = useState({
   basic: {
@@ -494,7 +492,8 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
   }, []);
 
   const handleSchoolSelect = (school) => {
-    setSelectedSchool(school);  // Pass the full school object, not just the ID
+    const schoolId = school._id.$oid || school._id;
+    setSelectedSchool({...school, _id: schoolId});
     setSelectedCountry(school.country);
     setCurrentStep(prevStep => prevStep + 1);
   };
@@ -551,7 +550,7 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
     
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
-  const { events, eventsLoading, eventsError } = useEvents(selectedSchool._id);
+  const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
 
   if (eventsLoading) {
     return <div className="text-center">Loading events...</div>;
