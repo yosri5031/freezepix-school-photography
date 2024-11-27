@@ -88,7 +88,15 @@ const FreezePIXRegistration = () => {
     };
   };
 
-
+  const {
+    events,
+    eventsLoading,
+    eventsError,
+    schools,
+    packages,
+    loading,
+    error
+  } = useEvents(selectedSchool);
   
 
 
