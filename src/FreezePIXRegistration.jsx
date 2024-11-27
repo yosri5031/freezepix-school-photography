@@ -53,48 +53,9 @@ const FreezePIXRegistration = () => {
   
       fetchInitialData();
     }, []);
+  }
   
-    // Fetch events when school is selected
-    useEffect(() => {
-      const fetchEvents = async () => {
-        if (!selectedSchool) return;
-  
-        setEventsLoading(true);
-        try {
-          const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
-          setEvents(response.data);
-          setEventsError(null);
-        } catch (err) {
-          setEventsError(err.message);
-          setEvents([]);
-        } finally {
-          setEventsLoading(false);
-        }
-      };
-  
-      fetchEvents();
-    }, [selectedSchool]);
-  
-    return {
-      events,
-      eventsLoading,
-      eventsError,
-      schools,
-      packages,
-      loading,
-      error
-    };
-  };
 
-  const {
-    events,
-    eventsLoading,
-    eventsError,
-    schools,
-    packages,
-    loading,
-    error
-  } = useEvents(selectedSchool);
   
 
 
@@ -565,6 +526,8 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
       setLoading(true);
       setError(null);
       try {
+        console.log('Fetching events for school:', selectedSchool);
+        
         const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`, {
           headers: {
             'Accept': 'application/json',
@@ -572,25 +535,29 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
           }
         });
     
+        console.log('Response data:', response.data);
+        
         if (response.data && Array.isArray(response.data)) {
+          if (response.data.length === 0) {
+            console.log('No events found for this school');
+          }
           setEvents(response.data);
         } else {
-          throw new Error('No events found or invalid data format');
+          console.error('Invalid data format:', response.data);
+          throw new Error('Invalid data format received from server');
         }
       } catch (err) {
-        console.error('Event Fetch Error:', err);
+        console.error('Full error details:', err);
         
-        // More specific error messaging
         if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          setError(`Server Error: ${err.response.status} - ${err.response.data.message || 'Unknown error'}`);
+          console.error('Response error:', err.response.data);
+          setError(`Server Error: ${err.response.status}`);
         } else if (err.request) {
-          // The request was made but no response was received
-          setError('Network Error: No response from server');
+          console.error('Request error:', err.request);
+          setError('No response received from server');
         } else {
-          // Something happened in setting up the request that triggered an Error
-          setError(`Error: ${err.message}`);
+          console.error('Error:', err.message);
+          setError(err.message);
         }
       } finally {
         setLoading(false);
