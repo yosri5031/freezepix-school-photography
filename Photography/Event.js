@@ -16,7 +16,7 @@ const EventSchema = new mongoose.Schema({
     required: true
   },
   schoolId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'School'
   },
   isActive: {
