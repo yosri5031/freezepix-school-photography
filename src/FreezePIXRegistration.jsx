@@ -459,7 +459,7 @@ const FreezePIXRegistration = () => {
   };
 
     // School Selection Component
-    const SchoolSelection = ({ t }) => {
+    const SchoolSelection = ({ t = (key) => key }) => {  // Provide default implementation for t
       const [schools, setSchools] = useState([]);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
@@ -518,7 +518,7 @@ const FreezePIXRegistration = () => {
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
-            {t('steps.school')}
+          {t('steps.school')}
           </h2>
           <div className="space-y-4">
             {schools.map((school) => (
