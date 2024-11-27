@@ -9,6 +9,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
 
@@ -40,16 +41,13 @@ const FreezePIXRegistration = () => {
     setLoading(true);
     try {
       // Fetch schools
-      const schoolsResponse = await fetch('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
-      if (!schoolsResponse.ok) throw new Error('Failed to fetch schools');
-      const schoolsData = await schoolsResponse.json();
-      setSchools(schoolsData);
+    const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
+    setSchools(schoolsResponse.data);
 
-      // Fetch packages
-      const packagesResponse = await fetch('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
-      if (!packagesResponse.ok) throw new Error('Failed to fetch packages');
-      const packagesData = await packagesResponse.json();
-      setPackages(packagesData);
+    // Fetch packages
+    const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
+    setPackages(packagesResponse.data);
+  
 
     } catch (err) {
       setError(err.message);
@@ -61,18 +59,16 @@ const FreezePIXRegistration = () => {
   fetchData();
 }, []);
 
- // Add new useEffect for fetching events when school is selected
- useEffect(() => {
+// Add new useEffect for fetching events when school is selected
+useEffect(() => {
   const fetchEvents = async () => {
     if (!selectedSchool) return;
-    
+
     setEventsLoading(true);
     setEventsError(null);
     try {
-      const response = await fetch(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
-      if (!response.ok) throw new Error('Failed to fetch events');
-      const eventsData = await response.json();
-      setEvents(eventsData);
+      const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
+      setEvents(response.data);
     } catch (err) {
       setEventsError(err.message);
     } finally {
@@ -81,7 +77,9 @@ const FreezePIXRegistration = () => {
   };
 
   fetchEvents();
-}, [selectedSchool]); // Dependency on selectedSchool
+}, [selectedSchool]);
+
+  
 
 
   // Translations (kept the same as in the previous version)
