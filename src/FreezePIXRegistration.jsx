@@ -461,10 +461,62 @@ const FreezePIXRegistration = () => {
   };
 
     // School Selection Component
-    const SchoolSelection = () => {
-      if (loading) return <div className="text-center">Loading schools...</div>;
-      if (error) return <div className="text-center text-red-500">Error loading schools: {error}</div>;
-  
+    const SchoolSelection = ({ t }) => {
+      const [schools, setSchools] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [selectedSchool, setSelectedSchool] = useState(null);
+      const [selectedLocation, setSelectedLocation] = useState(null);
+    
+      useEffect(() => {
+        const fetchSchools = async () => {
+          setLoading(true);
+          setError(null);
+          
+          try {
+            console.log('Fetching schools...');
+            const response = await axios.get(
+              'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
+              {
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                withCredentials: true
+              }
+            );
+    
+            console.log('Schools response:', response.data);
+            
+            if (!response.data || !Array.isArray(response.data)) {
+              throw new Error('Invalid response format');
+            }
+    
+            setSchools(response.data);
+          } catch (err) {
+            console.error('Error fetching schools:', err);
+            setError(err.message || 'Failed to load schools');
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchSchools();
+      }, []);
+    
+      const nextStep = () => {
+        // Implement your next step logic here
+        console.log('Moving to next step');
+      };
+    
+      if (loading) {
+        return <div className="text-center">Loading schools...</div>;
+      }
+    
+      if (error) {
+        return <div className="text-center text-red-500">Error loading schools: {error}</div>;
+      }
+    
       return (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -472,14 +524,14 @@ const FreezePIXRegistration = () => {
           </h2>
           <div className="space-y-4">
             {schools.map((school) => (
-              <div 
+              <div
                 key={school._id}
                 className={`border rounded-lg p-4 cursor-pointer ${
                   selectedSchool === school._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
                 }`}
                 onClick={() => {
                   setSelectedSchool(school._id);
-                  setSelectedCountry(school.country);
+                  setSelectedLocation(school.location);
                   nextStep();
                 }}
               >
