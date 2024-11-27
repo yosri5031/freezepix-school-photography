@@ -31,11 +31,29 @@ const FreezePIXRegistration = () => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(false);
     const [eventsError, setEventsError] = useState(null);
-   
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-      
-}
+  
+    useEffect(() => {
+      const fetchEvents = async () => {
+        if (!selectedSchool) return;
+        
+        setEventsLoading(true);
+        try {
+          const response = await axios.get(
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events?schoolId=${selectedSchool}`
+          );
+          setEvents(response.data);
+        } catch (error) {
+          setEventsError(error.message);
+        } finally {
+          setEventsLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, [selectedSchool]);
+  
+    return { events, eventsLoading, eventsError };
+  };
 
 // Add state for packages and schools
 const [packages, setPackages] = useState({
@@ -526,101 +544,57 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
     
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        console.log('Fetching events for school:', selectedSchool);
-        
-        const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-    
-        console.log('Response data:', response.data);
-        
-        if (response.data && Array.isArray(response.data)) {
-          if (response.data.length === 0) {
-            console.log('No events found for this school');
-          }
-          setEvents(response.data);
-        } else {
-          console.error('Invalid data format:', response.data);
-          throw new Error('Invalid data format received from server');
-        }
-      } catch (err) {
-        console.error('Full error details:', err);
-        
-        if (err.response) {
-          console.error('Response error:', err.response.data);
-          setError(`Server Error: ${err.response.status}`);
-        } else if (err.request) {
-          console.error('Request error:', err.request);
-          setError('No response received from server');
-        } else {
-          console.error('Error:', err.message);
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (eventsLoading) {
+    return <div className="text-center">Loading events...</div>;
+  }
 
-    if (selectedSchool) {
-      fetchEvents();
-    }
-  }, [selectedSchool]);
-
-  if (loading) return <div className="text-center">Loading events... Please wait.</div>;
-  if (error) return <div className="text-center text-red-500">Error loading events: {error}</div>;
-  if (events.length === 0) return <div className="text-center">No upcoming events available</div>;
+  if (eventsError) {
+    return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
+  }
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-800 text-center">
         {t('steps.event')}
       </h2>
+      
       <div className="space-y-4">
-        {events.map((event) => (
-          <div
-            key={event._id}
-            className={`border rounded-lg p-4 cursor-pointer ${
-              selectedEvent === event._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-            }`}
-            onClick={() => {
-              setSelectedEvent(event._id);
-              nextStep();
-            }}
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold text-lg">{event.name}</h3>
-                <p className="text-sm text-gray-600">
-                  {new Date(event.date).toLocaleDateString(
-                    language === 'fr' ? 'fr-FR' : 'en-US',
-                    { year: 'numeric', month: 'long', day: 'numeric' }
-                  )}
-                </p>
+        {events.length > 0 ? (
+          events.map((event) => (
+            <div
+              key={event._id}
+              className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
+              onClick={() => {
+                setSelectedEvent(event._id);
+                nextStep();
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-lg">{event.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    <Calendar className="inline-block w-4 h-4 mr-2" />
+                    {new Date(event.date).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="text-center text-gray-500">No events available for this school</div>
+        )}
       </div>
-      <div className="flex justify-between space-x-4">
-  <button 
-    onClick={previousStep} 
-    className="px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-  >
-    {t('buttons.previous')}
-  </button>
-</div>
+
+      <div className="flex justify-between mt-6">
+        <button
+          onClick={previousStep}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        >
+          {t('buttons.previous')}
+        </button>
+      </div>
     </div>
   );
 };
