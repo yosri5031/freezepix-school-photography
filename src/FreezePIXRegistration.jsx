@@ -61,23 +61,27 @@ const FreezePIXRegistration = () => {
 
 // Add new useEffect for fetching events when school is selected
 useEffect(() => {
-  const fetchEvents = async () => {
-    if (!selectedSchool) return;
-
-    setEventsLoading(true);
-    setEventsError(null);
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/events/${selectedSchool}`);
-      setEvents(response.data);
+      // Fetch schools
+      const schoolsResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools');
+      console.log('Fetched schools:', schoolsResponse.data);
+      setSchools(schoolsResponse.data);
+
+      // Fetch packages
+      const packagesResponse = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/packages');
+      console.log('Fetched packages:', packagesResponse.data);
+      setPackages(packagesResponse.data);
     } catch (err) {
-      setEventsError(err.message);
+      setError(err.message);
     } finally {
-      setEventsLoading(false);
+      setLoading(false);
     }
   };
 
-  fetchEvents();
-}, [selectedSchool]);
+  fetchData();
+}, []);
 
   
 
