@@ -741,401 +741,177 @@ const handleRegistrationSubmit = async (e) => {
 
 
   // Registration Form Component
-  const RegistrationForm = () => {
-    
+// Separate component outside the main component
+const MemoizedRegistrationInput = React.memo(({ 
+  name, 
+  value, 
+  onChange, 
+  placeholder, 
+  type = 'text' 
+}) => {
+  const inputRef = useRef(null);
 
-    const handleInputChange = (field) => (e) => {
-      const newValue = e.target.value;
+  useEffect(() => {
+    // Ensure input maintains focus
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [value]);
+
+  return (
+    <input
+      ref={inputRef}
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="w-full p-2 border rounded"
+      required
       
-      // Prevent default only if absolutely necessary
-      // e.preventDefault();
-  
-      setFormData(prevData => ({
-        ...prevData,
-        [field]: newValue
-      }));
-  
-      // Ensure keyboard stays open and caret position is maintained
-      requestAnimationFrame(() => {
-        const inputElement = e.target;
-        
-        // Force focus and prevent keyboard dismissal
-        inputElement.focus({
-          preventScroll: true
+      // Mobile optimization attributes
+      autoComplete="off"
+      autoCorrect="off"
+      autoCapitalize={type === 'text' ? 'words' : 'none'}
+      spellCheck="false"
+      
+      // Prevent auto-zoom
+      style={{
+        fontSize: '16px',
+        '@media screen and (max-width: 768px)': {
+          fontSize: '16px'
+        }
+      }}
+      
+      // Additional focus management
+      onFocus={(e) => {
+        e.target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
         });
-  
-        // Attempt to maintain caret position
-        try {
-          const caretPosition = inputElement.selectionStart;
-          inputElement.setSelectionRange(caretPosition, caretPosition);
-        } catch (error) {
-          console.warn('Caret position maintenance failed', error);
-        }
-      });
-    };
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      setIsLoading(true);
+      }}
+    />
+  );
+});
+
+const RegistrationForm = () => {
+  // Memoized input change handler to prevent unnecessary re-renders
+  const handleInputChange = useCallback((field) => (e) => {
+    const newValue = e.target.value;
     
-      try {
-        // For credit card payments
-      
-    
-        // Call registration submission regardless of payment method
-        await handleRegistrationSubmit();
-        
-      } catch (error) {
-        console.error('Payment error:', error);
-      } finally {
-        setIsLoading(false);
+    setFormData(prevData => {
+      // Only update if value has actually changed
+      if (prevData[field] !== newValue) {
+        return {
+          ...prevData,
+          [field]: newValue
+        };
       }
-    };
+      return prevData;
+    });
+  }, []);
 
-    //const packageSelected = packages[selectedPackage];
-    const pkg = {
-      _id: { $oid: "6746d9b30d449c3529961fd2" },
-      name: "Basic",
-      value: "1 Digital Photo",
-      price: 19.99,
-      description: "1 Digital Photo",
-      isActive: true
-    };
+  // Memoize form data to prevent unnecessary re-renders
+  const memoizedFormData = useMemo(() => formData, [formData]);
 
-      // Add tax calculation function
-      const TAX_RATES = {
-        'TUNISIA': { TND: 0.19 },
-        'CANADA': {
-          'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
-          'ALBERTA': { GST: 5.0 },
-          'NEW BRUNSWICK': { HST: 15.0 },
-          'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
-          'NORTHWEST TERRITORIES': { GST: 5.0 },
-          'NOVA SCOTIA': { HST: 15.0 },
-          'NUNAVUT': { GST: 5.0 },
-          'PRINCE EDWARD ISLAND': { HST: 15.0 },
-          'QUEBEC': { GST: 5.0, QST: 9.975 },
-          'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
-          'YUKON': { GST: 5.0 },
-          'ONTARIO': { HST: 13.0 }
-        }
-      };
-      
-      const calculateTotal = () => {
-        if (!selectedSchool?.country || !pkg.price) return { subtotal: pkg.price, total: pkg.price };
-      
-        const country = selectedSchool.country.toUpperCase();
-        const taxRates = TAX_RATES[country];
-        
-        if (country === 'CANADA' && selectedSchool.location && taxRates) {
-          const province = selectedSchool.location.toUpperCase();
-          const provinceTaxRates = taxRates[province];
-      
-          if (provinceTaxRates) {
-            const taxes = calculateTaxes(pkg.price, provinceTaxRates);
-      
-            return {
-              subtotal: pkg.price,
-              taxDetails: taxes.taxDetails,
-              total: taxes.totalAmount
-            };
+  return (
+    <div className="space-y-4">
+      <form 
+        onSubmit={handleSubmit} 
+        className="space-y-4"
+        // Prevent form default behavior
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
           }
-        } else if (country === 'TUNISIA' && taxRates) {
-          const tunisiaTaxRate = taxRates.TND;
-          const subtotal = pkg.price / 2;
-          
-          return {
-            subtotal,
-            total: subtotal * (1 + tunisiaTaxRate)
-          };
-        }
-      
-        return { subtotal: pkg.price, total: pkg.price };
-      };
-      
-      const calculateTaxes = (basePrice, taxRates) => {
-        let totalTax = 0;
-        const taxDetails = {};
-      
-        if (taxRates.HST) {
-          const hst = (basePrice * taxRates.HST) / 100;
-          totalTax += hst;
-          taxDetails.HST = { rate: taxRates.HST, amount: hst };
-        } else {
-          if (taxRates.GST) {
-            const gst = (basePrice * taxRates.GST) / 100;
-            totalTax += gst;
-            taxDetails.GST = { rate: taxRates.GST, amount: gst };
+        }}
+      >
+        {[
+          {
+            name: 'parentFirstName',
+            placeholder: 'Parent First Name',
+            type: 'text'
+          },
+          {
+            name: 'parentLastName',
+            placeholder: 'Parent Last Name',
+            type: 'text'
+          },
+          {
+            name: 'studentFirstName',
+            placeholder: 'Student First Name',
+            type: 'text'
+          },
+          {
+            name: 'studentLastName',
+            placeholder: 'Student Last Name',
+            type: 'text'
+          },
+          {
+            name: 'parentEmail',
+            placeholder: 'Parent Email',
+            type: 'email'
           }
-          if (taxRates.PST) {
-            const pst = (basePrice * taxRates.PST) / 100;
-            totalTax += pst;
-            taxDetails.PST = { rate: taxRates.PST, amount: pst };
-          }
-          if (taxRates.QST) {
-            const gstAmount = basePrice * taxRates.GST / 100;
-            const qst = ((basePrice + gstAmount) * taxRates.QST) / 100;
-            totalTax += qst;
-            taxDetails.QST = { rate: taxRates.QST, amount: qst };
-          }
-        }
-      
-        return { totalAmount: basePrice + totalTax, taxDetails };
-      };
-
-    const priceDetails = calculateTotal();
-    return (
-      <div className="space-y-4">
-    {/* Package Summary */}
-    <div className="bg-gray-100 rounded-lg p-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold">{pkg.name}</h3>
-          <p className="text-sm text-gray-600">{pkg.description}</p>
-        </div>
-        <div className="font-bold text-xl text-green-600">
-  {selectedSchool.country === 'Tunisia' ? 
-    `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
-    `$${pkg.price.toFixed(2)}`}
-</div>
-      </div>
+        ].map((field) => (
+          <MemoizedRegistrationInput
+            key={field.name}
+            name={field.name}
+            type={field.type}
+            placeholder={field.placeholder}
+            value={memoizedFormData[field.name]}
+            onChange={handleInputChange(field.name)}
+          />
+        ))}
+      </form>
     </div>
+  );
+};
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="parentFirstName"
-          placeholder="Parent First Name"
-          value={formData.parentFirstName}
-          onChange={handleInputChange('parentFirstName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="parentLastName"
-          placeholder="Parent Last Name"
-          value={formData.parentLastName}
-          onChange={handleInputChange('parentLastName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="studentFirstName"
-          placeholder="Student First Name"
-          value={formData.studentFirstName}
-          onChange={handleInputChange('studentFirstName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="studentLastName"
-          placeholder="Student Last Name"
-          value={formData.studentLastName}
-          onChange={handleInputChange('studentLastName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="email"
-          name="parentEmail"
-          placeholder="Parent Email"
-          value={formData.parentEmail}
-          onChange={handleInputChange('parentEmail')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          spellCheck="false"
-        />
-          
-
-          {/* Payment Method Selection */}
-          <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
-          {selectedSchool.country !== 'Tunisia' && (
-            <div className="mb-4">
-              <h4 className="font-medium">{t('canada.select')}</h4>
-              <label className="block">
-                <input
-                  type="radio"
-                  value="interac"
-                  checked={paymentMethod === 'interac'}
-                  onChange={handlePaymentMethodChange}
-                  className="mr-2"
-                />
-                {t('canada.interac')}
-              </label>
-              <label className="block">
-                <input
-                  type="radio"
-                  value="credit"
-                  checked={paymentMethod === 'credit'}
-                  onChange={handlePaymentMethodChange}
-                  className="mr-2"
-                />
-                {t('canada.credit')}
-              </label>
-            </div>
-          )}
-
-           {/* Order Summary  */}
-           <div className="bg-white rounded-lg p-4 shadow-sm border">
-    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-    <div className="space-y-2">
-        <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>
-                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
-            </span>
-        </div>
-
-        {selectedSchool.country === 'Tunisia' && (
-            <div className="flex justify-between text-gray-600">
-                <span>TVA (19%):</span>
-                <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
-            </div>
-        )}
-
-{priceDetails.taxDetails &&
-            Object.keys(priceDetails.taxDetails).map(key => (
-                <div key={key} className="flex justify-between text-gray-600">
-                    <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
-                    <span>
-                        {selectedSchool.country !== 'Tunisia' ? `$${priceDetails.taxDetails[key].amount.toFixed(2)}` : ''}
-                    </span>
-                </div>
-            ))
-        }
-
-        <div className="border-t pt-2 mt-2">
-            <div className="flex justify-between font-bold">
-                <span>Total:</span>
-                <span>
-                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-
-{/* Option de paiement Tunisia */}
-{selectedSchool.country === 'Tunisia' && (
-  <div className="p-4 bg-yellow-50 rounded-lg">
-            <h4 className="font-medium text-yellow-700">
-              {t('tunisia.daycarePayment')}
-            </h4>
-            <p className="text-sm text-yellow-600">
-            </p>
-          </div>
-)
+// Form Data Initialization with useReducer for more controlled updates
+const formReducer = (state, action) => {
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      return {
+        ...state,
+        [action.field]: action.value
+      };
+    case 'RESET':
+      return initialFormState;
+    default:
+      return state;
   }
- {selectedSchool.country !== 'Tunisia' && (
-            <>
-                  {/* Option de paiement Interac */}
-                  {paymentMethod === 'interac' && (
-                    <div className="border rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{t('canada.interac')}</h4>
-                          <p className="text-sm text-gray-600">{t('canada.send')}</p>
-                          <p className="font-bold">Info@freezepix.com</p>
-                        </div>
-                        <img 
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp9FibB-R9ac8XXEootfuHyEdTuaeJ9bZiQQ&s" 
-                          alt="Interac E-Transfer" 
-                          className="h-12 w-auto"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t('canada.placing')}
-                      </p>
-                      {/* Bouton de commande pour Interac */}
-                      
-                    </div>
-                  )}
-      
-                  {/* Option de paiement par carte de crédit */}
-                  {paymentMethod === 'credit' && (
-  <Elements stripe={stripePromise}>
-    {/*<CheckoutForm
-      
-    /> */}
-    <h2> We will add stripe checkout session ASAP</h2>
-  </Elements>
-)}
- </>
-              )}
-                </div>
-               
-              </div>
+};
 
-          
-      <div className="flex justify-between space-x-4">
-        <button 
-          type="button"
-          onClick={previousStep} 
-          className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-        >
-          {t('buttons.previous')}
-        </button>
+const initialFormState = {
+  parentFirstName: '',
+  parentLastName: '',
+  studentFirstName: '',
+  studentLastName: '',
+  parentEmail: '',
+  paymentMethod: 'credit',
+  schoolId: selectedSchool?._id || '',
+  eventId: selectedEvent?._id || '',
+};
 
-        {selectedSchool.country === 'Tunisia' && (
-           <button 
-           type="submit"
-           onClick={handleRegistrationSubmit}
-           disabled={isLoading}
-           className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-             isLoading ? 'opacity-50 cursor-not-allowed' : ''
-           }`}
-         >
-           {isLoading ? (
-             <div className="flex items-center justify-center">
-               <Loader className="animate-spin h-5 w-5 mr-2" />
-               Loading...
-             </div>
-           ) : (
-             `${t('buttons.submit')} (${priceDetails.total.toFixed(2)} TND)`
-           )}
-         </button>
-        )}
+const RegistrationWrapper = () => {
+  const [formData, dispatch] = useReducer(formReducer, initialFormState);
 
-        {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
-          <button 
-          type="submit"
-          onClick={handleRegistrationSubmit}
-          disabled={isLoading}
-          className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <Loader className="animate-spin h-5 w-5 mr-2" />
-              Loading...
-            </div>
-          ) : (
-            `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
-          )}
-        </button>
-        )}
-      </div>
-        </form>
-      </div>
-    );
-  };
+  // Optimized dispatch method
+  const updateField = useCallback((field) => (value) => {
+    dispatch({
+      type: 'UPDATE_FIELD',
+      field,
+      value
+    });
+  }, []);
+
+  return (
+    <RegistrationForm 
+      formData={formData}
+      updateField={updateField}
+    />
+  );
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
