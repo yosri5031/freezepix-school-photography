@@ -1,12 +1,4 @@
-import React, { 
-  memo, 
-  useState, 
-  useRef, 
-  useCallback, 
-  useEffect, 
-  useMemo,
-  useReducer 
-} from 'react';
+import { memo, useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2} from 'lucide-react';
 import { School as CustomSchoolIcon } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
