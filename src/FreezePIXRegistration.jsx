@@ -28,6 +28,8 @@ const FreezePIXRegistration = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+ 
   const useEvents = (selectedSchool) => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(true);
@@ -829,6 +831,44 @@ const PackageSelection = () => {
   );
 };
 
+const handleRegistrationSubmit = async () => {
+  setIsLoading(true);
+  try {
+    const registrationData = {
+      ...formData,
+      schoolId: selectedSchool._id,
+      eventId: selectedEvent._id,
+      packageId: selectedPackage._id,
+      paymentMethod: paymentMethod, // 'interac' or 'daycare'
+    };
+
+    const response = await axios.post(
+      'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
+      registrationData
+    );
+
+    if (response.status === 201) {
+      setRegistrationConfirmation({
+        success: true,
+        message: paymentMethod === 'interac' 
+          ? "Registration successful! Please complete Interac payment."
+          : "Registration successful! Please pay at daycare.",
+        registrationId: response.data._id
+      });
+      setCurrentStep(5); // Move to confirmation step
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    setRegistrationConfirmation({
+      success: false,
+      message: "Registration failed. Please try again."
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
   // Registration Form Component
   const RegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -841,8 +881,10 @@ const PackageSelection = () => {
     });
 
     const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value
+      });
     };
 
     const handleSubmit = (e) => {
@@ -1156,21 +1198,43 @@ const PackageSelection = () => {
         </button>
 
         {selectedSchool.country === 'Tunisia' && (
-          <button 
-            type="submit"
-            className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
-          >
-                        {t('buttons.submit')} ({priceDetails.total.toFixed(2)} TND)
-                        </button>
+           <button 
+           type="submit"
+           onClick={handleRegistrationSubmit}
+           disabled={isLoading}
+           className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
+             isLoading ? 'opacity-50 cursor-not-allowed' : ''
+           }`}
+         >
+           {isLoading ? (
+             <div className="flex items-center justify-center">
+               <Loader className="animate-spin h-5 w-5 mr-2" />
+               Loading...
+             </div>
+           ) : (
+             `${t('buttons.submit')} (${priceDetails.total.toFixed(2)} TND)`
+           )}
+         </button>
         )}
 
         {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
           <button 
-            type="submit"
-            className="w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
-          >
-                        {t('buttons.submit')} (${priceDetails.total.toFixed(2)})
-                        </button>
+          type="submit"
+          onClick={handleRegistrationSubmit}
+          disabled={isLoading}
+          className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <Loader className="animate-spin h-5 w-5 mr-2" />
+              Loading...
+            </div>
+          ) : (
+            `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
+          )}
+        </button>
         )}
       </div>
         </form>
