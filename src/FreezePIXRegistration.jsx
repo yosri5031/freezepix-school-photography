@@ -1056,40 +1056,46 @@ const PackageSelection = () => {
 
            {/* Order Summary  */}
            <div className="bg-white rounded-lg p-4 shadow-sm border">
-                <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-                <div className="space-y-2">
-                    <div className="flex justify-between">
-                        <span>Subtotal:</span>
-                        <span>
-                            {selectedSchool.country === 'Tunisia' 
-                                ? `${priceDetails.subtotal.toFixed(2)} TND`
-                                : `$${priceDetails.subtotal.toFixed(2)}`}
-                        </span>
-                    </div>
-                    
-                    {/* Show tax details for Canadian orders */}
-                    {selectedSchool.country === 'canada' && Object.entries(priceDetails)
-                        .filter(([key]) => ['GST', 'PST', 'HST', 'QST'].includes(key))
-                        .map(([key, value]) => (
-                            <div key={key} className="flex justify-between text-gray-600">
-                                <span>{key} ({value.rate}%):</span>
-                                <span>${value.amount.toFixed(2)}</span>
-                            </div>
-                        ))
-                    }
-
-                    <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span>
-                                {selectedSchool.country === 'Tunisia'
-                                    ? `${priceDetails.total.toFixed(2)} TND`
-                                    : `$${priceDetails.total.toFixed(2)}`}
-                            </span>
-                        </div>
-                    </div>
+    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+    <div className="space-y-2">
+        <div className="flex justify-between">
+            <span>Subtotal:</span>
+            <span>
+                {selectedSchool.country === 'Tunisia' 
+                    ? `${priceDetails.subtotal.toFixed(2)} TND`
+                    : `$${priceDetails.subtotal.toFixed(2)}`}
+            </span>
+        </div>
+        
+        {/* Show tax details for Canadian and Tunisian orders */}
+        {selectedSchool.country.toUpperCase() === 'CANADA' && priceDetails.taxDetails &&
+            Object.keys(priceDetails.taxDetails).map(key => (
+                <div key={key} className="flex justify-between text-gray-600">
+                    <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
+                    <span>${priceDetails.taxDetails[key].amount.toFixed(2)}</span>
                 </div>
+            ))
+        }
+
+        {selectedSchool.country === 'Tunisia' && priceDetails.taxDetails &&
+            <div className="flex justify-between text-gray-600">
+                <span>Tunisia Tax ({priceDetails.taxDetails.TND.rate}%):</span>
+                <span>{priceDetails.taxDetails.TND.amount.toFixed(2)} TND</span>
             </div>
+        }
+
+        <div className="border-t pt-2 mt-2">
+            <div className="flex justify-between font-bold">
+                <span>Total:</span>
+                <span>
+    {selectedSchool.country === 'Tunisia'
+        ? `${priceDetails.total.toFixed(2)} TND`
+        : `$${priceDetails.total.toFixed(2)}`}
+</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 {/* Option de paiement Tunisia */}
 {selectedSchool.country === 'Tunisia' && (
