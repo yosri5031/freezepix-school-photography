@@ -867,7 +867,7 @@ const handleRegistrationSubmit = async (e) => {
            type="text"
            name="studentName"
            placeholder='Student Name'
-           value={formData.studentName}
+           value={formData.studentFirstName}
            onChange={handleInputChange}
            className="w-full p-2 border rounded"
            required
@@ -1120,7 +1120,8 @@ const handleRegistrationSubmit = async (e) => {
   setFormData={setFormData}
 />}
           {currentStep === 3 && <PackageSelection />}
-          {currentStep === 4 && <RegistrationForm />}
+          {currentStep === 4 && <RegistrationForm 
+          setFormData={setFormData}/>}
           {currentStep === 5 && <ConfirmationPage />}
         </div>
       </div>
