@@ -22,8 +22,8 @@ const FreezePIXRegistration = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedSchool, setSelectedSchool] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState('');
-  useEffect(() => {
+  const [selectedEvent, setSelectedEvent] = useState(null); 
+    useEffect(() => {
     if (selectedSchool) {
       setFormData(prev => ({
         ...prev,
@@ -53,38 +53,34 @@ const FreezePIXRegistration = () => {
   
     useEffect(() => {
       const fetchEvents = async () => {
-        // Extract the ID and format it correctly
-        let schoolId;
-        if (selectedSchool?._id) {
-          // Handle the ObjectId format
-          if (typeof selectedSchool._id === 'string') {
-            // If it's already a string ID
-            schoolId = selectedSchool._id;
-          } else if (selectedSchool._id.$oid) {
-            // If it's in $oid format
-            schoolId = selectedSchool._id.$oid;
-          } else if (selectedSchool._id.toString().includes('ObjectId')) {
-            // If it's in ObjectId format
-            schoolId = selectedSchool._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
-          }
-        }
-        
-        if (!schoolId) {
-          console.log('No valid school ID provided');
-          return;
+           // Extract the ID and format it correctly
+           let schoolId;
+           if (selectedSchool?._id) {
+             // Handle the ObjectId format
+             if (typeof selectedSchool._id === 'string') {
+               // If it's already a string ID
+               schoolId = selectedSchool._id;
+             } else if (selectedSchool._id.$oid) {
+               // If it's in $oid format
+               schoolId = selectedSchool._id.$oid;
+             } else if (selectedSchool._id.toString().includes('ObjectId')) {
+               // If it's in ObjectId format
+               schoolId = selectedSchool._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
+             }
+           }
+           
+           if (!schoolId) {
+             console.log('No valid school ID provided');
         }
   
-        console.log('Fetching events for school ID:', schoolId);
-        
         try {
           const response = await axios.get(
-            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
+             `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
           );
           
-          console.log('Response received:', response.data);
           setEvents(response.data);
         } catch (error) {
-          console.error('Full error details:', error);
+          console.error('Events fetch error:', error);
           setEventsError(error.message);
         } finally {
           setEventsLoading(false);
@@ -428,7 +424,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
               key={event._id}
               className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
               onClick={() => {
-                setSelectedEvent(event._id);
+                setSelectedEvent(event);
                 nextStep();
               }}
             >
@@ -646,6 +642,16 @@ const PackageSelection = () => {
 
 const handleRegistrationSubmit = async () => {
   try {
+     // Validate all required data before submission
+     if (!selectedSchool?._id) {
+      throw new Error('Missing required field: schoolId');
+    }
+    if (!selectedEvent?._id) {
+      throw new Error('Missing required field: eventId');
+    }
+    if (!selectedPackage?._id) {
+      throw new Error('Missing required field: packageId');
+    }
     // Ensure all required fields are present
     const registrationData = {
       parentFirstName: formData.firstName,
@@ -834,7 +840,7 @@ const handleRegistrationSubmit = async () => {
    placeholder='First Name'
    value={formData.firstName}
    onChange={handleInputChange}
-   className="form-input"
+   className="w-full p-2 border rounded"
    required
 />
           <input
@@ -843,7 +849,7 @@ const handleRegistrationSubmit = async () => {
             placeholder='Last Name'
             value={formData.lastName}
             onChange={handleInputChange}
-            className="form-input"
+            className="w-full p-2 border rounded"
             required
           />
           <input
@@ -852,7 +858,7 @@ const handleRegistrationSubmit = async () => {
            placeholder='Student Name'
            value={formData.studentName}
            onChange={handleInputChange}
-           className="form-input"
+           className="w-full p-2 border rounded"
            required
           />
           <input
@@ -861,7 +867,7 @@ const handleRegistrationSubmit = async () => {
           placeholder='Student Last Name'
            value={formData.studentLastName}
            onChange={handleInputChange}
-           className="form-input"
+           className="w-full p-2 border rounded"
            required
           />
           <input
@@ -870,7 +876,7 @@ const handleRegistrationSubmit = async () => {
             placeholder='Parent Email'
             value={formData.parentEmail}
             onChange={handleInputChange}
-            className="form-input"
+            className="w-full p-2 border rounded"
             required
           />
           
