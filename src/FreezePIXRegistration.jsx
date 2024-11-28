@@ -23,6 +23,14 @@ const FreezePIXRegistration = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedSchool, setSelectedSchool] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('');
+  useEffect(() => {
+    if (selectedSchool) {
+      setFormData(prev => ({
+        ...prev,
+        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
+      }));
+    }
+  }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
   const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
@@ -842,19 +850,35 @@ const PackageSelection = () => {
 const handleRegistrationSubmit = async (e) => {
   e.preventDefault();
   setIsLoading(true);
+
+  // Determine currency based on selected country
   
+
+
+  // Determine payment status based on payment method
+  const paymentStatusMap = {
+    credit: 'pending',
+    interac: 'pending_interac',
+    daycare: 'pending_daycare'
+  };
+
   try {
     const registrationData = {
+      // Personal information
       parentFirstName: formData.firstName,
       parentLastName: formData.lastName,
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentName,
       studentLastName: formData.studentLastName,
+      
+      // Required IDs
       schoolId: selectedSchool._id,
       eventId: selectedEvent._id,
-      packageId: selectedPackage._id,
-      paymentMethod: formData.paymentMethod
-    };
+      
+      // Payment information
+      paymentMethod: formData.paymentMethod,
+      paymentStatus: paymentStatusMap[formData.paymentMethod],
+        };
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
@@ -871,10 +895,10 @@ const handleRegistrationSubmit = async (e) => {
       message: "Registration successful!",
       data: response.data
     });
-    setCurrentStep(5); // Move to confirmation step
+    setCurrentStep(5);
 
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Registration error:', error.response?.data || error.message);
     setRegistrationConfirmation({
       success: false,
       message: error.response?.data?.message || "Registration failed. Please try again."
@@ -889,12 +913,24 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
+    const handleInputChange = (field) => (e) => {
+      const newValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
+      const scrollPosition = e.target.scrollTop;
+  
+      setFormData(prevData => ({
+        ...prevData,
+        [field]: newValue
       }));
+  
+      // Preserve caret and scroll position after state update
+      setTimeout(() => {
+        if (e.target) {
+          e.target.selectionStart = caretPosition;
+          e.target.selectionEnd = caretPosition;
+          e.target.scrollTop = scrollPosition;
+        }
+      }, 0);
     };
 
     const handleSubmit = (e) => {
@@ -1035,7 +1071,7 @@ const handleRegistrationSubmit = async (e) => {
   name="firstName"
   placeholder={t('form.firstName')}
   value={formData.firstName}
-  onChange={handleInputChange}
+  onChange={handleInputChange('firstName')}
   inputMode="text"
   className="w-full p-2 border rounded"
   required
@@ -1045,7 +1081,7 @@ const handleRegistrationSubmit = async (e) => {
             name="lastName"
             placeholder={t('form.lastName')}
             value={formData.lastName}
-            onChange={handleInputChange}
+            onChange={handleInputChange('lastName')}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             required
           />
@@ -1054,7 +1090,7 @@ const handleRegistrationSubmit = async (e) => {
             name="studentName"
             placeholder={t('form.studentName')}
             value={formData.studentName}
-            onChange={handleInputChange}
+            onChange={handleInputChange('studentName')}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             required
           />
@@ -1063,7 +1099,7 @@ const handleRegistrationSubmit = async (e) => {
             name="studentLastName"
             placeholder={t('form.studentLastName')}
             value={formData.studentLastName}
-            onChange={handleInputChange}
+            onChange={handleInputChange('studentLastName')}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             required
           />
@@ -1072,7 +1108,7 @@ const handleRegistrationSubmit = async (e) => {
             name="parentEmail"
             placeholder={t('form.parentEmail')}
             value={formData.parentEmail}
-            onChange={handleInputChange}
+            onChange={handleInputChange('parentEmail')}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             required
           />
