@@ -855,7 +855,7 @@ const PackageSelection = () => {
               </div>
               <div className="font-bold text-xl">
   {selectedSchool.country === 'Tunisia' ? 
-    `${priceDetails.total.toFixed(2)} TND` : 
+    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
     `$${pkg.price.toFixed(2)}`}
               </div>
             </div>
@@ -999,7 +999,7 @@ const PackageSelection = () => {
         </div>
         <div className="font-bold text-xl text-green-600">
   {selectedSchool.country === 'Tunisia' ? 
-    `${priceDetails.total.toFixed(2)} TND` : 
+    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
     `$${pkg.price.toFixed(2)}`}
 </div>
       </div>
@@ -1090,7 +1090,7 @@ const PackageSelection = () => {
                         <span>Subtotal:</span>
                         <span>
                             {selectedSchool.country === 'Tunisia' 
-                                ? `${priceDetails.total.toFixed(2)} TND`
+                                ? `${priceDetails.subtotal.toFixed(2)} TND`
                                 : `$${priceDetails.subtotal.toFixed(2)}`}
                         </span>
                     </div>
