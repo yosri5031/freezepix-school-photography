@@ -645,6 +645,8 @@ const PackageSelection = () => {
 const handleRegistrationSubmit = async (e) => {
   e.preventDefault();
   setIsLoading(true);
+  const [error, setError] = useState(null);
+
 
   try {
     // Ensure all required IDs are in the correct format
