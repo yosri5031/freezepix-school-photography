@@ -749,7 +749,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
     if (!school) return basePrice;
 
     // Check if the school is in Tunisia
-    if (school.country.toLowerCase() === 'tunisia') {
+    if (selectedSchool.country.toLowerCase() === 'tunisia') {
       const tunisianPrice = (basePrice * 0.5);
       return parseFloat(tunisianPrice.toFixed(2));
     }
