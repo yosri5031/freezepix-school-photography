@@ -556,14 +556,22 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
           <p className="text-green-700 font-semibold">
             {t('tunisia.confirmationMessage')}
           </p>
-          <div className="mt-4">
-            <span className="font-bold">Registration ID:</span>
-            <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono">
-              {registrationConfirmation?.registrationId || 'N/A'}
-            </span>
+          <div className="mt-4 space-y-2">
+            <div>
+              <span className="font-bold">Registration ID:</span>
+              <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono">
+                {registrationConfirmation?.registrationId || 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-bold">Unique QR Code:</span>
+              <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono">
+                {registrationConfirmation?.uniqueQRCode || 'N/A'}
+              </span>
+            </div>
           </div>
           
-          {/* Optional: Additional Registration Details */}
+          {/* Additional Registration Details */}
           <div className="mt-4 text-sm text-gray-600">
             <p>Student: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
             <p>School: {selectedSchool?.name}</p>
