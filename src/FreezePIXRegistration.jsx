@@ -855,7 +855,7 @@ const PackageSelection = () => {
               </div>
               <div className="font-bold text-xl">
   {selectedSchool.country === 'Tunisia' ? 
-    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
+     `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
     `$${pkg.price.toFixed(2)}`}
               </div>
             </div>
@@ -999,7 +999,7 @@ const PackageSelection = () => {
         </div>
         <div className="font-bold text-xl text-green-600">
   {selectedSchool.country === 'Tunisia' ? 
-    `${calculatePackagePrice(pkg.price).toFixed(2)} TND` : 
+    `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
     `$${pkg.price.toFixed(2)}`}
 </div>
       </div>
