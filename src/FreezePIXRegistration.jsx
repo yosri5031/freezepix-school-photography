@@ -404,6 +404,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
       ...prev,
       eventId: eventId
     }));
+    nextStep();
   };
 
   if (eventsLoading) {
