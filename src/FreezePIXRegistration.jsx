@@ -408,8 +408,18 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
 };
     
 
-const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t }) => {
+const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
   const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
+
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+    setFormData(prev => ({
+      ...prev,
+      eventId: event._id.toString(),
+      schoolId: selectedSchool._id.toString() // Ensure schoolId is also set
+    }));
+    nextStep();
+  };
 
   if (eventsLoading) {
     return <div className="text-center">Loading events...</div>;
@@ -431,14 +441,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
             <div
               key={event._id}
               className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
-              onClick={() => {
-                setSelectedEvent(event);
-                setFormData(prev => ({
-                  ...prev,
-                  eventId: event._id.toString()
-                }));
-                nextStep();
-              }}
+              onClick={() => handleEventSelect(event)}
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -1103,6 +1106,7 @@ const handleRegistrationSubmit = async (e) => {
     setSelectedSchool={setSelectedSchool}
     setSelectedCountry={setSelectedCountry}
     setCurrentStep={setCurrentStep}
+    setFormData={setFormData}
   />}
           {currentStep === 2 && <EventSelection
   selectedSchool={selectedSchool}
@@ -1111,6 +1115,7 @@ const handleRegistrationSubmit = async (e) => {
   previousStep={previousStep}
   language={language}
   t={t}
+  setFormData={setFormData}
 />}
           {currentStep === 3 && <PackageSelection />}
           {currentStep === 4 && <RegistrationForm />}
