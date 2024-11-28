@@ -871,7 +871,7 @@ const handleRegistrationSubmit = async (e) => {
       studentFirstName: formData.studentName,
       studentLastName: formData.studentLastName,
       
-      // Required IDs
+      // Required IDs ...
       schoolId: selectedSchool._id,
       eventId: selectedEvent._id,
       
