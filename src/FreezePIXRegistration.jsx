@@ -807,74 +807,17 @@ const RegistrationForm = ({
   selectedEvent, 
   setRegistrationConfirmation, 
   currentStep, 
-  setCurrentStep,
-  t // Translation function
+  setCurrentStep
 }) => {
-  // Initial form state with dynamic payment method
-  const initialFormState = useMemo(() => ({
-    parentFirstName: '',
-    parentLastName: '',
-    studentFirstName: '',
-    studentLastName: '',
-    parentEmail: '',
-    paymentMethod: selectedSchool?.country === 'Tunisia' ? 'daycare' : 'credit'
-  }), [selectedSchool]);
-
-  // Form reducer
-  const formReducer = (state, action) => {
-    switch (action.type) {
-      case 'UPDATE_FIELD':
-        return {
-          ...state,
-          [action.field]: action.value
-        };
-      case 'RESET':
-        return initialFormState;
-      default:
-        return state;
-    }
-  };
-
-  // State management
-  const [formData, dispatch] = useReducer(formReducer, initialFormState);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   // Comprehensive handleRegistrationSubmit method
   const handleRegistrationSubmit = useCallback(async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-
-    // Form validation
-    const requiredFields = [
-      'parentFirstName', 
-      'parentLastName', 
-      'studentFirstName', 
-      'studentLastName', 
-      'parentEmail'
-    ];
-
-    const missingFields = requiredFields.filter(field => 
-      !formData[field] || formData[field].trim() === ''
-    );
-
-    if (missingFields.length > 0) {
-      setError(`Please fill in all required fields: ${missingFields.join(', ')}`);
-      setIsLoading(false);
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.parentEmail)) {
-      setError('Please enter a valid email address');
-      setIsLoading(false);
-      return;
-    }
 
     try {
-      // Prepare registration data
+      // Ensure all required IDs are in the correct format
       const registrationData = {
         parentFirstName: formData.parentFirstName,    
         parentLastName: formData.parentLastName,
@@ -904,17 +847,15 @@ const RegistrationForm = ({
         }
       );
 
-      // Update parent component state
       setRegistrationConfirmation(response.data);
       setCurrentStep(currentStep + 1);
     } catch (error) {
       console.error('Registration error:', error.response?.data || error.message);
+      // Handle error appropriately
+      console.log(error.response?.data?.message || 'Registration failed. Please try again.');
       
-      // Set error state for user feedback
-      setError(
-        error.response?.data?.message || 
-        'Registration failed. Please try again.'
-      );
+      // Optional: Add error state or display error message to user
+      alert(error.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -927,50 +868,96 @@ const RegistrationForm = ({
     setCurrentStep
   ]);
 
-  // Input fields configuration
-  const inputFields = useMemo(() => [
-    {
-      name: 'parentFirstName',
-      placeholder: t('form.firstName'),
-      type: 'text'
-    },
-    {
-      name: 'parentLastName',
-      placeholder: t('form.lastName'),
-      type: 'text'
-    },
-    {
-      name: 'studentFirstName',
-      placeholder: t('form.studentName'),
-      type: 'text'
-    },
-    {
-      name: 'studentLastName',
-      placeholder: t('form.studentLastName'),
-      type: 'text'
-    },
-    {
-      name: 'parentEmail',
-      placeholder: t('form.parentEmail'),
-      type: 'email'
+  // Initial form state
+  const initialFormState = {
+    parentFirstName: '',
+    parentLastName: '',
+    studentFirstName: '',
+    studentLastName: '',
+    parentEmail: '',
+    paymentMethod: selectedSchool?.country === 'Tunisia' ? 'daycare' : 'credit'
+  };
+
+  // Form reducer
+  const formReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_FIELD':
+        return {
+          ...state,
+          [action.field]: action.value
+        };
+      case 'RESET':
+        return initialFormState;
+      default:
+        return state;
     }
-  ], [t]);
+  };
+
+  // Use reducer for form state management
+  const [formData, dispatch] = useReducer(formReducer, initialFormState);
+
+  // Form validation method
+  const validateForm = useCallback(() => {
+    const requiredFields = [
+      'parentFirstName', 
+      'parentLastName', 
+      'studentFirstName', 
+      'studentLastName', 
+      'parentEmail'
+    ];
+
+    const missingFields = requiredFields.filter(field => 
+      !formData[field] || formData[field].trim() === ''
+    );
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.parentEmail)) {
+      alert('Please enter a valid email address');
+      return false;
+    }
+
+    return true;
+  }, [formData]);
 
   return (
     <div className="space-y-4">
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-
       <form 
         onSubmit={handleRegistrationSubmit} 
         className="space-y-4"
       >
-        {/* Dynamic Input Fields */}
-        {inputFields.map((field) => (
+        {[
+          {
+            name: 'parentFirstName',
+            placeholder: 'Parent First Name',
+            type: 'text'
+          },
+          {
+            name: 'parentLastName',
+            placeholder: 'Parent Last Name',
+            type: 'text'
+          },
+          {
+            name: 'studentFirstName',
+            placeholder: 'Student First Name',
+            type: 'text'
+          },
+          {
+            name: 'studentLastName',
+            placeholder: 'Student Last Name',
+            type: 'text'
+          },
+          {
+            name: 'parentEmail',
+            placeholder: 'Parent Email',
+            type: 'email'
+          }
+        ].map((field) => (
           <input
             key={field.name}
             type={field.type}
@@ -993,7 +980,7 @@ const RegistrationForm = ({
         {selectedSchool?.country !== 'Tunisia' && (
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              {t('canada.select')}
+              Payment Method
             </label>
             <select
               value={formData.paymentMethod}
@@ -1006,13 +993,12 @@ const RegistrationForm = ({
               }}
               className="w-full p-2 border rounded"
             >
-              <option value="credit">{t('canada.credit')}</option>
-              <option value="interac">{t('canada.interac')}</option>
+              <option value="credit">Credit Card</option>
+              <option value="interac">Interac E-Transfer</option>
             </select>
           </div>
         )}
 
-        {/* Submit Button */}
         <button 
           type="submit" 
           disabled={isLoading}
@@ -1022,7 +1008,7 @@ const RegistrationForm = ({
               : 'bg-blue-500 text-white hover:bg-blue-600'
           }`}
         >
-          {isLoading ? t('checkout.processing') : t('buttons.submit')}
+          {isLoading ? 'Submitting...' : 'Submit Registration'}
         </button>
       </form>
     </div>
