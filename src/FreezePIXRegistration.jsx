@@ -29,6 +29,14 @@ const FreezePIXRegistration = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    parentEmail: '',
+    studentName: '',
+    studentLastName: '',
+    paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
+  });
  
   const useEvents = (selectedSchool) => {
     const [events, setEvents] = useState([]);
