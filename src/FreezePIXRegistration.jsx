@@ -848,15 +848,19 @@ const handleRegistrationSubmit = async (e) => {
         <input
   type="text"
   name="parentFirstName"
+  placeholder='Parent Name'
   value={formData.parentFirstName}
   onChange={(e) => setFormData({...formData, parentFirstName: e.target.value})}
+  className="w-full p-2 border rounded"
   required
 />
 <input
   type="text"
   name="parentLastName"
+  placeholder='Parent Last Name'
   value={formData.parentLastName}
   onChange={(e) => setFormData({...formData, parentLastName: e.target.value})}
+  className="w-full p-2 border rounded"
   required
 />
           <input
