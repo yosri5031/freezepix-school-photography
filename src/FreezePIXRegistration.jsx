@@ -653,8 +653,7 @@ const handleRegistrationSubmit = async () => {
     }
 
     // Always set selectedPackage._id to ObjectId('6746d9b30d449c3529961fd2')
-    const selectedPackage = { _id: mongoose.Types.ObjectId('6746d9b30d449c3529961fd2') };
-
+    const selectedPackage = { _id: new mongoose.Types.ObjectId('6746d9b30d449c3529961fd2') };
     // Ensure all required fields are present
     const registrationData = {
       parentFirstName: formData.firstName,
