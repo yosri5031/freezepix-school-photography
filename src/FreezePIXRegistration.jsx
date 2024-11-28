@@ -1121,7 +1121,12 @@ const handleRegistrationSubmit = async (e) => {
 />}
           {currentStep === 3 && <PackageSelection />}
           {currentStep === 4 && <RegistrationForm 
-          setFormData={setFormData}/>}
+          selectedSchool={selectedSchool}
+          selectedEvent={selectedEvent}
+          formData={formData}
+          setFormData={setFormData}
+          handleRegistrationSubmit={handleRegistrationSubmit}
+          />}
           {currentStep === 5 && <ConfirmationPage />}
         </div>
       </div>
