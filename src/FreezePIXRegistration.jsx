@@ -865,7 +865,7 @@ const handleRegistrationSubmit = async (e) => {
 />
           <input
            type="text"
-           name="studentName"
+           name="studentFirstName"
            placeholder='Student Name'
            value={formData.studentFirstName}
            onChange={handleInputChange}
