@@ -46,8 +46,8 @@ const FreezePIXRegistration = () => {
     studentFirstName: '',
     studentLastName: '',
     paymentMethod: 'credit',
-    schoolId: '',
-    eventId: ''
+    schoolId: selectedSchool?._id || '',
+    eventId: selectedEvent?._id || '',
   });
  
   const useEvents = (selectedSchool) => {
