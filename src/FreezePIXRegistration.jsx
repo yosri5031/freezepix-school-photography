@@ -261,62 +261,7 @@ useEffect(() => {
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const previousStep = () => setCurrentStep(prev => prev - 1);
 
-  
-  const CANADIAN_TAX_RATES = {
-    'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
-    'ALBERTA': { GST: 5.0 },
-    'NEW BRUNSWICK': { HST: 15.0 },
-    'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
-    'NORTHWEST TERRITORIES': { GST: 5.0 },
-    'NOVA SCOTIA': { HST: 15.0 },
-    'NUNAVUT': { GST: 5.0 },
-    'PRINCE EDWARD ISLAND': { HST: 15.0 },
-    'QUEBEC': { GST: 5.0, QST: 9.975 },
-    'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
-    'YUKON': { GST: 5.0 },
-    'ONTARIO': { HST: 13.0 }
-  };
-  
-  // Add this function to calculate taxes
-  const calculateTaxes = (basePrice, province) => {
-    if (!province || !basePrice) return { totalAmount: basePrice, taxDetails: {} };
-  
-    const normalizedProvince = province.toUpperCase();
-    const taxRates = CANADIAN_TAX_RATES[normalizedProvince];
-  
-    if (!taxRates) return { totalAmount: basePrice, taxDetails: {} };
-  
-    let totalTax = 0;
-    const taxDetails = {};
-  
-    if (taxRates.HST) {
-      const hst = (basePrice * taxRates.HST) / 100;
-      totalTax += hst;
-      taxDetails.HST = { rate: taxRates.HST, amount: hst };
-    } else {
-      if (taxRates.GST) {
-        const gst = (basePrice * taxRates.GST) / 100;
-        totalTax += gst;
-        taxDetails.GST = { rate: taxRates.GST, amount: gst };
-      }
-      if (taxRates.PST) {
-        const pst = (basePrice * taxRates.PST) / 100;
-        totalTax += pst;
-        taxDetails.PST = { rate: taxRates.PST, amount: pst };
-      }
-      if (taxRates.QST) {
-        // QST is calculated on price + GST
-        const qst = ((basePrice + (basePrice * taxRates.GST / 100)) * taxRates.QST) / 100;
-        totalTax += qst;
-        taxDetails.QST = { rate: taxRates.QST, amount: qst };
-      }
-    }
-  
-    return {
-      totalAmount: basePrice + totalTax,
-      taxDetails
-    };
-  };
+ 
   
   const CheckoutForm = ({ basePrice, onSubmit, isProcessing }) => {
     const stripe = useStripe();
@@ -934,58 +879,85 @@ const PackageSelection = () => {
     };
 
       // Add tax calculation function
+      const TAX_RATES = {
+        'TUNISIA': { TND: 0.19 },
+        'CANADA': {
+          'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
+          'ALBERTA': { GST: 5.0 },
+          'NEW BRUNSWICK': { HST: 15.0 },
+          'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
+          'NORTHWEST TERRITORIES': { GST: 5.0 },
+          'NOVA SCOTIA': { HST: 15.0 },
+          'NUNAVUT': { GST: 5.0 },
+          'PRINCE EDWARD ISLAND': { HST: 15.0 },
+          'QUEBEC': { GST: 5.0, QST: 9.975 },
+          'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
+          'YUKON': { GST: 5.0 },
+          'ONTARIO': { HST: 13.0 }
+        }
+      };
+      
       const calculateTotal = () => {
         if (!selectedSchool?.country || !pkg.price) return { subtotal: pkg.price, total: pkg.price };
-
-        if (selectedSchool.country.toLowerCase() === 'canada' && selectedSchool.location) {
-            const normalizedProvince = selectedSchool.location.toUpperCase();
-            const taxRates = CANADIAN_TAX_RATES[normalizedProvince];
-            
-            if (!taxRates) return { subtotal: pkg.price, total: pkg.price };
-
-            let totalTax = 0;
-            const taxDetails = {};
-
-            if (taxRates.HST) {
-                const hst = (pkg.price * taxRates.HST) / 100;
-                totalTax += hst;
-                taxDetails.HST = { rate: taxRates.HST, amount: hst };
-            } else {
-                if (taxRates.GST) {
-                    const gst = (pkg.price * taxRates.GST) / 100;
-                    totalTax += gst;
-                    taxDetails.GST = { rate: taxRates.GST, amount: gst };
-                }
-                if (taxRates.PST) {
-                    const pst = (pkg.price * taxRates.PST) / 100;
-                    totalTax += pst;
-                    taxDetails.PST = { rate: taxRates.PST, amount: pst };
-                }
-                if (taxRates.QST) {
-                    const gstAmount = pkg.price * taxRates.GST / 100;
-                    const qst = ((pkg.price + gstAmount) * taxRates.QST) / 100;
-                    totalTax += qst;
-                    taxDetails.QST = { rate: taxRates.QST, amount: qst };
-                }
-            }
-
+      
+        const country = selectedSchool.country.toUpperCase();
+        const taxRates = TAX_RATES[country];
+        
+        if (country === 'CANADA' && selectedSchool.location && taxRates) {
+          const province = selectedSchool.location.toUpperCase();
+          const provinceTaxRates = taxRates[province];
+      
+          if (provinceTaxRates) {
+            const taxes = calculateTaxes(pkg.price, provinceTaxRates);
+      
             return {
-                subtotal: pkg.price,
-                ...taxDetails,
-                total: pkg.price + totalTax
+              subtotal: pkg.price,
+              taxDetails: taxes.taxDetails,
+              total: taxes.totalAmount
             };
+          }
+        } else if (country === 'TUNISIA' && taxRates) {
+          const tunisiaTaxRate = taxRates.TND;
+          const subtotal = pkg.price / 2;
+          
+          return {
+            subtotal,
+            total: subtotal * (1 + tunisiaTaxRate)
+          };
         }
-
-        // For Tunisia, return half price without tax
-        if (selectedSchool.country.toLowerCase() === 'tunisia') {
-            return {
-                subtotal: pkg.price / 2,
-                total: pkg.price / 2
-            };
-        }
-
+      
         return { subtotal: pkg.price, total: pkg.price };
-    };
+      };
+      
+      const calculateTaxes = (basePrice, taxRates) => {
+        let totalTax = 0;
+        const taxDetails = {};
+      
+        if (taxRates.HST) {
+          const hst = (basePrice * taxRates.HST) / 100;
+          totalTax += hst;
+          taxDetails.HST = { rate: taxRates.HST, amount: hst };
+        } else {
+          if (taxRates.GST) {
+            const gst = (basePrice * taxRates.GST) / 100;
+            totalTax += gst;
+            taxDetails.GST = { rate: taxRates.GST, amount: gst };
+          }
+          if (taxRates.PST) {
+            const pst = (basePrice * taxRates.PST) / 100;
+            totalTax += pst;
+            taxDetails.PST = { rate: taxRates.PST, amount: pst };
+          }
+          if (taxRates.QST) {
+            const gstAmount = basePrice * taxRates.GST / 100;
+            const qst = ((basePrice + gstAmount) * taxRates.QST) / 100;
+            totalTax += qst;
+            taxDetails.QST = { rate: taxRates.QST, amount: qst };
+          }
+        }
+      
+        return { totalAmount: basePrice + totalTax, taxDetails };
+      };
 
     const priceDetails = calculateTotal();
     return (
