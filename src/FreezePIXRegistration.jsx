@@ -746,33 +746,31 @@ const handleRegistrationSubmit = async (e) => {
 
     const handleInputChange = (field) => (e) => {
       const newValue = e.target.value;
-      
-      // Prevent default only if absolutely necessary
-      // e.preventDefault();
+      const caretPosition = e.target.selectionStart;
+      const scrollPosition = e.target.scrollTop;
   
+      // Update form data
       setFormData(prevData => ({
         ...prevData,
         [field]: newValue
       }));
   
-      // Ensure keyboard stays open and caret position is maintained
-      requestAnimationFrame(() => {
+      // Preserve caret position and scroll state
+      setTimeout(() => {
+        // Ensure the input exists and has focus
         const inputElement = e.target;
-        
-        // Force focus and prevent keyboard dismissal
-        inputElement.focus({
-          preventScroll: true
-        });
-  
-        // Attempt to maintain caret position
-        try {
-          const caretPosition = inputElement.selectionStart;
-          inputElement.setSelectionRange(caretPosition, caretPosition);
-        } catch (error) {
-          console.warn('Caret position maintenance failed', error);
+        if (inputElement) {
+          try {
+            inputElement.selectionStart = caretPosition;
+            inputElement.selectionEnd = caretPosition;
+            inputElement.scrollTop = scrollPosition;
+          } catch (error) {
+            console.warn('Could not restore caret position', error);
+          }
         }
-      });
+      }, 0);
     };
+
     const handleSubmit = async (event) => {
       event.preventDefault();
       setIsLoading(true);
