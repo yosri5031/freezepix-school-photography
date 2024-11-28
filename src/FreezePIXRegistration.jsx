@@ -1065,14 +1065,21 @@ const PackageSelection = () => {
             </span>
         </div>
 
+        {selectedSchool.country === 'Tunisia' && (
+            <div className="flex justify-between text-gray-600">
+                <span>TVA (19%):</span>
+                <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
+            </div>
+        )}
+
         {priceDetails.taxDetails &&
             Object.keys(priceDetails.taxDetails).map(key => (
                 <div key={key} className="flex justify-between text-gray-600">
                     <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
                     <span>
-                        {selectedSchool.country === 'Tunisia' && key === 'TND'
-                            ? `${priceDetails.taxDetails[key].amount.toFixed(2)} TND`
-                            : `$${priceDetails.taxDetails[key].amount.toFixed(2)}`
+                        {selectedSchool.country !== 'Tunisia' 
+                            
+                             `$${priceDetails.taxDetails[key].amount.toFixed(2)}`
                         }
                     </span>
                 </div>
