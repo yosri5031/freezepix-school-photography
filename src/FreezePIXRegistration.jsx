@@ -670,8 +670,8 @@ const handleRegistrationSubmit = async (e) => {
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
-      schoolId: selectedSchool._id,                 // Use the actual ID
-      eventId: selectedEvent._id,                   // Use the actual ID
+      schoolId: formData.schoolId,                 // Use the actual ID
+      eventId: formData.eventId,                   // Use the actual ID
       paymentMethod: formData.paymentMethod,
       paymentStatus: formData.paymentMethod === 'daycare' 
         ? 'awaiting_daycare_payment' 
