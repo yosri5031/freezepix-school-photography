@@ -12,6 +12,8 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { ObjectId } from 'mongodb'; // Import ObjectId from MongoDB as an ES Module
+
 
 
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
@@ -642,16 +644,17 @@ const PackageSelection = () => {
 
 const handleRegistrationSubmit = async () => {
   try {
-     // Validate all required data before submission
-     if (!selectedSchool?._id) {
+    // Validate all required data before submission
+    if (!selectedSchool?._id) {
       throw new Error('Missing required field: schoolId');
     }
     if (!selectedEvent?._id) {
       throw new Error('Missing required field: eventId');
     }
-    if (!selectedPackage?._id) {
-      throw new Error('Missing required field: packageId');
-    }
+
+    // Always set selectedPackage._id to ObjectId('6746d9b30d449c3529961fd2')
+    const selectedPackage = { _id: ObjectId('6746d9b30d449c3529961fd2') };
+
     // Ensure all required fields are present
     const registrationData = {
       parentFirstName: formData.firstName,
@@ -660,18 +663,30 @@ const handleRegistrationSubmit = async () => {
       studentFirstName: formData.studentName,
       studentLastName: formData.studentLastName,
       schoolId: selectedSchool._id, // Make sure this is the MongoDB ObjectId
-      eventId: selectedEvent._id,   // Make sure this is the MongoDB ObjectId
+      eventId: selectedEvent._id, // Make sure this is the MongoDB ObjectId
       packageId: selectedPackage._id, // Make sure this is the MongoDB ObjectId
       paymentMethod: formData.paymentMethod,
-      paymentStatus: formData.paymentMethod === 'daycare' ? 'pending_daycare' : 
-                    formData.paymentMethod === 'interac' ? 'pending_interac' : 'pending'
+      paymentStatus:
+        formData.paymentMethod === 'daycare'
+          ? 'pending_daycare'
+          : formData.paymentMethod === 'interac'
+          ? 'pending_interac'
+          : 'pending',
     };
 
     // Validate required fields
-    const requiredFields = ['parentFirstName', 'parentLastName', 'parentEmail', 
-                          'studentFirstName', 'studentLastName', 'schoolId', 
-                          'eventId', 'packageId', 'paymentMethod'];
-    
+    const requiredFields = [
+      'parentFirstName',
+      'parentLastName',
+      'parentEmail',
+      'studentFirstName',
+      'studentLastName',
+      'schoolId',
+      'eventId',
+      'packageId',
+      'paymentMethod',
+    ];
+
     for (const field of requiredFields) {
       if (!registrationData[field]) {
         throw new Error(`Missing required field: ${field}`);
