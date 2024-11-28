@@ -645,7 +645,6 @@ const PackageSelection = () => {
 const handleRegistrationSubmit = async (e) => {
   e.preventDefault();
   setIsLoading(true);
-  const [error, setError] = useState(null);
 
 
   try {
@@ -684,7 +683,7 @@ const handleRegistrationSubmit = async (e) => {
   } catch (error) {
     console.error('Registration error:', error.response?.data || error.message);
     // Handle error appropriately
-    setError(error.response?.data?.message || 'Registration failed. Please try again.');
+    console.log(error.response?.data?.message || 'Registration failed. Please try again.');
   } finally {
     setIsLoading(false);
   }
