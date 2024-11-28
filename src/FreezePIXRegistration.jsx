@@ -43,7 +43,7 @@ const FreezePIXRegistration = () => {
     parentEmail: '',
     studentName: '',
     studentLastName: '',
-    paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
+    paymentMethod: 'credit'
   });
  
   const useEvents = (selectedSchool) => {
@@ -326,64 +326,7 @@ useEffect(() => {
       }
     };
   
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      
-      if (isProcessing || processing || !stripe || !elements) {
-        return;
-      }
-  
-      setCardError('');
-      setPostalCodeError('');
-      setServerError('');
-      setProcessing(true);
-  
-      if (!postalCode) {
-        setPostalCodeError("Postal/ZIP Code is required");
-        setProcessing(false);
-        return;
-      }
-  
-      if (!validatePostalCode(postalCode)) {
-        setPostalCodeError("Invalid Postal/ZIP Code");
-        setProcessing(false);
-        return;
-      }
-  
-      try {
-        const { error: cardValidationError, paymentMethod } = await stripe.createPaymentMethod({
-          type: 'card',
-          card: elements.getElement(CardNumberElement),
-          billing_details: {
-            address: {
-              postal_code: postalCode,
-            },
-          },
-        });
-  
-        if (cardValidationError) {
-          setCardError(cardValidationError.message);
-          setProcessing(false);
-          return;
-        }
-  
-        // Simulate successful payment and move to confirmation
-        setCurrentStep(5); // Assuming 5 is your confirmation step
-        setRegistrationConfirmation({
-          success: true,
-          message: "Payment successful! Your registration is complete.",
-          amount: basePrice
-        });
-  
-      } catch (error) {
-        setCardError("Payment processing failed. Please try again.");
-        elements.getElement(CardNumberElement).clear();
-        elements.getElement(CardExpiryElement).clear();
-        elements.getElement(CardCvcElement).clear();
-      } finally {
-        setProcessing(false);
-      }
-    };
+   
   
     return (
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -847,64 +790,46 @@ const PackageSelection = () => {
   );
 };
 
-const handleRegistrationSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-
-  // Determine currency based on selected country
-  
-
-
-  // Determine payment status based on payment method
-  const paymentStatusMap = {
-    credit: 'pending',
-    interac: 'pending_interac',
-    daycare: 'pending_daycare'
-  };
-
+const handleRegistrationSubmit = async () => {
   try {
+    // Ensure all required fields are present
     const registrationData = {
-      // Personal information
       parentFirstName: formData.firstName,
       parentLastName: formData.lastName,
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentName,
       studentLastName: formData.studentLastName,
-      
-      // Required IDs ...
-      schoolId: selectedSchool._id,
-      eventId: selectedEvent._id,
-      
-      // Payment information
+      schoolId: selectedSchool._id, // Make sure this is the MongoDB ObjectId
+      eventId: selectedEvent._id,   // Make sure this is the MongoDB ObjectId
+      packageId: selectedPackage._id, // Make sure this is the MongoDB ObjectId
       paymentMethod: formData.paymentMethod,
-      paymentStatus: paymentStatusMap[formData.paymentMethod],
-        };
+      paymentStatus: formData.paymentMethod === 'daycare' ? 'pending_daycare' : 
+                    formData.paymentMethod === 'interac' ? 'pending_interac' : 'pending'
+    };
+
+    // Validate required fields
+    const requiredFields = ['parentFirstName', 'parentLastName', 'parentEmail', 
+                          'studentFirstName', 'studentLastName', 'schoolId', 
+                          'eventId', 'packageId', 'paymentMethod'];
+    
+    for (const field of requiredFields) {
+      if (!registrationData[field]) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
-      registrationData,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
+      registrationData
     );
 
-    setRegistrationConfirmation({
-      success: true,
-      message: "Registration successful!",
-      data: response.data
-    });
-    setCurrentStep(5);
-
+    if (response.data) {
+      setRegistrationConfirmation(response.data);
+      setCurrentStep(currentStep + 1);
+    }
   } catch (error) {
-    console.error('Registration error:', error.response?.data || error.message);
-    setRegistrationConfirmation({
-      success: false,
-      message: error.response?.data?.message || "Registration failed. Please try again."
-    });
-  } finally {
-    setIsLoading(false);
+    console.error('Registration error:', error);
+    throw error;
   }
 };
 
@@ -913,47 +838,30 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-    const handleInputChange = (field) => (e) => {
-      const newValue = e.target.value;
-      const caretPosition = e.target.selectionStart;
-      const scrollPosition = e.target.scrollTop;
-  
-      setFormData(prevData => ({
-        ...prevData,
-        [field]: newValue
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
       }));
-  
-      // Preserve caret and scroll position after state update
-      setTimeout(() => {
-        if (e.target) {
-          e.target.selectionStart = caretPosition;
-          e.target.selectionEnd = caretPosition;
-          e.target.scrollTop = scrollPosition;
-        }
-      }, 0);
     };
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      setIsLoading(true);
+    
+      try {
+        // For credit card payments
       
-      const selectedPackageData = packages[selectedPackage];
-      const totalCost = selectedPackageData.price;
-      const registrationId = `FP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-      
-      const registrationDetails = {
-        ...formData,
-        package: packages[selectedPackage],
-        totalCost: totalCost,
-        school: selectedSchool,
-        event: selectedEvent,
-        registrationId: registrationId
-      };
-
-      // Set registration confirmation details
-      setRegistrationConfirmation(registrationDetails);
-      
-      // Move to confirmation page (which would be the last step)
-      setCurrentStep(5);
+    
+        // Call registration submission regardless of payment method
+        await handleRegistrationSubmit();
+        
+      } catch (error) {
+        console.error('Payment error:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     //const packageSelected = packages[selectedPackage];
@@ -1067,49 +975,48 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <input
-  type="text"
-  name="firstName"
-  placeholder={t('form.firstName')}
-  value={formData.firstName}
-  onChange={handleInputChange('firstName')}
-  inputMode="text"
-  className="w-full p-2 border rounded"
-  required
+   type="text"
+   name="firstName"
+   placeholder='First Name'
+   value={formData.firstName}
+   onChange={handleInputChange}
+   className="form-input"
+   required
 />
           <input
             type="text"
             name="lastName"
-            placeholder={t('form.lastName')}
+            placeholder='Last Name'
             value={formData.lastName}
-            onChange={handleInputChange('lastName')}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            onChange={handleInputChange}
+            className="form-input"
             required
+          />
+          <input
+           type="text"
+           name="studentName"
+           placeholder='Student Name'
+           value={formData.studentName}
+           onChange={handleInputChange}
+           className="form-input"
+           required
+          />
+          <input
+           type="text"
+           name="studentLastName"
+          placeholder='Student Last Name'
+           value={formData.studentLastName}
+           onChange={handleInputChange}
+           className="form-input"
+           required
           />
           <input
             type="text"
-            name="studentName"
-            placeholder={t('form.studentName')}
-            value={formData.studentName}
-            onChange={handleInputChange('studentName')}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            required
-          />
-          <input
-            type="text"
-            name="studentLastName"
-            placeholder={t('form.studentLastName')}
-            value={formData.studentLastName}
-            onChange={handleInputChange('studentLastName')}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            required
-          />
-          <input
-            type="email"
             name="parentEmail"
-            placeholder={t('form.parentEmail')}
+            placeholder='Parent Email'
             value={formData.parentEmail}
-            onChange={handleInputChange('parentEmail')}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            onChange={handleInputChange}
+            className="form-input"
             required
           />
           
