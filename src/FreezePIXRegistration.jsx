@@ -40,14 +40,14 @@ const FreezePIXRegistration = () => {
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    parentFirstName: '',
+    parentLastName: '',
     parentEmail: '',
-    studentName: '',
+    studentFirstName: '',
     studentLastName: '',
     paymentMethod: 'credit',
-    eventId: '', // Add this
-    schoolId: ''  // Add this
+    schoolId: '',
+    eventId: ''
   });
  
   const useEvents = (selectedSchool) => {
@@ -413,12 +413,21 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
 
   const handleEventSelect = (event) => {
     setSelectedEvent(event);
+    let eventId;
+    if (typeof event._id === 'string') {
+      eventId = event._id;
+    } else if (event._id.$oid) {
+      eventId = event._id.$oid;
+    } else if (event._id.toString().includes('ObjectId')) {
+      eventId = event._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
+    } else {
+      console.error('Invalid event ID format');
+      return;
+    }
     setFormData(prev => ({
       ...prev,
-      eventId: event._id.toString(),
-      schoolId: selectedSchool._id.toString() // Ensure schoolId is also set
+      eventId: eventId 
     }));
-    nextStep();
   };
 
   if (eventsLoading) {
@@ -663,13 +672,13 @@ const handleRegistrationSubmit = async (e) => {
   try {
     // Ensure all required IDs are in the correct format
     const registrationData = {
-      parentFirstName: formData.firstName,
-      parentLastName: formData.lastName,
+      parentFirstName: formData.parentFirstName,    // Make sure these match
+      parentLastName: formData.parentLastName,
       parentEmail: formData.parentEmail,
-      studentFirstName: formData.studentName,
+      studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
-      schoolId: selectedSchool._id, // Make sure this is a string
-      eventId: selectedEvent._id,   // Make sure this is a string
+      schoolId: selectedSchool._id,                 // Use the actual ID
+      eventId: selectedEvent._id,                   // Use the actual ID
       paymentMethod: formData.paymentMethod,
       paymentStatus: formData.paymentMethod === 'daycare' 
         ? 'awaiting_daycare_payment' 
@@ -844,23 +853,19 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <input
-   type="text"
-   name="firstName"
-   placeholder='First Name'
-   value={formData.firstName}
-   onChange={handleInputChange}
-   className="w-full p-2 border rounded"
-   required
+  type="text"
+  name="parentFirstName"
+  value={formData.parentFirstName}
+  onChange={(e) => setFormData({...formData, parentFirstName: e.target.value})}
+  required
 />
-          <input
-            type="text"
-            name="lastName"
-            placeholder='Last Name'
-            value={formData.lastName}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded"
-            required
-          />
+<input
+  type="text"
+  name="parentLastName"
+  value={formData.parentLastName}
+  onChange={(e) => setFormData({...formData, parentLastName: e.target.value})}
+  required
+/>
           <input
            type="text"
            name="studentName"
