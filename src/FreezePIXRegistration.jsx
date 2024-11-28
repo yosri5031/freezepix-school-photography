@@ -12,7 +12,7 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { ObjectId } from 'mongodb'; // Import ObjectId from MongoDB as an ES Module
+import { Stitch, RemoteMongoClient, ObjectId } from 'mongodb-stitch-browser-sdk';
 
 
 
