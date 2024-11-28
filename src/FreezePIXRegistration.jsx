@@ -744,12 +744,31 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
+    const handleInputChange = (field) => (e) => {
+      const newValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
+      const scrollPosition = e.target.scrollTop;
+  
+      // Update form data
+      setFormData(prevData => ({
+        ...prevData,
+        [field]: newValue
       }));
+  
+      // Preserve caret position and scroll state
+      setTimeout(() => {
+        // Ensure the input exists and has focus
+        const inputElement = e.target;
+        if (inputElement) {
+          try {
+            inputElement.selectionStart = caretPosition;
+            inputElement.selectionEnd = caretPosition;
+            inputElement.scrollTop = scrollPosition;
+          } catch (error) {
+            console.warn('Could not restore caret position', error);
+          }
+        }
+      }, 0);
     };
 
     const handleSubmit = async (event) => {
@@ -881,50 +900,64 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <input
-  type="text"
-  name="parentFirstName"
-  placeholder='Parent Name'
-  value={formData.parentFirstName}
-  onChange={handleInputChange}
-  className="w-full p-2 border rounded"
-  required
-/>
-<input
-  type="text"
-  name="parentLastName"
-  placeholder='Parent Last Name'
-  value={formData.parentLastName}
-  onChange={handleInputChange}
-  className="w-full p-2 border rounded"
-  required
-/>
-          <input
-           type="text"
-           name="studentFirstName"
-           placeholder='Student Name'
-           value={formData.studentFirstName}
-           onChange={handleInputChange}
-           className="w-full p-2 border rounded"
-           required
-          />
-          <input
-           type="text"
-           name="studentLastName"
-          placeholder='Student Last Name'
-           value={formData.studentLastName}
-           onChange={handleInputChange}
-           className="w-full p-2 border rounded"
-           required
-          />
-          <input
-            type="text"
-            name="parentEmail"
-            placeholder='Parent Email'
-            value={formData.parentEmail}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded"
-            required
-          />
+          type="text"
+          name="parentFirstName"
+          placeholder="Parent First Name"
+          value={formData.parentFirstName}
+          onChange={handleInputChange('parentFirstName')}
+          className="w-full p-2 border rounded"
+          required
+          autoCorrect="off"
+          autoCapitalize="words"
+          spellCheck="false"
+        />
+        <input
+          type="text"
+          name="parentLastName"
+          placeholder="Parent Last Name"
+          value={formData.parentLastName}
+          onChange={handleInputChange('parentLastName')}
+          className="w-full p-2 border rounded"
+          required
+          autoCorrect="off"
+          autoCapitalize="words"
+          spellCheck="false"
+        />
+        <input
+          type="text"
+          name="studentFirstName"
+          placeholder="Student First Name"
+          value={formData.studentFirstName}
+          onChange={handleInputChange('studentFirstName')}
+          className="w-full p-2 border rounded"
+          required
+          autoCorrect="off"
+          autoCapitalize="words"
+          spellCheck="false"
+        />
+        <input
+          type="text"
+          name="studentLastName"
+          placeholder="Student Last Name"
+          value={formData.studentLastName}
+          onChange={handleInputChange('studentLastName')}
+          className="w-full p-2 border rounded"
+          required
+          autoCorrect="off"
+          autoCapitalize="words"
+          spellCheck="false"
+        />
+        <input
+          type="email"
+          name="parentEmail"
+          placeholder="Parent Email"
+          value={formData.parentEmail}
+          onChange={handleInputChange('parentEmail')}
+          className="w-full p-2 border rounded"
+          required
+          autoCorrect="off"
+          spellCheck="false"
+        />
           
 
           {/* Payment Method Selection */}
