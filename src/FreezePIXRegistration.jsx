@@ -839,37 +839,45 @@ const PackageSelection = () => {
   );
 };
 
-const handleRegistrationSubmit = async () => {
+const handleRegistrationSubmit = async (e) => {
+  e.preventDefault();
   setIsLoading(true);
+  
   try {
     const registrationData = {
-      ...formData,
+      parentFirstName: formData.firstName,
+      parentLastName: formData.lastName,
+      parentEmail: formData.parentEmail,
+      studentFirstName: formData.studentName,
+      studentLastName: formData.studentLastName,
       schoolId: selectedSchool._id,
       eventId: selectedEvent._id,
       packageId: selectedPackage._id,
-      paymentMethod: paymentMethod, // 'interac' or 'daycare'
+      paymentMethod: formData.paymentMethod
     };
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
-      registrationData
+      registrationData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     );
 
-    if (response.status === 201) {
-      setRegistrationConfirmation({
-        success: true,
-        message: paymentMethod === 'interac' 
-          ? "Registration successful! Please complete Interac payment."
-          : "Registration successful! Please pay at daycare.",
-        registrationId: response.data._id
-      });
-      setCurrentStep(5); // Move to confirmation step
-    }
+    setRegistrationConfirmation({
+      success: true,
+      message: "Registration successful!",
+      data: response.data
+    });
+    setCurrentStep(5); // Move to confirmation step
+
   } catch (error) {
     console.error('Registration error:', error);
     setRegistrationConfirmation({
       success: false,
-      message: "Registration failed. Please try again."
+      message: error.response?.data?.message || "Registration failed. Please try again."
     });
   } finally {
     setIsLoading(false);
@@ -882,10 +890,11 @@ const handleRegistrationSubmit = async () => {
     
 
     const handleInputChange = (e) => {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value
-      });
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
     };
 
     const handleSubmit = (e) => {
@@ -1021,15 +1030,16 @@ const handleRegistrationSubmit = async () => {
     </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="firstName"
-            placeholder={t('form.firstName')}
-            value={formData.firstName}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            required
-          />
+        <input
+  type="text"
+  name="firstName"
+  placeholder={t('form.firstName')}
+  value={formData.firstName}
+  onChange={handleInputChange}
+  inputMode="text"
+  className="w-full p-2 border rounded"
+  required
+/>
           <input
             type="text"
             name="lastName"
