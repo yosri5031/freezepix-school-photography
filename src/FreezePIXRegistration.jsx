@@ -534,57 +534,60 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
 
   // Confirmation Page Component
   // Confirmation Page Component
-const ConfirmationPage = () => {
-  const generateRegistrationId = () => {
-    return `FP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-  };
-
-  const handleRegisterNewChild = () => {
-    // Reset all state to initial values
-    setCurrentStep(1);
-    setSelectedCountry('');
-    setSelectedSchool('');
-    setSelectedEvent('');
-    setSelectedPackage('');
-    setPaymentMethod('credit');
-    setRegistrationConfirmation(null);
-  };
-
-  return (
-    <div className="text-center space-y-6 p-6">
-      <CheckCircle className="mx-auto text-green-500 w-16 h-16" />
-      <h2 className="text-2xl font-bold text-gray-800">
-        {t('tunisia.confirmationTitle')}
-      </h2>
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-green-700 font-semibold">
-          {t('tunisia.confirmationMessage')}
-        </p>
-        <div className="mt-4">
-          <span className="font-bold">Registration ID:</span>
-          <span className="ml-2 bg-green-100 px-2 py-1 rounded">
-            {registrationConfirmation?.registrationId}
-          </span>
+  const ConfirmationPage = () => {
+    const handleRegisterNewChild = () => {
+      // Reset all state to initial values
+      setCurrentStep(1);
+      setSelectedCountry('');
+      setSelectedSchool('');
+      setSelectedEvent('');
+      setSelectedPackage('');
+      setPaymentMethod('credit');
+      setRegistrationConfirmation(null);
+    };
+  
+    return (
+      <div className="text-center space-y-6 p-6">
+        <CheckCircle className="mx-auto text-green-500 w-16 h-16" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          {t('tunisia.confirmationTitle')}
+        </h2>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-700 font-semibold">
+            {t('tunisia.confirmationMessage')}
+          </p>
+          <div className="mt-4">
+            <span className="font-bold">Registration ID:</span>
+            <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono">
+              {registrationConfirmation?.registrationId || 'N/A'}
+            </span>
+          </div>
+          
+          {/* Optional: Additional Registration Details */}
+          <div className="mt-4 text-sm text-gray-600">
+            <p>Student: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
+            <p>School: {selectedSchool?.name}</p>
+            <p>Event: {selectedEvent?.name}</p>
+          </div>
+        </div>
+        
+        {selectedSchool.country === 'Tunisia' && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
+            <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
+          </div>
+        )}
+        
+        <div className="flex justify-center space-x-4 mt-6">
+          <button 
+            onClick={handleRegisterNewChild}
+            className="px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
+          >
+            Register Another Child
+          </button>
         </div>
       </div>
-      {selectedSchool.country === 'Tunisia' && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
-          <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
-        </div>
-      )}
-      
-      {/* New button to register another child */}
-      <div className="flex justify-center space-x-4 mt-6">
-        <button 
-          onClick={handleRegisterNewChild}
-          className="px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
-        >
-          Register Another Child
-        </button>
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
 
 // Package Selection Component
@@ -709,7 +712,10 @@ const handleRegistrationSubmit = async (e) => {
       }
     );
 
-    setRegistrationConfirmation(response.data);
+    setRegistrationConfirmation({
+      ...response.data,
+      registrationId: response.data.registrationId
+    });
     setCurrentStep(currentStep + 1);
   } catch (error) {
     console.error('Registration error details:', {
