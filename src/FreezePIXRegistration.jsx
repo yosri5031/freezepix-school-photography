@@ -879,14 +879,7 @@ const handleRegistrationSubmit = async () => {
 
   // Registration Form Component
   const RegistrationForm = () => {
-    const [formData, setFormData] = useState({
-      firstName: '',
-      lastName: '',
-      parentEmail: '',
-      studentName: '',
-      studentLastName: '',
-      paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
-    });
+    
 
     const handleInputChange = (e) => {
       setFormData({
