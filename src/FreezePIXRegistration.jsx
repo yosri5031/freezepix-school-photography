@@ -12,7 +12,7 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { Stitch, RemoteMongoClient, ObjectId } from 'mongodb-stitch-browser-sdk';
+import mongoose from 'mongoose';
 
 
 
@@ -653,7 +653,7 @@ const handleRegistrationSubmit = async () => {
     }
 
     // Always set selectedPackage._id to ObjectId('6746d9b30d449c3529961fd2')
-    const selectedPackage = { _id: ObjectId('6746d9b30d449c3529961fd2') };
+    const selectedPackage = { _id: mongoose.Types.ObjectId('6746d9b30d449c3529961fd2') };
 
     // Ensure all required fields are present
     const registrationData = {
