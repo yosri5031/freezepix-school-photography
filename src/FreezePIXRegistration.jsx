@@ -45,7 +45,9 @@ const FreezePIXRegistration = () => {
     parentEmail: '',
     studentName: '',
     studentLastName: '',
-    paymentMethod: 'credit'
+    paymentMethod: 'credit',
+    eventId: '', // Add this
+    schoolId: ''  // Add this
   });
  
   const useEvents = (selectedSchool) => {
@@ -346,6 +348,10 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
     };
   
     setSelectedSchool(processedSchool);
+    setFormData(prev => ({
+      ...prev,
+      schoolId: schoolId
+    }));
     if (school.country) {
       setSelectedCountry(school.country);
     }
@@ -427,6 +433,10 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
               className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
               onClick={() => {
                 setSelectedEvent(event);
+                setFormData(prev => ({
+                  ...prev,
+                  eventId: event._id.toString()
+                }));
                 nextStep();
               }}
             >
