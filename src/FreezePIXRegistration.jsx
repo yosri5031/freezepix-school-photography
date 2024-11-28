@@ -642,68 +642,49 @@ const PackageSelection = () => {
   );
 };
 
-const handleRegistrationSubmit = async () => {
-  try {
-    // Validate all required data before submission
-    if (!selectedSchool?._id) {
-      throw new Error('Missing required field: schoolId');
-    }
-    if (!selectedEvent?._id) {
-      throw new Error('Missing required field: eventId');
-    }
+const handleRegistrationSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    // Always set selectedPackage._id to ObjectId('6746d9b30d449c3529961fd2')
-    const selectedPackage = { _id: new mongoose.Types.ObjectId('6746d9b30d449c3529961fd2') };
-    // Ensure all required fields are present
+  try {
+    // Ensure all required IDs are in the correct format
     const registrationData = {
       parentFirstName: formData.firstName,
       parentLastName: formData.lastName,
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentName,
       studentLastName: formData.studentLastName,
-      schoolId: selectedSchool._id, // Make sure this is the MongoDB ObjectId
-      eventId: selectedEvent._id, // Make sure this is the MongoDB ObjectId
-      packageId: selectedPackage._id, // Make sure this is the MongoDB ObjectId
+      schoolId: selectedSchool._id, // Make sure this is a string
+      eventId: selectedEvent._id,   // Make sure this is a string
       paymentMethod: formData.paymentMethod,
-      paymentStatus:
-        formData.paymentMethod === 'daycare'
-          ? 'pending_daycare'
-          : formData.paymentMethod === 'interac'
-          ? 'pending_interac'
-          : 'pending',
+      paymentStatus: formData.paymentMethod === 'daycare' 
+        ? 'awaiting_daycare_payment' 
+        : formData.paymentMethod === 'interac'
+        ? 'awaiting_interac'
+        : 'pending'
     };
 
-    // Validate required fields
-    const requiredFields = [
-      'parentFirstName',
-      'parentLastName',
-      'parentEmail',
-      'studentFirstName',
-      'studentLastName',
-      'schoolId',
-      'eventId',
-      'packageId',
-      'paymentMethod',
-    ];
-
-    for (const field of requiredFields) {
-      if (!registrationData[field]) {
-        throw new Error(`Missing required field: ${field}`);
-      }
-    }
+    // Log the data being sent
+    console.log('Sending registration data:', registrationData);
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
-      registrationData
+      registrationData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     );
 
-    if (response.data) {
-      setRegistrationConfirmation(response.data);
-      setCurrentStep(currentStep + 1);
-    }
+    setRegistrationConfirmation(response.data);
+    setCurrentStep(currentStep + 1);
   } catch (error) {
-    console.error('Registration error:', error);
-    throw error;
+    console.error('Registration error:', error.response?.data || error.message);
+    // Handle error appropriately
+    setError(error.response?.data?.message || 'Registration failed. Please try again.');
+  } finally {
+    setIsLoading(false);
   }
 };
 
