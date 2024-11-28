@@ -802,37 +802,134 @@ const MemoizedRegistrationInput = React.memo(({
   );
 });
 
-const RegistrationForm = () => {
-  // Memoized input change handler to prevent unnecessary re-renders
-  const handleInputChange = useCallback((field) => (e) => {
-    const newValue = e.target.value;
-    
-    setFormData(prevData => {
-      // Only update if value has actually changed
-      if (prevData[field] !== newValue) {
-        return {
-          ...prevData,
-          [field]: newValue
-        };
-      }
-      return prevData;
-    });
-  }, []);
+const RegistrationForm = ({
+  selectedSchool, 
+  selectedEvent, 
+  setRegistrationConfirmation, 
+  currentStep, 
+  setCurrentStep
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Memoize form data to prevent unnecessary re-renders
-  const memoizedFormData = useMemo(() => formData, [formData]);
+  // Comprehensive handleRegistrationSubmit method
+  const handleRegistrationSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Ensure all required IDs are in the correct format
+      const registrationData = {
+        parentFirstName: formData.parentFirstName,    
+        parentLastName: formData.parentLastName,
+        parentEmail: formData.parentEmail,
+        studentFirstName: formData.studentFirstName,
+        studentLastName: formData.studentLastName,
+        schoolId: selectedSchool._id,                 
+        eventId: selectedEvent._id,                   
+        paymentMethod: formData.paymentMethod,
+        paymentStatus: formData.paymentMethod === 'daycare' 
+          ? 'awaiting_daycare_payment' 
+          : formData.paymentMethod === 'interac'
+          ? 'awaiting_interac'
+          : 'pending'
+      };
+
+      // Log the data being sent
+      console.log('Sending registration data:', registrationData);
+
+      const response = await axios.post(
+        'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
+        registrationData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setRegistrationConfirmation(response.data);
+      setCurrentStep(currentStep + 1);
+    } catch (error) {
+      console.error('Registration error:', error.response?.data || error.message);
+      // Handle error appropriately
+      console.log(error.response?.data?.message || 'Registration failed. Please try again.');
+      
+      // Optional: Add error state or display error message to user
+      alert(error.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [
+    formData, 
+    selectedSchool, 
+    selectedEvent, 
+    setRegistrationConfirmation, 
+    currentStep, 
+    setCurrentStep
+  ]);
+
+  // Initial form state
+  const initialFormState = {
+    parentFirstName: '',
+    parentLastName: '',
+    studentFirstName: '',
+    studentLastName: '',
+    parentEmail: '',
+    paymentMethod: selectedSchool?.country === 'Tunisia' ? 'daycare' : 'credit'
+  };
+
+  // Form reducer
+  const formReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_FIELD':
+        return {
+          ...state,
+          [action.field]: action.value
+        };
+      case 'RESET':
+        return initialFormState;
+      default:
+        return state;
+    }
+  };
+
+  // Use reducer for form state management
+  const [formData, dispatch] = useReducer(formReducer, initialFormState);
+
+  // Form validation method
+  const validateForm = useCallback(() => {
+    const requiredFields = [
+      'parentFirstName', 
+      'parentLastName', 
+      'studentFirstName', 
+      'studentLastName', 
+      'parentEmail'
+    ];
+
+    const missingFields = requiredFields.filter(field => 
+      !formData[field] || formData[field].trim() === ''
+    );
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.parentEmail)) {
+      alert('Please enter a valid email address');
+      return false;
+    }
+
+    return true;
+  }, [formData]);
 
   return (
     <div className="space-y-4">
       <form 
-        onSubmit={handleSubmit} 
+        onSubmit={handleRegistrationSubmit} 
         className="space-y-4"
-        // Prevent form default behavior
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-          }
-        }}
       >
         {[
           {
@@ -861,15 +958,58 @@ const RegistrationForm = () => {
             type: 'email'
           }
         ].map((field) => (
-          <MemoizedRegistrationInput
+          <input
             key={field.name}
-            name={field.name}
             type={field.type}
+            name={field.name}
             placeholder={field.placeholder}
-            value={memoizedFormData[field.name]}
-            onChange={handleInputChange(field.name)}
+            value={formData[field.name]}
+            onChange={(e) => {
+              dispatch({
+                type: 'UPDATE_FIELD',
+                field: field.name,
+                value: e.target.value
+              });
+            }}
+            className="w-full p-2 border rounded"
+            required
           />
         ))}
+
+        {/* Payment Method Selection for non-Tunisian schools */}
+        {selectedSchool?.country !== 'Tunisia' && (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Payment Method
+            </label>
+            <select
+              value={formData.paymentMethod}
+              onChange={(e) => {
+                dispatch({
+                  type: 'UPDATE_FIELD',
+                  field: 'paymentMethod',
+                  value: e.target.value
+                });
+              }}
+              className="w-full p-2 border rounded"
+            >
+              <option value="credit">Credit Card</option>
+              <option value="interac">Interac E-Transfer</option>
+            </select>
+          </div>
+        )}
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className={`w-full py-2 rounded ${
+            isLoading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-500 text-white hover:bg-blue-600'
+          }`}
+        >
+          {isLoading ? 'Submitting...' : 'Submit Registration'}
+        </button>
       </form>
     </div>
   );
