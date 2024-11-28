@@ -661,27 +661,43 @@ const handleRegistrationSubmit = async (e) => {
   e.preventDefault();
   setIsLoading(true);
 
-
   try {
-    // Ensure all required IDs are in the correct format
+    // Ensure IDs are properly converted to strings
     const registrationData = {
-      parentFirstName: formData.parentFirstName,    // Make sure these match
+      parentFirstName: formData.parentFirstName,
       parentLastName: formData.parentLastName,
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
-      schoolId: formData.schoolId,                 // Use the actual ID
-      eventId: formData.eventId,                   // Use the actual ID
+      schoolId: selectedSchool._id 
+        ? (typeof selectedSchool._id === 'string' 
+            ? selectedSchool._id 
+            : selectedSchool._id.toString())
+        : '',
+      eventId: selectedEvent._id
+        ? (typeof selectedEvent._id === 'string' 
+            ? selectedEvent._id 
+            : selectedEvent._id.toString())
+        : '',
       paymentMethod: formData.paymentMethod,
-      paymentStatus: formData.paymentMethod === 'daycare' 
-        ? 'awaiting_daycare_payment' 
+      paymentStatus: formData.paymentMethod === 'daycare'
+        ? 'awaiting_daycare_payment'
         : formData.paymentMethod === 'interac'
         ? 'awaiting_interac'
         : 'pending'
     };
 
-    // Log the data being sent
-    console.log('Sending registration data:', registrationData);
+    // Additional validation before submission
+    if (!registrationData.schoolId || !registrationData.eventId) {
+      throw new Error('School or Event ID is missing');
+    }
+
+    // Log the data being sent with more detailed information
+    console.log('Sending registration data:', {
+      ...registrationData,
+      schoolIdType: typeof registrationData.schoolId,
+      eventIdType: typeof registrationData.eventId
+    });
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
@@ -696,9 +712,14 @@ const handleRegistrationSubmit = async (e) => {
     setRegistrationConfirmation(response.data);
     setCurrentStep(currentStep + 1);
   } catch (error) {
-    console.error('Registration error:', error.response?.data || error.message);
-    // Handle error appropriately
-    console.log(error.response?.data?.message || 'Registration failed. Please try again.');
+    console.error('Registration error details:', {
+      message: error.message,
+      response: error.response?.data,
+      fullError: error
+    });
+    
+    // Optional: Show user-friendly error message
+    alert('Registration failed. Please check your information and try again.');
   } finally {
     setIsLoading(false);
   }
