@@ -57,31 +57,23 @@ const FreezePIXRegistration = () => {
   
     useEffect(() => {
       const fetchEvents = async () => {
-           // Extract the ID and format it correctly
-           let schoolId;
-           if (selectedSchool?._id) {
-             // Handle the ObjectId format
-             if (typeof selectedSchool._id === 'string') {
-               // If it's already a string ID
-               schoolId = selectedSchool._id;
-             } else if (selectedSchool._id.$oid) {
-               // If it's in $oid format
-               schoolId = selectedSchool._id.$oid;
-             } else if (selectedSchool._id.toString().includes('ObjectId')) {
-               // If it's in ObjectId format
-               schoolId = selectedSchool._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
-             }
-           }
-           
-           if (!schoolId) {
-             console.log('No valid school ID provided');
+        if (!selectedSchool || !selectedSchool._id) {
+          setEventsLoading(false);
+          return;
         }
   
+        // Simplified ID extraction
+        const schoolId = typeof selectedSchool._id === 'string' 
+          ? selectedSchool._id 
+          : selectedSchool._id.toString();
+  
         try {
+          setEventsLoading(true);
           const response = await axios.get(
-             `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
           );
           
+          console.log('Events response:', response.data); // Debug log
           setEvents(response.data);
         } catch (error) {
           console.error('Events fetch error:', error);
@@ -91,9 +83,7 @@ const FreezePIXRegistration = () => {
         }
       };
   
-      if (selectedSchool) {
-        fetchEvents();
-      }
+      fetchEvents();
     }, [selectedSchool]);
   
     return { events, eventsLoading, eventsError };
@@ -329,29 +319,19 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
   const handleSchoolSelect = (school) => {
     if (!school) return;
   
-    let schoolId;
-    if (typeof school._id === 'string') {
-      schoolId = school._id;
-    } else if (school._id.$oid) {
-      schoolId = school._id.$oid;
-    } else if (school._id.toString().includes('ObjectId')) {
-      schoolId = school._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
-    } else {
-      console.error('Invalid school ID format');
-      return;
-    }
-  
-    // Create a clean school object with the processed ID
+    // Simplified school object
     const processedSchool = {
       ...school,
-      _id: schoolId
+      _id: typeof school._id === 'string' ? school._id : school._id.toString()
     };
   
+    console.log('Selected school:', processedSchool); // Debug log
     setSelectedSchool(processedSchool);
     setFormData(prev => ({
       ...prev,
-      schoolId: schoolId
+      schoolId: processedSchool._id
     }));
+    
     if (school.country) {
       setSelectedCountry(school.country);
     }
@@ -411,31 +391,42 @@ const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCount
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
   const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
 
+  console.log('Selected school in EventSelection:', selectedSchool); // Debug log
+  console.log('Events:', events); // Debug log
+
   const handleEventSelect = (event) => {
+    if (!event) return;
+
+    const eventId = typeof event._id === 'string' ? event._id : event._id.toString();
+    
     setSelectedEvent(event);
-    let eventId;
-    if (typeof event._id === 'string') {
-      eventId = event._id;
-    } else if (event._id.$oid) {
-      eventId = event._id.$oid;
-    } else if (event._id.toString().includes('ObjectId')) {
-      eventId = event._id.toString().match(/ObjectId\('(.+?)'\)/)[1];
-    } else {
-      console.error('Invalid event ID format');
-      return;
-    }
     setFormData(prev => ({
       ...prev,
-      eventId: eventId 
+      eventId: eventId
     }));
   };
 
   if (eventsLoading) {
-    return <div className="text-center">Loading events...</div>;
+    return (
+      <div className="text-center">
+        <Loader className="animate-spin inline-block" />
+        <p>Loading events...</p>
+      </div>
+    );
   }
 
   if (eventsError) {
-    return <div className="text-center text-red-500">Error loading events: {eventsError}</div>;
+    return (
+      <div className="text-center text-red-500">
+        <p>Error loading events: {eventsError}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -445,11 +436,11 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
       </h2>
       
       <div className="space-y-4">
-        {events.length > 0 ? (
+        {events && events.length > 0 ? (
           events.map((event) => (
             <div
               key={event._id}
-              className={`border rounded-lg p-4 cursor-pointer hover:bg-blue-50`}
+              className="border rounded-lg p-4 cursor-pointer hover:bg-blue-50"
               onClick={() => handleEventSelect(event)}
             >
               <div className="flex justify-between items-center">
@@ -464,7 +455,9 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-500">No events available for this school</div>
+          <div className="text-center text-gray-500">
+            No events available for this school
+          </div>
         )}
       </div>
 
@@ -479,7 +472,6 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
     </div>
   );
 };
-  
     
   
 
