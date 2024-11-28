@@ -1072,15 +1072,12 @@ const PackageSelection = () => {
             </div>
         )}
 
-        {priceDetails.taxDetails &&
+{priceDetails.taxDetails &&
             Object.keys(priceDetails.taxDetails).map(key => (
                 <div key={key} className="flex justify-between text-gray-600">
                     <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
                     <span>
-                        {selectedSchool.country !== 'Tunisia' 
-                            
-                             `$${priceDetails.taxDetails[key].amount.toFixed(2)}`
-                        }
+                        {selectedSchool.country !== 'Tunisia' ? `$${priceDetails.taxDetails[key].amount.toFixed(2)}` : ''}
                     </span>
                 </div>
             ))
