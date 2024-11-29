@@ -747,39 +747,27 @@ const handleRegistrationSubmit = async (e) => {
   // Registration Form Component
   const RegistrationForm = () => {
     
-    
-    // Create refs for inputs
-  const inputRefs = {
-    parentFirstName: useRef(null),
-    parentLastName: useRef(null),
-    studentFirstName: useRef(null),
-    studentLastName: useRef(null),
-    parentEmail: useRef(null)
-  };
+    const [formData, setFormData] = useState({
+      parentFirstName: '',
+      parentLastName: '',
+      parentEmail: '',
+      studentFirstName: '',
+      studentLastName: '',
+      paymentMethod: 'credit',
+      schoolId: selectedSchool?._id || '',
+      eventId: selectedEvent?._id || '',
+    });
+
+
 
   // Modified handleInputChange to better handle focus
-  const handleInputChange = useCallback((field) => (e) => {
-    e.persist(); // Persist the synthetic event
-    const inputElement = e.target;
-    const cursorPosition = inputElement.selectionStart;
-
-    setFormData(prevData => {
-      const updatedData = {
-        ...prevData,
-        [field]: inputElement.value
-      };
-
-      // Preserve focus and cursor position after state update
-      setTimeout(() => {
-        if (inputElement) {
-          inputElement.focus();
-          inputElement.setSelectionRange(cursorPosition, cursorPosition);
-        }
-      }, 0);
-
-      return updatedData;
-    });
-  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   // Add touch event handlers to prevent keyboard dismissal
   const handleTouchStart = (e) => {
@@ -912,12 +900,9 @@ const handleRegistrationSubmit = async (e) => {
           name="parentFirstName"
           placeholder="Parent First Name"
           value={formData.parentFirstName}
-          onTouchStart={handleTouchStart}
-          onChange={(e) => setFormData({ ...formData, parentFirstName: e.target.value })}
-          required
-          autoCapitalize="words"
+          onChange={handleChange}
+          Required
           className="w-full p-2 border rounded"
-          autoComplete="off" // Add this to prevent autocomplete from interfering
         />
         
         <input
@@ -925,12 +910,9 @@ const handleRegistrationSubmit = async (e) => {
           name="parentLastName"
           placeholder="Parent Last Name"
           value={formData.parentLastName}
-          onTouchStart={handleTouchStart}
-          onChange={(e) => setFormData({ ...formData, parentLastName: e.target.value })}
-          required
-          autoCapitalize="words"
+          onChange={handleChange}
+          Required
           className="w-full p-2 border rounded"
-          autoComplete="off"
         />
         
         <input
@@ -938,12 +920,9 @@ const handleRegistrationSubmit = async (e) => {
           name="studentFirstName"
           placeholder="Student First Name"
           value={formData.studentFirstName}
-          onTouchStart={handleTouchStart}
-          onChange={(e) => setFormData({ ...formData, studentFirstName: e.target.value })}
-          required
-          autoCapitalize="words"
+          onChange={handleChange}
+          Required
           className="w-full p-2 border rounded"
-          autoComplete="off"
         />
         
         <input
@@ -951,12 +930,9 @@ const handleRegistrationSubmit = async (e) => {
           name="studentLastName"
           placeholder="Student Last Name"
           value={formData.studentLastName}
-          onTouchStart={handleTouchStart}
-          onChange={(e) => setFormData({ ...formData, studentLastName: e.target.value })}
-          required
-          autoCapitalize="words"
+          onChange={handleChange}
+          Required
           className="w-full p-2 border rounded"
-          autoComplete="off"
         />
         
         <input
@@ -965,12 +941,9 @@ const handleRegistrationSubmit = async (e) => {
           name="parentEmail"
           placeholder="Parent Email"
           value={formData.parentEmail}
-          onTouchStart={handleTouchStart}
-          onChange={(e) => setFormData({ ...formData, parentEmail: e.target.value })}
-
-          required
+          onChange={handleChange}
+          Required
           className="w-full p-2 border rounded"
-          autoComplete="off"
         />
           
 
