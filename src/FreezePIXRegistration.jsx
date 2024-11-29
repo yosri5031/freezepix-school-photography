@@ -775,24 +775,11 @@ const StableInput = React.memo(({
   const handleInputChange = useCallback((field) => (e) => {
     const inputElement = e.target;
     const newValue = inputElement.value;
-    const caretPosition = inputElement.selectionStart;
-
-    setFormData(prevData => {
-      // Create a new object to trigger minimal re-render
-      const updatedData = { ...prevData, [field]: newValue };
-      
-      // Use setTimeout to ensure state update completes
-      setTimeout(() => {
-        try {
-          inputElement.setSelectionRange(caretPosition, caretPosition);
-          inputElement.focus();
-        } catch (error) {
-          console.warn('Failed to restore cursor position', error);
-        }
-      }, 0);
-
-      return updatedData;
-    });
+    
+    setFormData(prevData => ({
+      ...prevData, 
+      [field]: newValue
+    }));
   }, []);
 
     const handleSubmit = async (event) => {
