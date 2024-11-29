@@ -21,7 +21,6 @@ const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2K
 
 
 const FreezePIXRegistration = () => {
-  useKeyboardFix(); 
   // State management for multi-step registration
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState('');
