@@ -1,5 +1,6 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2} from 'lucide-react';
+import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon } from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -20,6 +21,7 @@ const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2K
 
 
 const FreezePIXRegistration = () => {
+  useKeyboardFix(); 
   // State management for multi-step registration
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -89,24 +91,7 @@ const FreezePIXRegistration = () => {
     return { events, eventsLoading, eventsError };
   };
 
-  // Add this to your component
-  useEffect(() => {
-    const handleFocus = (event) => {
-      // Scroll input into view instead of fixing body
-      event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-  
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-      input.addEventListener('focus', handleFocus);
-    });
-  
-    return () => {
-      inputs.forEach(input => {
-        input.removeEventListener('focus', handleFocus);
-      });
-    };
-  }, []);
+
 
 
 // Add state for packages and schools
