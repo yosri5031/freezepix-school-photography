@@ -752,32 +752,23 @@ const handleRegistrationSubmit = async (e) => {
   const [formDrafts, setFormDrafts] = useState({});
 
   // Handle input change
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     const caretPosition = e.target.selectionStart;
     const scrollPosition = e.target.scrollTop;
 
-    // Update draft for real-time user feedback
-    setFormDrafts((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Preserve caret position and scroll after state update
+    // Update form data
     setTimeout(() => {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      // Restore caret position and scroll position
       e.target.selectionStart = caretPosition;
       e.target.selectionEnd = caretPosition;
       e.target.scrollTop = scrollPosition;
     }, 0);
-  };
-
-  // Update formData from drafts (onBlur or submit)
-  const handleBlur = (e) => {
-    const { name } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: formDrafts[name],
-    }));
   };
 
     //const packageSelected = packages[selectedPackage];
@@ -894,8 +885,7 @@ const handleRegistrationSubmit = async (e) => {
           name="parentFirstName"
           placeholder="Parent First Name"
           value={formData.parentFirstName || ''}
-          onChange={handleInputChange}
-          onBlur={handleBlur}
+          onChange={handleChange}
           className="w-full p-2 border rounded"
         />
         
@@ -903,8 +893,7 @@ const handleRegistrationSubmit = async (e) => {
           name="parentLastName"
           placeholder="Parent Last Name"
           value={formData.parentLastName || ''}
-          onChange={handleInputChange}
-          onBlur={handleBlur}
+          onChange={handleChange}
           className="w-full p-2 border rounded"
         />
         
@@ -912,8 +901,7 @@ const handleRegistrationSubmit = async (e) => {
           name="studentFirstName"
           placeholder="Student First Name"
           value={formData.studentFirstName || ''}
-          onChange={handleInputChange}
-          onBlur={handleBlur}
+          onChange={handleChange}
           className="w-full p-2 border rounded"
         />
         
@@ -921,8 +909,7 @@ const handleRegistrationSubmit = async (e) => {
           name="studentLastName"
           placeholder="Student Last Name"
           value={formData.studentLastName || ''}
-          onChange={handleInputChange}
-          onBlur={handleBlur}
+          onChange={handleChange}
           className="w-full p-2 border rounded"
         />
         
@@ -931,8 +918,7 @@ const handleRegistrationSubmit = async (e) => {
           name="parentEmail"
           placeholder="Parent Email"
           value={formData.parentEmail || ''}
-          onChange={handleInputChange}
-          onBlur={handleBlur}
+          onChange={handleChange}
           className="w-full p-2 border rounded"
         />
           
