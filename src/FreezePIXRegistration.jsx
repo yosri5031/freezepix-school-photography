@@ -88,6 +88,38 @@ const FreezePIXRegistration = () => {
   
     return { events, eventsLoading, eventsError };
   };
+
+  // Add this to your component
+useEffect(() => {
+  // Disable body scroll when input is focused
+  const handleFocus = () => {
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+  };
+
+  // Enable body scroll when input is blurred
+  const handleBlur = () => {
+    const scrollY = document.body.style.top;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  };
+
+  const inputs = document.querySelectorAll('input');
+  inputs.forEach(input => {
+    input.addEventListener('focus', handleFocus);
+    input.addEventListener('blur', handleBlur);
+  });
+
+  return () => {
+    inputs.forEach(input => {
+      input.removeEventListener('focus', handleFocus);
+      input.removeEventListener('blur', handleBlur);
+    });
+  };
+}, []);
+
+
 // Add state for packages and schools
 const [packages, setPackages] = useState({
   basic: {
