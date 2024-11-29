@@ -738,26 +738,7 @@ const handleRegistrationSubmit = async (e) => {
     setIsLoading(false);
   }
 };
-const StableInput = React.memo(({ 
-  value, 
-  onChange, 
-  placeholder, 
-  name 
-}) => {
-  return (
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      autoCorrect="off"
-      autoCapitalize="words"
-      spellCheck="false"
-      className="w-full p-2 border rounded"
-    />
-  );
-});
+
 
   // Registration Form Component
   const RegistrationForm = () => {
@@ -795,29 +776,16 @@ const StableInput = React.memo(({
     });
   }, []);
 
-  const handleSubmit = useCallback(async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
-
+  
     try {
-      // Combine form validation and submission logic
-      const submissionData = {
-        ...formData,
-        paymentMethod,
-        total: calculateTotal().total
-      };
-
-      // Actual submission logic would go here
-      await handleRegistrationSubmit(submissionData);
-      
-      // Reset form or navigate after successful submission
+      await handleRegistrationSubmit(event);
     } catch (error) {
-      console.error('Registration submission error:', error);
-      // Handle error (show message to user, etc.)
-    } finally {
-      setIsLoading(false);
+      console.error('Form submission error:', error);
+      // No need to show alert here since handleRegistrationSubmit already handles errors
     }
-  }, [formData, paymentMethod, calculateTotal]);
+  };
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
