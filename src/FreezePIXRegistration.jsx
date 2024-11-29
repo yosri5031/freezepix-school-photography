@@ -749,20 +749,25 @@ const handleRegistrationSubmit = async (e) => {
     
 
   // Modified handleInputChange to better handle focus
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    
+  const [formDrafts, setFormDrafts] = useState({});
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  // Update draft for specific field
+  setFormDrafts(prev => ({
+    ...prev,
+    [name]: value
+  }));
+  
+  // Debounce saving to formData
+  const timer = setTimeout(() => {
     setFormData(prevData => ({
       ...prevData, 
       [name]: value
     }));
-    
-    // Prevent keyboard dismissal on mobile
-    if (e.target.setSelectionRange) {
-      const length = value.length;
-      e.target.setSelectionRange(length, length);
-    }
-  };
+  }, 750);
+};
 
   // Add touch event handlers to prevent keyboard dismissal
   const handleTouchStart = (e) => {
@@ -885,36 +890,32 @@ const handleRegistrationSubmit = async (e) => {
         <input
           name="parentFirstName"
           placeholder="Parent First Name"
-          value={formData.parentFirstName}
+          value={formDrafts.parentFirstName || ''}
           onChange={handleChange}
-          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
         <input
           name="parentLastName"
           placeholder="Parent Last Name"
-          value={formData.parentLastName}
+          value={formDrafts.parentLastName || ''}
           onChange={handleChange}
-          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
         <input
           name="studentFirstName"
           placeholder="Student First Name"
-          value={formData.studentFirstName}
+          value={formDrafts.studentFirstName || ''}
           onChange={handleChange}
-          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
         <input
           name="studentLastName"
           placeholder="Student Last Name"
-          value={formData.studentLastName}
+          value={formDrafts.studentLastName || ''}
           onChange={handleChange}
-          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
@@ -922,9 +923,8 @@ const handleRegistrationSubmit = async (e) => {
           type="text" // Changed to email type for better keyboard
           name="parentEmail"
           placeholder="Parent Email"
-          value={formData.parentEmail}
+          value={formDrafts.parentEmail || ''}
           onChange={handleChange}
-          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
           
