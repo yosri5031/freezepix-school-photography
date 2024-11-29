@@ -19,24 +19,49 @@ import mongoose from 'mongoose';
 
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
 const AddressForm = ({ type, data, onChange }) => {
-  const { t } = useTranslation(); // Add this line to use translation
+  const { t } = useTranslation();
+  const [localData, setLocalData] = useState({
+    parentFirstName: data.parentFirstName || '',
+    parentLastName: data.parentLastName || '',
+    studentFirstName: data.studentFirstName || '',
+    studentLastName: data.studentLastName || '',
+    parentEmail: data.parentEmail || ''
+  });
+
+  const requiredFields = [
+    'parentFirstName', 
+    'parentLastName', 
+    'studentFirstName', 
+    'studentLastName', 
+    'parentEmail'
+  ];
 
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
-    const caretPosition = e.target.selectionStart;
-    const scrollPosition = e.target.scrollTop;
-
-    onChange({
-      ...data,
+    
+    // Update local state
+    const updatedData = {
+      ...localData,
       [field]: newValue
-    });
+    };
 
-    setTimeout(() => {
-      e.target.selectionStart = caretPosition;
-      e.target.selectionEnd = caretPosition;
-      e.target.scrollTop = scrollPosition;
-    }, 10000);
+    // Check if all required fields are filled
+    const allFieldsFilled = requiredFields.every(
+      requiredField => updatedData[requiredField].trim() !== ''
+    );
+
+    // Update local state
+    setLocalData(updatedData);
+
+    // Only update parent form data when all fields are filled
+    if (allFieldsFilled) {
+      onChange({
+        ...data,
+        ...updatedData
+      });
+    }
   };
+
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -44,7 +69,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent First Name"
-        value={data.parentFirstName|| ''}
+        value={localData.parentFirstName|| ''}
         onChange={handleInputChange('parentFirstName')}
         className="p-2 border rounded"
       />
@@ -52,7 +77,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent Last Name"
-        value={data.parentLastName || ''}
+        value={localData.parentLastName || ''}
         onChange={handleInputChange('parentLastName')}
         className="p-2 border rounded"
       />
@@ -60,7 +85,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Student First Name"
-        value={data.studentFirstName || ''}
+        value={localData.studentFirstName || ''}
         onChange={handleInputChange('studentFirstName')}
         className="col-span-2 p-2 border rounded"
       />
@@ -68,7 +93,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Student Last Name"
-        value={data.studentLastName || ''}
+        value={localData.studentLastName || ''}
         onChange={handleInputChange('studentLastName')}
         className="p-2 border rounded"
       />
@@ -77,7 +102,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent Email"
-        value={data.parentEmail || ''}
+        value={localData.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
         className="p-2 border rounded"
       />
