@@ -914,6 +914,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent First Name"
           value={formData.parentFirstName}
           onTouchStart={handleTouchStart}
+          onChange={(e) => setFormData({ ...formData, parentFirstName: e.target.value })}
           required
           autoCapitalize="words"
           className="w-full p-2 border rounded"
@@ -926,6 +927,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Last Name"
           value={formData.parentLastName}
           onTouchStart={handleTouchStart}
+          onChange={(e) => setFormData({ ...formData, parentLastName: e.target.value })}
           required
           autoCapitalize="words"
           className="w-full p-2 border rounded"
@@ -938,6 +940,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student First Name"
           value={formData.studentFirstName}
           onTouchStart={handleTouchStart}
+          onChange={(e) => setFormData({ ...formData, studentFirstName: e.target.value })}
           required
           autoCapitalize="words"
           className="w-full p-2 border rounded"
@@ -950,6 +953,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student Last Name"
           value={formData.studentLastName}
           onTouchStart={handleTouchStart}
+          onChange={(e) => setFormData({ ...formData, studentLastName: e.target.value })}
           required
           autoCapitalize="words"
           className="w-full p-2 border rounded"
@@ -963,6 +967,8 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Email"
           value={formData.parentEmail}
           onTouchStart={handleTouchStart}
+          onChange={(e) => setFormData({ ...formData, parentEmail: e.target.value })}
+
           required
           className="w-full p-2 border rounded"
           autoComplete="off"
