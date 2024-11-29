@@ -39,33 +39,43 @@ const AddressForm = ({ type, data, onChange }) => {
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
     const caretPosition = e.target.selectionStart;
-      const scrollPosition = e.target.scrollTop;
-    // Update local state
+    const scrollPosition = e.target.scrollTop;
+  
+    // Determine if all fields should be updated
     const updatedData = {
-      ...localData,
+      ...data,
       [field]: newValue
     };
-
+  
     // Check if all required fields are filled
+    const requiredFields = [
+      'parentFirstName', 
+      'parentLastName', 
+      'studentFirstName', 
+      'studentLastName', 
+      'parentEmail'
+    ];
+  
     const allFieldsFilled = requiredFields.every(
-      requiredField => updatedData[requiredField].trim() !== ''
+      requiredField => updatedData[requiredField]?.trim() !== ''
     );
-
-    // Update local state
-    setLocalData(updatedData);
-
-    // Only update parent form data when all fields are filled
+  
+    // Only update if all fields are filled
     if (allFieldsFilled) {
-      onChange({
-        ...data,
-        ...updatedData
-      });
+      onChange(updatedData);
     }
-    setTimeout(() => {
-      e.target.selectionStart = caretPosition;
-      e.target.selectionEnd = caretPosition;
-      e.target.scrollTop = scrollPosition;
-    }, 0);
+  
+    // Remove or significantly reduce the timeout
+    // Or remove this entirely if not critical
+    requestAnimationFrame(() => {
+      try {
+        e.target.selectionStart = caretPosition;
+        e.target.selectionEnd = caretPosition;
+        e.target.scrollTop = scrollPosition;
+      } catch (error) {
+        // Silently handle any potential errors
+      }
+    });
   };
 
 
@@ -75,7 +85,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent First Name"
-        value={localData.parentFirstName|| ''}
+        value={data.parentFirstName|| ''}
         onChange={handleInputChange('parentFirstName')}
         className="p-2 border rounded"
       />
@@ -83,7 +93,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent Last Name"
-        value={localData.parentLastName || ''}
+        value={data.parentLastName || ''}
         onChange={handleInputChange('parentLastName')}
         className="p-2 border rounded"
       />
@@ -91,7 +101,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Student First Name"
-        value={localData.studentFirstName || ''}
+        value={data.studentFirstName || ''}
         onChange={handleInputChange('studentFirstName')}
         className="col-span-2 p-2 border rounded"
       />
@@ -99,7 +109,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Student Last Name"
-        value={localData.studentLastName || ''}
+        value={data.studentLastName || ''}
         onChange={handleInputChange('studentLastName')}
         className="p-2 border rounded"
       />
@@ -108,7 +118,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent Email"
-        value={localData.parentEmail || ''}
+        value={data.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
         className="p-2 border rounded"
       />
