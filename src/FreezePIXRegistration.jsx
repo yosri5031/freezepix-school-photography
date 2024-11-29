@@ -899,7 +899,6 @@ const handleRegistrationSubmit = async (e) => {
     </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
         <input
           type="text"
           name="parentFirstName"
@@ -912,8 +911,6 @@ const handleRegistrationSubmit = async (e) => {
           autoCapitalize="words"
           spellCheck="false"
         />
-        </div>
-        <div>
         <input
           type="text"
           name="parentLastName"
@@ -926,7 +923,6 @@ const handleRegistrationSubmit = async (e) => {
           autoCapitalize="words"
           spellCheck="false"
         />
-        </div>
         <input
           type="text"
           name="studentFirstName"
