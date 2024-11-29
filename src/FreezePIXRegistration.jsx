@@ -35,7 +35,7 @@ const AddressForm = ({ type, data, onChange }) => {
       e.target.selectionStart = caretPosition;
       e.target.selectionEnd = caretPosition;
       e.target.scrollTop = scrollPosition;
-    }, 0);
+    }, 10000);
   };
 
   return (
