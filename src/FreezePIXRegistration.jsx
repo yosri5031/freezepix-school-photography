@@ -747,18 +747,6 @@ const handleRegistrationSubmit = async (e) => {
   // Registration Form Component
   const RegistrationForm = () => {
     
-    const [formData, setFormData] = useState({
-      parentFirstName: '',
-      parentLastName: '',
-      parentEmail: '',
-      studentFirstName: '',
-      studentLastName: '',
-      paymentMethod: 'credit',
-      schoolId: selectedSchool?._id || '',
-      eventId: selectedEvent?._id || '',
-    });
-
-
 
   // Modified handleInputChange to better handle focus
   const handleChange = (e) => {
@@ -900,7 +888,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent First Name"
           value={formData.parentFirstName}
           onChange={handleChange}
-          Required
+          required
           className="w-full p-2 border rounded"
         />
         
@@ -909,7 +897,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Last Name"
           value={formData.parentLastName}
           onChange={handleChange}
-          Required
+          required
           className="w-full p-2 border rounded"
         />
         
@@ -918,7 +906,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student First Name"
           value={formData.studentFirstName}
           onChange={handleChange}
-          Required
+          required
           className="w-full p-2 border rounded"
         />
         
@@ -927,7 +915,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student Last Name"
           value={formData.studentLastName}
           onChange={handleChange}
-          Required
+          required
           className="w-full p-2 border rounded"
         />
         
@@ -937,7 +925,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Email"
           value={formData.parentEmail}
           onChange={handleChange}
-          Required
+          required
           className="w-full p-2 border rounded"
         />
           
