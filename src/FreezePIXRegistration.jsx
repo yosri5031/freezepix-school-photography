@@ -772,28 +772,28 @@ const StableInput = React.memo(({
     parentEmail: useRef(null)
   };
 
-  const handleInputChange = (field) => (e) => {
+  const handleInputChange = useCallback((field) => (e) => {
     const inputElement = e.target;
     const newValue = inputElement.value;
-    
-    // Capture cursor position immediately
     const caretPosition = inputElement.selectionStart;
 
-    // Update form data
-    setFormData(prevData => ({
-      ...prevData,
-      [field]: newValue
-    }));
+    setFormData(prevData => {
+      // Create a new object to trigger minimal re-render
+      const updatedData = { ...prevData, [field]: newValue };
+      
+      // Use setTimeout to ensure state update completes
+      setTimeout(() => {
+        try {
+          inputElement.setSelectionRange(caretPosition, caretPosition);
+          inputElement.focus();
+        } catch (error) {
+          console.warn('Failed to restore cursor position', error);
+        }
+      }, 0);
 
-    // Use requestAnimationFrame for more reliable focus preservation
-    requestAnimationFrame(() => {
-      const currentInputRef = inputRefs[field].current;
-      if (currentInputRef) {
-        currentInputRef.focus();
-        currentInputRef.setSelectionRange(caretPosition, caretPosition);
-      }
+      return updatedData;
     });
-  };
+  }, []);
 
     const handleSubmit = async (event) => {
       event.preventDefault();
@@ -931,6 +931,8 @@ const StableInput = React.memo(({
         onChange={handleInputChange('parentFirstName')}
         required
         autoCapitalize="words"
+        className="w-full p-2 border rounded"
+
       />
       <input
       ref={inputRefs.parentLastName}
@@ -940,6 +942,8 @@ const StableInput = React.memo(({
         onChange={handleInputChange('parentLastName')}
         required
         autoCapitalize="words"
+        className="w-full p-2 border rounded"
+
       />
       <input
         ref={inputRefs.studentFirstName}
@@ -949,6 +953,8 @@ const StableInput = React.memo(({
         onChange={handleInputChange('studentFirstName')}
         required
         autoCapitalize="words"
+        className="w-full p-2 border rounded"
+
       />
       <input
         ref={inputRefs.studentLastName}
@@ -958,6 +964,8 @@ const StableInput = React.memo(({
         onChange={handleInputChange('studentLastName')}
         required
         autoCapitalize="words"
+        className="w-full p-2 border rounded"
+
       />
       <input
          ref={inputRefs.parentEmail}
@@ -966,6 +974,7 @@ const StableInput = React.memo(({
         placeholder="Parent Email"
         value={formData.parentEmail}
         onChange={handleInputChange('parentEmail')}
+        className="w-full p-2 border rounded"
         required
       />
           
