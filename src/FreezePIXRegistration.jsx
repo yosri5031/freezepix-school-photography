@@ -751,31 +751,33 @@ const handleRegistrationSubmit = async (e) => {
   // Modified handleInputChange to better handle focus
   const [formDrafts, setFormDrafts] = useState({});
 
-  const handleChange = (e) => {
+  // Handle input change
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     const caretPosition = e.target.selectionStart;
     const scrollPosition = e.target.scrollTop;
-  
-    // Update draft for a specific field
-    setFormData(prev => ({
-      ...formData,
-      [name]: value
+
+    // Update draft for real-time user feedback
+    setFormDrafts((prev) => ({
+      ...prev,
+      [name]: value,
     }));
-  
+
+    // Preserve caret position and scroll after state update
     setTimeout(() => {
       e.target.selectionStart = caretPosition;
       e.target.selectionEnd = caretPosition;
       e.target.scrollTop = scrollPosition;
     }, 0);
-  
-    // Add touch event handlers to prevent keyboard dismissal
-    e.target.addEventListener('touchstart', (event) => {
-      event.preventDefault();
-    });
-  
-    e.target.addEventListener('touchmove', (event) => {
-      event.preventDefault();
-    });
+  };
+
+  // Update formData from drafts (onBlur or submit)
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formDrafts[name],
+    }));
   };
 
     //const packageSelected = packages[selectedPackage];
@@ -892,7 +894,8 @@ const handleRegistrationSubmit = async (e) => {
           name="parentFirstName"
           placeholder="Parent First Name"
           value={formData.parentFirstName || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="w-full p-2 border rounded"
         />
         
@@ -900,7 +903,8 @@ const handleRegistrationSubmit = async (e) => {
           name="parentLastName"
           placeholder="Parent Last Name"
           value={formData.parentLastName || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="w-full p-2 border rounded"
         />
         
@@ -908,7 +912,8 @@ const handleRegistrationSubmit = async (e) => {
           name="studentFirstName"
           placeholder="Student First Name"
           value={formData.studentFirstName || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="w-full p-2 border rounded"
         />
         
@@ -916,7 +921,8 @@ const handleRegistrationSubmit = async (e) => {
           name="studentLastName"
           placeholder="Student Last Name"
           value={formData.studentLastName || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="w-full p-2 border rounded"
         />
         
@@ -925,7 +931,8 @@ const handleRegistrationSubmit = async (e) => {
           name="parentEmail"
           placeholder="Parent Email"
           value={formData.parentEmail || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="w-full p-2 border rounded"
         />
           
