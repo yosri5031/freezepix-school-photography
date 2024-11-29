@@ -896,7 +896,6 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <input
-          ref={inputRefs.parentFirstName}
           name="parentFirstName"
           placeholder="Parent First Name"
           value={formData.parentFirstName}
@@ -906,7 +905,6 @@ const handleRegistrationSubmit = async (e) => {
         />
         
         <input
-          ref={inputRefs.parentLastName}
           name="parentLastName"
           placeholder="Parent Last Name"
           value={formData.parentLastName}
@@ -916,7 +914,6 @@ const handleRegistrationSubmit = async (e) => {
         />
         
         <input
-          ref={inputRefs.studentFirstName}
           name="studentFirstName"
           placeholder="Student First Name"
           value={formData.studentFirstName}
@@ -926,7 +923,6 @@ const handleRegistrationSubmit = async (e) => {
         />
         
         <input
-          ref={inputRefs.studentLastName}
           name="studentLastName"
           placeholder="Student Last Name"
           value={formData.studentLastName}
@@ -936,7 +932,6 @@ const handleRegistrationSubmit = async (e) => {
         />
         
         <input
-          ref={inputRefs.parentEmail}
           type="email" // Changed to email type for better keyboard
           name="parentEmail"
           placeholder="Parent Email"
