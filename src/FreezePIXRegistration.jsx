@@ -757,8 +757,11 @@ const handleRegistrationSubmit = async (e) => {
       [name]: value
     }));
     
-    // Prevent input from losing focus
-    e.target.focus();
+    // Prevent keyboard dismissal on mobile
+    if (e.target.setSelectionRange) {
+      const length = value.length;
+      e.target.setSelectionRange(length, length);
+    }
   };
 
   // Add touch event handlers to prevent keyboard dismissal
@@ -884,6 +887,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent First Name"
           value={formData.parentFirstName}
           onChange={handleChange}
+          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
@@ -892,6 +896,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Last Name"
           value={formData.parentLastName}
           onChange={handleChange}
+          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
@@ -900,6 +905,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student First Name"
           value={formData.studentFirstName}
           onChange={handleChange}
+          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
@@ -908,6 +914,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student Last Name"
           value={formData.studentLastName}
           onChange={handleChange}
+          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
         
@@ -917,6 +924,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Email"
           value={formData.parentEmail}
           onChange={handleChange}
+          onTouchStart={(e) => e.target.focus()}
           className="w-full p-2 border rounded"
         />
           
