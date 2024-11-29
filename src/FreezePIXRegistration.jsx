@@ -766,7 +766,7 @@ const handleChange = (e) => {
       ...prevData, 
       [name]: value
     }));
-  }, 750);
+  });
 };
 
   // Add touch event handlers to prevent keyboard dismissal
