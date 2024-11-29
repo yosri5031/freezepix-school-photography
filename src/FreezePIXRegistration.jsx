@@ -795,23 +795,29 @@ const StableInput = React.memo(({
     });
   }, []);
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      setIsLoading(true);
-    
-      try {
-        // For credit card payments
+  const handleSubmit = useCallback(async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Combine form validation and submission logic
+      const submissionData = {
+        ...formData,
+        paymentMethod,
+        total: calculateTotal().total
+      };
+
+      // Actual submission logic would go here
+      await handleRegistrationSubmit(submissionData);
       
-    
-        // Call registration submission regardless of payment method
-        await handleRegistrationSubmit();
-        
-      } catch (error) {
-        console.error('Payment error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      // Reset form or navigate after successful submission
+    } catch (error) {
+      console.error('Registration submission error:', error);
+      // Handle error (show message to user, etc.)
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, paymentMethod, calculateTotal]);
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
