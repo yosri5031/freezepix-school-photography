@@ -674,6 +674,7 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
+  e.preventDefault(); // Prevent default form submission
   setIsLoading(true);
 
   try {
