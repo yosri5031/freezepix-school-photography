@@ -90,34 +90,23 @@ const FreezePIXRegistration = () => {
   };
 
   // Add this to your component
-useEffect(() => {
-  // Disable body scroll when input is focused
-  const handleFocus = () => {
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${window.scrollY}px`;
-  };
-
-  // Enable body scroll when input is blurred
-  const handleBlur = () => {
-    const scrollY = document.body.style.top;
-    document.body.style.position = '';
-    document.body.style.top = '';
-    window.scrollTo(0, parseInt(scrollY || '0') * -1);
-  };
-
-  const inputs = document.querySelectorAll('input');
-  inputs.forEach(input => {
-    input.addEventListener('focus', handleFocus);
-    input.addEventListener('blur', handleBlur);
-  });
-
-  return () => {
+  useEffect(() => {
+    const handleFocus = (event) => {
+      // Scroll input into view instead of fixing body
+      event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+  
+    const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
-      input.removeEventListener('focus', handleFocus);
-      input.removeEventListener('blur', handleBlur);
+      input.addEventListener('focus', handleFocus);
     });
-  };
-}, []);
+  
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener('focus', handleFocus);
+      });
+    };
+  }, []);
 
 
 // Add state for packages and schools
@@ -701,7 +690,6 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
-  e.preventDefault();
   setIsLoading(true);
 
   try {
@@ -811,13 +799,11 @@ const handleRegistrationSubmit = async (e) => {
 
   // Add touch event handlers to prevent keyboard dismissal
   const handleTouchStart = (e) => {
-    e.preventDefault();
     const input = e.target;
     input.focus();
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
   
     try {
       await handleRegistrationSubmit(event);
