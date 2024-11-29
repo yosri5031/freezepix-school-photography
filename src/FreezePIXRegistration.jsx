@@ -67,15 +67,7 @@ const AddressForm = ({ type, data, onChange }) => {
   
     // Remove or significantly reduce the timeout
     // Or remove this entirely if not critical
-    requestAnimationFrame(() => {
-      try {
-        e.target.selectionStart = caretPosition;
-        e.target.selectionEnd = caretPosition;
-        e.target.scrollTop = scrollPosition;
-      } catch (error) {
-        // Silently handle any potential errors
-      }
-    });
+    
   };
 
 
