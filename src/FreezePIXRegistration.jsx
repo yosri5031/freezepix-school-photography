@@ -23,11 +23,19 @@ const AddressForm = ({ type, data, onChange }) => {
 
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
-  
-    onChange(prevData => ({
-      ...prevData,
+    const caretPosition = e.target.selectionStart;
+    const scrollPosition = e.target.scrollTop;
+
+    onChange({
+      ...data,
       [field]: newValue
-    }));
+    });
+
+    setTimeout(() => {
+      e.target.selectionStart = caretPosition;
+      e.target.selectionEnd = caretPosition;
+      e.target.scrollTop = scrollPosition;
+    }, 10000);
   };
 
   return (
