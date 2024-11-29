@@ -755,19 +755,11 @@ const handleChange = (e) => {
   const { name, value } = e.target;
   
   // Update draft for specific field
-  setFormDrafts(prev => ({
+  
+  setFormData(prev => ({
     ...prev,
     [name]: value
   }));
-  
-  // Debounce saving to formData
-  const timer = setTimeout(() => {
-    setFormData(prevData => ({
-      ...prevData, 
-      [name]: value
-    }));
-  }, 19000);
-};
 
   // Add touch event handlers to prevent keyboard dismissal
   const handleTouchStart = (e) => {
@@ -775,7 +767,7 @@ const handleChange = (e) => {
     input.focus();
   };
 
-  
+}
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
