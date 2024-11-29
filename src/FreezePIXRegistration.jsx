@@ -773,13 +773,17 @@ const StableInput = React.memo(({
   };
 
   const handleInputChange = useCallback((field) => (e) => {
-    const inputElement = e.target;
-    const newValue = inputElement.value;
-    
-    setFormData(prevData => ({
-      ...prevData, 
-      [field]: newValue
-    }));
+    console.log('Input change:', {
+      field,
+      value: e.target.value,
+      caretPosition: e.target.selectionStart
+    });
+  
+    setFormData(prevData => {
+      const updatedData = { ...prevData, [field]: e.target.value };
+      console.log('Updated form data:', updatedData);
+      return updatedData;
+    });
   }, []);
 
     const handleSubmit = async (event) => {
