@@ -753,6 +753,8 @@ const handleRegistrationSubmit = async (e) => {
 
 const handleChange = (e) => {
   const { name, value } = e.target;
+  const caretPosition = e.target.selectionStart;
+      const scrollPosition = e.target.scrollTop;
   
   // Update draft for specific field
   
