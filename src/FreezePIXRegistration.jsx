@@ -894,7 +894,7 @@ const handleRegistrationSubmit = async (e) => {
       </div>
     </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleRegistrationSubmit} className="space-y-4">
         <input
           name="parentFirstName"
           placeholder="Parent First Name"
