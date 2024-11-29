@@ -923,7 +923,7 @@ const StableInput = React.memo(({
     </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-        <StableInput
+        <input
         ref={inputRefs.parentFirstName}
         name="parentFirstName"
         placeholder="Parent First Name"
@@ -932,7 +932,7 @@ const StableInput = React.memo(({
         required
         autoCapitalize="words"
       />
-      <StableInput
+      <input
       ref={inputRefs.parentLastName}
         name="parentLastName"
         placeholder="Parent Last Name"
@@ -941,7 +941,7 @@ const StableInput = React.memo(({
         required
         autoCapitalize="words"
       />
-      <StableInput
+      <input
         ref={inputRefs.studentFirstName}
         name="studentFirstName"
         placeholder="Student First Name"
@@ -950,7 +950,7 @@ const StableInput = React.memo(({
         required
         autoCapitalize="words"
       />
-      <StableInput
+      <input
         ref={inputRefs.studentLastName}
         name="studentLastName"
         placeholder="Student Last Name"
@@ -959,7 +959,7 @@ const StableInput = React.memo(({
         required
         autoCapitalize="words"
       />
-      <StableInput
+      <input
          ref={inputRefs.parentEmail}
         type="text"
         name="parentEmail"
