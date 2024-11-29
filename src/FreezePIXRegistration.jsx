@@ -52,7 +52,7 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent Last Name"
-        value={data.parentFirstName || ''}
+        value={data.parentLastName || ''}
         onChange={handleInputChange('parentLastName')}
         className="p-2 border rounded"
       />
