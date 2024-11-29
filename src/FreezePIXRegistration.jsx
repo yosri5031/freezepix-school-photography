@@ -674,6 +674,7 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
+  e.preventDefault(); // Add this line
   setIsLoading(true);
 
   try {
@@ -888,7 +889,6 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent First Name"
           value={formData.parentFirstName}
           onChange={handleChange}
-          required
           className="w-full p-2 border rounded"
         />
         
@@ -897,7 +897,6 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Last Name"
           value={formData.parentLastName}
           onChange={handleChange}
-          required
           className="w-full p-2 border rounded"
         />
         
@@ -906,7 +905,6 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student First Name"
           value={formData.studentFirstName}
           onChange={handleChange}
-          required
           className="w-full p-2 border rounded"
         />
         
@@ -915,17 +913,15 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student Last Name"
           value={formData.studentLastName}
           onChange={handleChange}
-          required
           className="w-full p-2 border rounded"
         />
         
         <input
-          type="email" // Changed to email type for better keyboard
+          type="text" // Changed to email type for better keyboard
           name="parentEmail"
           placeholder="Parent Email"
           value={formData.parentEmail}
           onChange={handleChange}
-          required
           className="w-full p-2 border rounded"
         />
           
