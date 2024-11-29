@@ -751,10 +751,14 @@ const handleRegistrationSubmit = async (e) => {
   // Modified handleInputChange to better handle focus
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData(prevData => ({
-      ...prevData,
+      ...prevData, 
       [name]: value
     }));
+    
+    // Prevent input from losing focus
+    e.target.focus();
   };
 
   // Add touch event handlers to prevent keyboard dismissal
@@ -763,15 +767,7 @@ const handleRegistrationSubmit = async (e) => {
     input.focus();
   };
 
-  const handleSubmit = async (event) => {
   
-    try {
-      await handleRegistrationSubmit(event);
-    } catch (error) {
-      console.error('Form submission error:', error);
-      // No need to show alert here since handleRegistrationSubmit already handles errors
-    }
-  };
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
