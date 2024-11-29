@@ -104,7 +104,7 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent Email"
         value={localData.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
-        className="w-full p-2 border rounded"
+        className="w-full p-4 border rounded"
         />
     
     </div>
