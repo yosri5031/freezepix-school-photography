@@ -18,7 +18,73 @@ import mongoose from 'mongoose';
 
 
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
+const AddressForm = ({ type, data, onChange }) => {
+  const { t } = useTranslation(); // Add this line to use translation
 
+  const handleInputChange = (field) => (e) => {
+    const newValue = e.target.value;
+    const caretPosition = e.target.selectionStart;
+    const scrollPosition = e.target.scrollTop;
+
+    onChange({
+      ...data,
+      [field]: newValue
+    });
+
+    setTimeout(() => {
+      e.target.selectionStart = caretPosition;
+      e.target.selectionEnd = caretPosition;
+      e.target.scrollTop = scrollPosition;
+    }, 0);
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <input
+        type="text"
+        inputMode="text"
+        placeholder="Parent First Name"
+        value={data.parentFirstName|| ''}
+        onChange={handleInputChange('parentFirstName')}
+        className="p-2 border rounded"
+      />
+      <input
+        type="text"
+        inputMode="text"
+        placeholder="Parent Last Name"
+        value={data.lastName || ''}
+        onChange={handleInputChange('parentLastName')}
+        className="p-2 border rounded"
+      />
+      <input
+        type="text"
+        inputMode="text"
+        placeholder="Student First Name"
+        value={data.studentFirstName || ''}
+        onChange={handleInputChange('studentFirstName')}
+        className="col-span-2 p-2 border rounded"
+      />
+      <input
+        type="text"
+        inputMode="text"
+        placeholder="Student Last Name"
+        value={data.studentLastName || ''}
+        onChange={handleInputChange('studentLastName')}
+        className="p-2 border rounded"
+      />
+
+<input
+        type="text"
+        inputMode="text"
+        placeholder="Parent Email"
+        value={data.parentEmail || ''}
+        onChange={handleInputChange('parentEmail')}
+        className="p-2 border rounded"
+      />
+    
+    </div>
+  );
+};
 
 const FreezePIXRegistration = () => {
   // State management for multi-step registration
@@ -748,29 +814,6 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-  // Modified handleInputChange to better handle focus
-  const [formDrafts, setFormDrafts] = useState({});
-
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const caretPosition = e.target.selectionStart;
-    const scrollPosition = e.target.scrollTop;
-
-    // Update form data
-    setTimeout(() => {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-
-      // Restore caret position and scroll position
-      e.target.selectionStart = caretPosition;
-      e.target.selectionEnd = caretPosition;
-      e.target.scrollTop = scrollPosition;
-    }, 0);
-  };
-
     //const packageSelected = packages[selectedPackage];
     const pkg = {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
@@ -881,46 +924,14 @@ const handleRegistrationSubmit = async (e) => {
     </div>
 
         <form onSubmit={handleRegistrationSubmit} className="space-y-4">
-        <input
-          name="parentFirstName"
-          placeholder="Parent First Name"
-          value={formData.parentFirstName || ''}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        
-        <input
-          name="parentLastName"
-          placeholder="Parent Last Name"
-          value={formData.parentLastName || ''}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        
-        <input
-          name="studentFirstName"
-          placeholder="Student First Name"
-          value={formData.studentFirstName || ''}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        
-        <input
-          name="studentLastName"
-          placeholder="Student Last Name"
-          value={formData.studentLastName || ''}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        
-        <input
-          type="text" // Changed to email type for better keyboard
-          name="parentEmail"
-          placeholder="Parent Email"
-          value={formData.parentEmail || ''}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
+        <AddressForm
+  type="registration"
+  data={formData}
+  onChange={(newData) => setFormData(prevData => ({
+    ...prevData,
+    ...newData
+  }))}
+/>
           
 
           {/* Payment Method Selection */}
