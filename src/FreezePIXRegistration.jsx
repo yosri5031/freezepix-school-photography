@@ -891,7 +891,7 @@ const handleRegistrationSubmit = async (e) => {
         <input
           name="parentFirstName"
           placeholder="Parent First Name"
-          value={formDrafts.parentFirstName || ''}
+          value={formData.parentFirstName || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -899,7 +899,7 @@ const handleRegistrationSubmit = async (e) => {
         <input
           name="parentLastName"
           placeholder="Parent Last Name"
-          value={formDrafts.parentLastName || ''}
+          value={formData.parentLastName || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -907,7 +907,7 @@ const handleRegistrationSubmit = async (e) => {
         <input
           name="studentFirstName"
           placeholder="Student First Name"
-          value={formDrafts.studentFirstName || ''}
+          value={formData.studentFirstName || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -915,7 +915,7 @@ const handleRegistrationSubmit = async (e) => {
         <input
           name="studentLastName"
           placeholder="Student Last Name"
-          value={formDrafts.studentLastName || ''}
+          value={formData.studentLastName || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -924,7 +924,7 @@ const handleRegistrationSubmit = async (e) => {
           type="text" // Changed to email type for better keyboard
           name="parentEmail"
           placeholder="Parent Email"
-          value={formDrafts.parentEmail || ''}
+          value={formData.parentEmail || ''}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
