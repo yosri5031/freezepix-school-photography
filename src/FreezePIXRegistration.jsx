@@ -71,32 +71,32 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent First Name"
         value={localData.parentFirstName|| ''}
         onChange={handleInputChange('parentFirstName')}
-        className="p-2 border rounded"
-      />
+        className="w-full p-2 border rounded"
+        />
       <input
         type="text"
         inputMode="text"
         placeholder="Parent Last Name"
         value={localData.parentLastName || ''}
         onChange={handleInputChange('parentLastName')}
-        className="p-2 border rounded"
-      />
+        className="w-full p-2 border rounded"
+        />
       <input
         type="text"
         inputMode="text"
         placeholder="Student First Name"
         value={localData.studentFirstName || ''}
         onChange={handleInputChange('studentFirstName')}
-        className="col-span-2 p-2 border rounded"
-      />
+        className="w-full p-2 border rounded"
+        />
       <input
         type="text"
         inputMode="text"
         placeholder="Student Last Name"
         value={localData.studentLastName || ''}
         onChange={handleInputChange('studentLastName')}
-        className="p-2 border rounded"
-      />
+        className="w-full p-2 border rounded"
+        />
 
 <input
         type="text"
@@ -104,8 +104,8 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent Email"
         value={localData.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
-        className="p-2 border rounded"
-      />
+        className="w-full p-2 border rounded"
+        />
     
     </div>
   );
