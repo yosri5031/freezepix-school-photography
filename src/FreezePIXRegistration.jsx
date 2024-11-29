@@ -913,7 +913,6 @@ const handleRegistrationSubmit = async (e) => {
           name="parentFirstName"
           placeholder="Parent First Name"
           value={formData.parentFirstName}
-          onChange={handleInputChange('parentFirstName')}
           onTouchStart={handleTouchStart}
           required
           autoCapitalize="words"
@@ -926,7 +925,6 @@ const handleRegistrationSubmit = async (e) => {
           name="parentLastName"
           placeholder="Parent Last Name"
           value={formData.parentLastName}
-          onChange={handleInputChange('parentLastName')}
           onTouchStart={handleTouchStart}
           required
           autoCapitalize="words"
@@ -939,7 +937,6 @@ const handleRegistrationSubmit = async (e) => {
           name="studentFirstName"
           placeholder="Student First Name"
           value={formData.studentFirstName}
-          onChange={handleInputChange('studentFirstName')}
           onTouchStart={handleTouchStart}
           required
           autoCapitalize="words"
@@ -952,7 +949,6 @@ const handleRegistrationSubmit = async (e) => {
           name="studentLastName"
           placeholder="Student Last Name"
           value={formData.studentLastName}
-          onChange={handleInputChange('studentLastName')}
           onTouchStart={handleTouchStart}
           required
           autoCapitalize="words"
@@ -966,7 +962,6 @@ const handleRegistrationSubmit = async (e) => {
           name="parentEmail"
           placeholder="Parent Email"
           value={formData.parentEmail}
-          onChange={handleInputChange('parentEmail')}
           onTouchStart={handleTouchStart}
           required
           className="w-full p-2 border rounded"
