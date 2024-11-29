@@ -753,28 +753,36 @@ const handleRegistrationSubmit = async (e) => {
     parentEmail: useRef(null)
   };
 
+  // Modified handleInputChange to better handle focus
   const handleInputChange = useCallback((field) => (e) => {
+    e.persist(); // Persist the synthetic event
     const inputElement = e.target;
-    const { value, selectionStart } = inputElement;
-    
+    const cursorPosition = inputElement.selectionStart;
+
     setFormData(prevData => {
-      const updatedData = { 
-        ...prevData, 
-        [field]: value 
+      const updatedData = {
+        ...prevData,
+        [field]: inputElement.value
       };
-  
-      // Use `requestAnimationFrame` for smoother rendering
-      requestAnimationFrame(() => {
-        try {
-          inputElement.setSelectionRange(selectionStart, selectionStart);
-        } catch (error) {
-          console.warn('Cursor position restore failed', error);
+
+      // Preserve focus and cursor position after state update
+      setTimeout(() => {
+        if (inputElement) {
+          inputElement.focus();
+          inputElement.setSelectionRange(cursorPosition, cursorPosition);
         }
-      });
-  
+      }, 0);
+
       return updatedData;
     });
   }, []);
+
+  // Add touch event handlers to prevent keyboard dismissal
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    const input = e.target;
+    input.focus();
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -898,59 +906,69 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <input
-        ref={inputRefs.parentFirstName}
-        name="parentFirstName"
-        placeholder="Parent First Name"
-        value={formData.parentFirstName}
-        onChange={handleInputChange('parentFirstName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-      ref={inputRefs.parentLastName}
-        name="parentLastName"
-        placeholder="Parent Last Name"
-        value={formData.parentLastName}
-        onChange={handleInputChange('parentLastName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-        ref={inputRefs.studentFirstName}
-        name="studentFirstName"
-        placeholder="Student First Name"
-        value={formData.studentFirstName}
-        onChange={handleInputChange('studentFirstName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-        ref={inputRefs.studentLastName}
-        name="studentLastName"
-        placeholder="Student Last Name"
-        value={formData.studentLastName}
-        onChange={handleInputChange('studentLastName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-         ref={inputRefs.parentEmail}
-        type="text"
-        name="parentEmail"
-        placeholder="Parent Email"
-        value={formData.parentEmail}
-        onChange={handleInputChange('parentEmail')}
-        className="w-full p-2 border rounded"
-        required
-      />
+          ref={inputRefs.parentFirstName}
+          name="parentFirstName"
+          placeholder="Parent First Name"
+          value={formData.parentFirstName}
+          onChange={handleInputChange('parentFirstName')}
+          onTouchStart={handleTouchStart}
+          required
+          autoCapitalize="words"
+          className="w-full p-2 border rounded"
+          autoComplete="off" // Add this to prevent autocomplete from interfering
+        />
+        
+        <input
+          ref={inputRefs.parentLastName}
+          name="parentLastName"
+          placeholder="Parent Last Name"
+          value={formData.parentLastName}
+          onChange={handleInputChange('parentLastName')}
+          onTouchStart={handleTouchStart}
+          required
+          autoCapitalize="words"
+          className="w-full p-2 border rounded"
+          autoComplete="off"
+        />
+        
+        <input
+          ref={inputRefs.studentFirstName}
+          name="studentFirstName"
+          placeholder="Student First Name"
+          value={formData.studentFirstName}
+          onChange={handleInputChange('studentFirstName')}
+          onTouchStart={handleTouchStart}
+          required
+          autoCapitalize="words"
+          className="w-full p-2 border rounded"
+          autoComplete="off"
+        />
+        
+        <input
+          ref={inputRefs.studentLastName}
+          name="studentLastName"
+          placeholder="Student Last Name"
+          value={formData.studentLastName}
+          onChange={handleInputChange('studentLastName')}
+          onTouchStart={handleTouchStart}
+          required
+          autoCapitalize="words"
+          className="w-full p-2 border rounded"
+          autoComplete="off"
+        />
+        
+        <input
+          ref={inputRefs.parentEmail}
+          type="email" // Changed to email type for better keyboard
+          name="parentEmail"
+          placeholder="Parent Email"
+          value={formData.parentEmail}
+          onChange={handleInputChange('parentEmail')}
+          onTouchStart={handleTouchStart}
+          required
+          className="w-full p-2 border rounded"
+          autoComplete="off"
+        />
           
 
           {/* Payment Method Selection */}
