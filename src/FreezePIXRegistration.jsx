@@ -772,46 +772,38 @@ const StableInput = React.memo(({
     parentEmail: useRef(null)
   };
 
-  const handleInputChange = useCallback((field) => (e) => {
-    const inputElement = e.target;
-    const { value, selectionStart } = inputElement;
+  const handleInputChange = useCallback((field) => (event) => {
+    const { value } = event.target;
     
-    setFormData(prevData => {
-      const updatedData = { 
-        ...prevData, 
-        [field]: value 
-      };
-  
-      // Use `requestAnimationFrame` for smoother rendering
-      requestAnimationFrame(() => {
-        try {
-          inputElement.setSelectionRange(selectionStart, selectionStart);
-        } catch (error) {
-          console.warn('Cursor position restore failed', error);
-        }
-      });
-  
-      return updatedData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   }, []);
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      setIsLoading(true);
-    
-      try {
-        // For credit card payments
+  const handleSubmit = useCallback(async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Combine form validation and submission logic
+      const submissionData = {
+        ...formData,
+        paymentMethod,
+        total: calculateTotal().total
+      };
+
+      // Actual submission logic would go here
+      await handleRegistrationSubmit(submissionData);
       
-    
-        // Call registration submission regardless of payment method
-        await handleRegistrationSubmit();
-        
-      } catch (error) {
-        console.error('Payment error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      // Reset form or navigate after successful submission
+    } catch (error) {
+      console.error('Registration submission error:', error);
+      // Handle error (show message to user, etc.)
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, paymentMethod, calculateTotal]);
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
@@ -907,248 +899,116 @@ const StableInput = React.memo(({
     const priceDetails = calculateTotal();
     return (
       <div className="space-y-4">
-    {/* Package Summary */}
-    <div className="bg-gray-100 rounded-lg p-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold">{pkg.name}</h3>
-          <p className="text-sm text-gray-600">{pkg.description}</p>
-        </div>
-        <div className="font-bold text-xl text-green-600">
-  {selectedSchool.country === 'Tunisia' ? 
-    `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
-    `$${pkg.price.toFixed(2)}`}
-</div>
-      </div>
-    </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-        ref={inputRefs.parentFirstName}
-        name="parentFirstName"
-        placeholder="Parent First Name"
-        value={formData.parentFirstName}
-        onChange={handleInputChange('parentFirstName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-      ref={inputRefs.parentLastName}
-        name="parentLastName"
-        placeholder="Parent Last Name"
-        value={formData.parentLastName}
-        onChange={handleInputChange('parentLastName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-        ref={inputRefs.studentFirstName}
-        name="studentFirstName"
-        placeholder="Student First Name"
-        value={formData.studentFirstName}
-        onChange={handleInputChange('studentFirstName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-        ref={inputRefs.studentLastName}
-        name="studentLastName"
-        placeholder="Student Last Name"
-        value={formData.studentLastName}
-        onChange={handleInputChange('studentLastName')}
-        required
-        autoCapitalize="words"
-        className="w-full p-2 border rounded"
-
-      />
-      <input
-         ref={inputRefs.parentEmail}
-        type="text"
-        name="parentEmail"
-        placeholder="Parent Email"
-        value={formData.parentEmail}
-        onChange={handleInputChange('parentEmail')}
-        className="w-full p-2 border rounded"
-        required
-      />
-          
-
-          {/* Payment Method Selection */}
-          <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
-          {selectedSchool.country !== 'Tunisia' && (
-            <div className="mb-4">
-              <h4 className="font-medium">{t('canada.select')}</h4>
-              <label className="block">
-                <input
-                  type="radio"
-                  value="interac"
-                  checked={paymentMethod === 'interac'}
-                  onChange={handlePaymentMethodChange}
-                  className="mr-2"
-                />
-                {t('canada.interac')}
-              </label>
-              <label className="block">
-                <input
-                  type="radio"
-                  value="credit"
-                  checked={paymentMethod === 'credit'}
-                  onChange={handlePaymentMethodChange}
-                  className="mr-2"
-                />
-                {t('canada.credit')}
-              </label>
+        {/* Package Summary */}
+        <div className="bg-gray-100 rounded-lg p-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="font-semibold">{pkg.name}</h3>
+              <p className="text-sm text-gray-600">{pkg.description}</p>
             </div>
-          )}
-
-           {/* Order Summary  */}
-           <div className="bg-white rounded-lg p-4 shadow-sm border">
-    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-    <div className="space-y-2">
-        <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>
-                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
-            </span>
-        </div>
-
-        {selectedSchool.country === 'Tunisia' && (
-            <div className="flex justify-between text-gray-600">
-                <span>TVA (19%):</span>
-                <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
+            <div className="font-bold text-xl text-green-600">
+              {renderPrice()}
             </div>
-        )}
-
-{priceDetails.taxDetails &&
-            Object.keys(priceDetails.taxDetails).map(key => (
-                <div key={key} className="flex justify-between text-gray-600">
-                    <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
-                    <span>
-                        {selectedSchool.country !== 'Tunisia' ? `$${priceDetails.taxDetails[key].amount.toFixed(2)}` : ''}
-                    </span>
-                </div>
-            ))
-        }
-
-        <div className="border-t pt-2 mt-2">
-            <div className="flex justify-between font-bold">
-                <span>Total:</span>
-                <span>
-                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-
-{/* Option de paiement Tunisia */}
-{selectedSchool.country === 'Tunisia' && (
-  <div className="p-4 bg-yellow-50 rounded-lg">
-            <h4 className="font-medium text-yellow-700">
-              {t('tunisia.daycarePayment')}
-            </h4>
-            <p className="text-sm text-yellow-600">
-            </p>
           </div>
-)
-  }
- {selectedSchool.country !== 'Tunisia' && (
-            <>
-                  {/* Option de paiement Interac */}
-                  {paymentMethod === 'interac' && (
-                    <div className="border rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{t('canada.interac')}</h4>
-                          <p className="text-sm text-gray-600">{t('canada.send')}</p>
-                          <p className="font-bold">Info@freezepix.com</p>
-                        </div>
-                        <img 
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp9FibB-R9ac8XXEootfuHyEdTuaeJ9bZiQQ&s" 
-                          alt="Interac E-Transfer" 
-                          className="h-12 w-auto"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t('canada.placing')}
-                      </p>
-                      {/* Bouton de commande pour Interac */}
-                      
-                    </div>
-                  )}
-      
-                  {/* Option de paiement par carte de crédit */}
-                  {paymentMethod === 'credit' && (
-  <Elements stripe={stripePromise}>
-    {/*<CheckoutForm
-      
-    /> */}
-    <h2> We will add stripe checkout session ASAP</h2>
-  </Elements>
-)}
- </>
-              )}
-                </div>
-               
+        </div>
+  
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Input Fields */}
+          {[
+            { name: 'parentFirstName', placeholder: 'Parent First Name' },
+            { name: 'parentLastName', placeholder: 'Parent Last Name' },
+            { name: 'studentFirstName', placeholder: 'Student First Name' },
+            { name: 'studentLastName', placeholder: 'Student Last Name' },
+            { name: 'parentEmail', placeholder: 'Parent Email', type: 'email' }
+          ].map(({ name, placeholder, type = 'text' }) => (
+            <input
+              key={name}
+              type={type}
+              name={name}
+              placeholder={placeholder}
+              value={formData[name]}
+              onChange={handleInputChange(name)}
+              required
+              autoCapitalize="words"
+              className="w-full p-2 border rounded"
+            />
+          ))}
+  
+          {/* Payment Method Selection */}
+          {selectedSchool?.country !== 'Tunisia' && (
+            <div className="mb-4">
+              <h4 className="font-medium">Select Payment Method</h4>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="interac"
+                    checked={paymentMethod === 'interac'}
+                    onChange={handlePaymentMethodChange}
+                    className="mr-2"
+                  />
+                  Interac E-Transfer
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="credit"
+                    checked={paymentMethod === 'credit'}
+                    onChange={handlePaymentMethodChange}
+                    className="mr-2"
+                  />
+                  Credit Card
+                </label>
               </div>
-
-          
-      <div className="flex justify-between space-x-4">
-        <button 
-          type="button"
-          onClick={previousStep} 
-          className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
-        >
-          {t('buttons.previous')}
-        </button>
-
-        {selectedSchool.country === 'Tunisia' && (
-           <button 
-           type="submit"
-           onClick={handleRegistrationSubmit}
-           disabled={isLoading}
-           className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-             isLoading ? 'opacity-50 cursor-not-allowed' : ''
-           }`}
-         >
-           {isLoading ? (
-             <div className="flex items-center justify-center">
-               <Loader className="animate-spin h-5 w-5 mr-2" />
-               Loading...
-             </div>
-           ) : (
-             `${t('buttons.submit')} (${priceDetails.total.toFixed(2)} TND)`
-           )}
-         </button>
-        )}
-
-        {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
-          <button 
-          type="submit"
-          onClick={handleRegistrationSubmit}
-          disabled={isLoading}
-          className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <Loader className="animate-spin h-5 w-5 mr-2" />
-              Loading...
             </div>
-          ) : (
-            `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
           )}
-        </button>
-        )}
-      </div>
+  
+          {/* Order Summary */}
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span>${calculateTotal().subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Tax ({calculateTotal().taxRate}%):</span>
+                <span>${(calculateTotal().total - calculateTotal().subtotal).toFixed(2)}</span>
+              </div>
+              <div className="border-t pt-2 mt-2 flex justify-between font-bold">
+                <span>Total:</span>
+                <span>{renderPrice()}</span>
+              </div>
+            </div>
+          </div>
+  
+          {/* Action Buttons */}
+          <div className="flex justify-between space-x-4">
+            <button 
+              type="button"
+              onClick={previousStep} 
+              className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+            >
+              Previous
+            </button>
+  
+            <button 
+              type="submit"
+              disabled={isLoading}
+              className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
+                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <Loader className="animate-spin h-5 w-5 mr-2" />
+                  Loading...
+                </div>
+              ) : (
+                `Submit (${renderPrice()})`
+              )}
+            </button>
+          </div>
         </form>
       </div>
     );
