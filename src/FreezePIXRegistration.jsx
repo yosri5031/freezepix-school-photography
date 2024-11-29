@@ -763,12 +763,32 @@ const StableInput = React.memo(({
   const RegistrationForm = () => {
     
     
-    const handleInputChange = useCallback((field) => (e) => {
+    const handleInputChange = (field) => (e) => {
+      const newValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
+      const scrollPosition = e.target.scrollTop;
+    
+      // Update form data
       setFormData(prevData => ({
         ...prevData,
-        [field]: e.target.value
+        [field]: newValue
       }));
-    }, []);
+    
+      // Preserve caret position and scroll state
+      setTimeout(() => {
+        // Ensure the input exists and has focus
+        const inputElement = e.target;
+        if (inputElement) {
+          try {
+            inputElement.selectionStart = caretPosition;
+            inputElement.selectionEnd = caretPosition;
+            inputElement.scrollTop = scrollPosition;
+          } catch (error) {
+            console.warn('Could not restore caret position', error);
+          }
+        }
+      }, 0);
+    };
 
     const handleSubmit = async (event) => {
       event.preventDefault();
