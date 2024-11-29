@@ -674,27 +674,27 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
-  e.preventDefault(); // Prevent default form submission
+  e.preventDefault(); // Add this line
   setIsLoading(true);
 
   try {
-    // Validate form data
-    if (!formData.parentFirstName || 
-        !formData.parentLastName || 
-        !formData.parentEmail || 
-        !formData.studentFirstName || 
-        !formData.studentLastName) {
-      throw new Error('Please fill in all required fields');
-    }
-
+    // Ensure IDs are properly converted to strings
     const registrationData = {
-      parentFirstName: formData.parentFirstName.trim(),
-      parentLastName: formData.parentLastName.trim(),
-      parentEmail: formData.parentEmail.trim(),
-      studentFirstName: formData.studentFirstName.trim(),
-      studentLastName: formData.studentLastName.trim(),
-      schoolId: selectedSchool._id?.toString() || '',
-      eventId: selectedEvent._id?.toString() || '',
+      parentFirstName: formData.parentFirstName,
+      parentLastName: formData.parentLastName,
+      parentEmail: formData.parentEmail,
+      studentFirstName: formData.studentFirstName,
+      studentLastName: formData.studentLastName,
+      schoolId: selectedSchool._id 
+        ? (typeof selectedSchool._id === 'string' 
+            ? selectedSchool._id 
+            : selectedSchool._id.toString())
+        : '',
+      eventId: selectedEvent._id
+        ? (typeof selectedEvent._id === 'string' 
+            ? selectedEvent._id 
+            : selectedEvent._id.toString())
+        : '',
       paymentMethod: formData.paymentMethod,
       paymentStatus: formData.paymentMethod === 'daycare'
         ? 'awaiting_daycare_payment'
@@ -703,7 +703,17 @@ const handleRegistrationSubmit = async (e) => {
         : 'pending'
     };
 
-    console.log('Registration Data:', registrationData); // Debug log
+    // Additional validation before submission
+    if (!registrationData.schoolId || !registrationData.eventId) {
+      throw new Error('School or Event ID is missing');
+    }
+
+    // Log the data being sent with more detailed information
+    console.log('Sending registration data:', {
+      ...registrationData,
+      schoolIdType: typeof registrationData.schoolId,
+      eventIdType: typeof registrationData.eventId
+    });
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
@@ -721,8 +731,14 @@ const handleRegistrationSubmit = async (e) => {
     });
     setCurrentStep(currentStep + 1);
   } catch (error) {
-    console.error('Registration error:', error);
-    alert(error.message);
+    console.error('Registration error details:', {
+      message: error.message,
+      response: error.response?.data,
+      fullError: error
+    });
+    
+    // Optional: Show user-friendly error message
+    alert('Registration failed. Please check your information and try again.');
   } finally {
     setIsLoading(false);
   }
@@ -732,21 +748,44 @@ const handleRegistrationSubmit = async (e) => {
   // Registration Form Component
   const RegistrationForm = () => {
     
-   // Modified handleInputChange to better handle focus
+    const [formData, setFormData] = useState({
+      parentFirstName: '',
+      parentLastName: '',
+      parentEmail: '',
+      studentFirstName: '',
+      studentLastName: '',
+      paymentMethod: 'credit',
+      schoolId: selectedSchool?._id || '',
+      eventId: selectedEvent?._id || '',
+    });
+
+
+
+  // Modified handleInputChange to better handle focus
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`Updating ${name} with value:`, value); // Debug log
-    setFormData(prevData => {
-      const newData = {
-        ...prevData,
-        [name]: value
-      };
-      console.log('New form data:', newData); // Debug log
-      return newData;
-    });
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
   };
 
- 
+  // Add touch event handlers to prevent keyboard dismissal
+  const handleTouchStart = (e) => {
+    const input = e.target;
+    input.focus();
+  };
+
+  const handleSubmit = async (event) => {
+  
+    try {
+      await handleRegistrationSubmit(event);
+    } catch (error) {
+      console.error('Form submission error:', error);
+      // No need to show alert here since handleRegistrationSubmit already handles errors
+    }
+  };
+
     //const packageSelected = packages[selectedPackage];
     const pkg = {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
@@ -858,54 +897,51 @@ const handleRegistrationSubmit = async (e) => {
 
         <form onSubmit={handleRegistrationSubmit} className="space-y-4">
         <input
-        type="text"
-        name="parentFirstName"
-        placeholder="Parent First Name"
-        value={formData.parentFirstName}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded"
-      />
-      
-      <input
-        type="text"
-        name="parentLastName"
-        placeholder="Parent Last Name"
-        value={formData.parentLastName}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded"
-      />
-      
-      <input
-        type="text"
-        name="studentFirstName"
-        placeholder="Student First Name"
-        value={formData.studentFirstName}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded"
-      />
-      
-      <input
-        type="text"
-        name="studentLastName"
-        placeholder="Student Last Name"
-        value={formData.studentLastName}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded"
-      />
-      
-      <input
-        type="email"
-        name="parentEmail"
-        placeholder="Parent Email"
-        value={formData.parentEmail}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded"
-      />
+          name="parentFirstName"
+          placeholder="Parent First Name"
+          value={formData.parentFirstName}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          name="parentLastName"
+          placeholder="Parent Last Name"
+          value={formData.parentLastName}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          name="studentFirstName"
+          placeholder="Student First Name"
+          value={formData.studentFirstName}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          name="studentLastName"
+          placeholder="Student Last Name"
+          value={formData.studentLastName}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          type="email" // Changed to email type for better keyboard
+          name="parentEmail"
+          placeholder="Parent Email"
+          value={formData.parentEmail}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+          
 
           {/* Payment Method Selection */}
           <div className="space-y-4">
