@@ -674,7 +674,6 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
-  e.preventDefault(); // Add this line
   setIsLoading(true);
 
   try {
@@ -901,7 +900,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent First Name"
           value={formData.parentFirstName}
           onChange={handleChange}
-          required
+          Required
           className="w-full p-2 border rounded"
         />
         
@@ -910,7 +909,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Last Name"
           value={formData.parentLastName}
           onChange={handleChange}
-          required
+          Required
           className="w-full p-2 border rounded"
         />
         
@@ -919,7 +918,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student First Name"
           value={formData.studentFirstName}
           onChange={handleChange}
-          required
+          Required
           className="w-full p-2 border rounded"
         />
         
@@ -928,7 +927,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Student Last Name"
           value={formData.studentLastName}
           onChange={handleChange}
-          required
+          Required
           className="w-full p-2 border rounded"
         />
         
@@ -938,7 +937,7 @@ const handleRegistrationSubmit = async (e) => {
           placeholder="Parent Email"
           value={formData.parentEmail}
           onChange={handleChange}
-          required
+          Required
           className="w-full p-2 border rounded"
         />
           
@@ -1076,6 +1075,7 @@ const handleRegistrationSubmit = async (e) => {
         {selectedSchool.country === 'Tunisia' && (
            <button 
            type="submit"
+           onClick={handleRegistrationSubmit}
            disabled={isLoading}
            className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
              isLoading ? 'opacity-50 cursor-not-allowed' : ''
@@ -1095,6 +1095,7 @@ const handleRegistrationSubmit = async (e) => {
         {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
           <button 
           type="submit"
+          onClick={handleRegistrationSubmit}
           disabled={isLoading}
           className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
             isLoading ? 'opacity-50 cursor-not-allowed' : ''
