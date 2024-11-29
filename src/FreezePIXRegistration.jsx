@@ -674,6 +674,7 @@ const PackageSelection = () => {
 };
 
 const handleRegistrationSubmit = async (e) => {
+  e.preventDefault(); // Prevent default form submission
   setIsLoading(true);
 
   try {
@@ -732,18 +733,16 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
    // Modified handleInputChange to better handle focus
-  const handleChange = (e) => {
+   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`Updating ${name} with value:`, value); // Debug log
-    setFormData(prevData => {
-      const newData = {
-        ...prevData,
-        [name]: value
-      };
-      console.log('New form data:', newData); // Debug log
-      return newData;
-    });
+  
+    // Use functional state updates to ensure only necessary changes are made
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
+  
 
  
     //const packageSelected = packages[selectedPackage];
