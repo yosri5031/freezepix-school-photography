@@ -761,11 +761,14 @@ const handleChange = (e) => {
     [name]: value
   }));
 
+  setTimeout(() => {
+    e.target.selectionStart = caretPosition;
+    e.target.selectionEnd = caretPosition;
+    e.target.scrollTop = scrollPosition;
+  }, 0);
+
   // Add touch event handlers to prevent keyboard dismissal
-  const handleTouchStart = (e) => {
-    const input = e.target;
-    input.focus();
-  };
+ 
 
 }
 
