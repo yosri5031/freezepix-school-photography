@@ -744,32 +744,13 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-    const handleInputChange = (field) => (e) => {
+    const handleInputChange = useCallback((field) => (e) => {
       const newValue = e.target.value;
-      const caretPosition = e.target.selectionStart;
-      const scrollPosition = e.target.scrollTop;
-  
-      // Update form data
       setFormData(prevData => ({
         ...prevData,
         [field]: newValue
       }));
-  
-      // Preserve caret position and scroll state
-      setTimeout(() => {
-        // Ensure the input exists and has focus
-        const inputElement = e.target;
-        if (inputElement) {
-          try {
-            inputElement.selectionStart = caretPosition;
-            inputElement.selectionEnd = caretPosition;
-            inputElement.scrollTop = scrollPosition;
-          } catch (error) {
-            console.warn('Could not restore caret position', error);
-          }
-        }
-      }, 0);
-    };
+    }, []);
 
     const handleSubmit = async (event) => {
       event.preventDefault();
@@ -907,7 +888,6 @@ const handleRegistrationSubmit = async (e) => {
           onChange={handleInputChange('parentFirstName')}
           className="w-full p-2 border rounded"
           required
-          autoCorrect="off"
           autoCapitalize="words"
           spellCheck="false"
         />
