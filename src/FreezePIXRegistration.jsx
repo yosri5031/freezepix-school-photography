@@ -761,10 +761,12 @@ const handleChange = (e) => {
   }));
   
   // Debounce saving to formData
+  const timer = setTimeout(() => {
     setFormData(prevData => ({
       ...prevData, 
       [name]: value
     }));
+  }, 19000);
 };
 
   // Add touch event handlers to prevent keyboard dismissal
