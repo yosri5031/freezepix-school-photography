@@ -773,15 +773,24 @@ const StableInput = React.memo(({
   };
 
   const handleInputChange = useCallback((field) => (e) => {
-    console.log('Input change:', {
-      field,
-      value: e.target.value,
-      caretPosition: e.target.selectionStart
-    });
-  
+    const inputElement = e.target;
+    const { value, selectionStart } = inputElement;
+    
     setFormData(prevData => {
-      const updatedData = { ...prevData, [field]: e.target.value };
-      console.log('Updated form data:', updatedData);
+      const updatedData = { 
+        ...prevData, 
+        [field]: value 
+      };
+  
+      // Use `requestAnimationFrame` for smoother rendering
+      requestAnimationFrame(() => {
+        try {
+          inputElement.setSelectionRange(selectionStart, selectionStart);
+        } catch (error) {
+          console.warn('Cursor position restore failed', error);
+        }
+      });
+  
       return updatedData;
     });
   }, []);
