@@ -751,28 +751,32 @@ const handleRegistrationSubmit = async (e) => {
   // Modified handleInputChange to better handle focus
   const [formDrafts, setFormDrafts] = useState({});
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  const caretPosition = e.target.selectionStart;
-      const scrollPosition = e.target.scrollTop;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const caretPosition = e.target.selectionStart;
+    const scrollPosition = e.target.scrollTop;
   
-  // Update draft for specific field
+    // Update draft for a specific field
+    setFormData(prev => ({
+      ...formData,
+      [name]: value
+    }));
   
-  setFormData(prev => ({
-    ...prev,
-    [name]: value
-  }));
-
-  setTimeout(() => {
-    e.target.selectionStart = caretPosition;
-    e.target.selectionEnd = caretPosition;
-    e.target.scrollTop = scrollPosition;
-  }, 0);
-
-  // Add touch event handlers to prevent keyboard dismissal
- 
-
-}
+    setTimeout(() => {
+      e.target.selectionStart = caretPosition;
+      e.target.selectionEnd = caretPosition;
+      e.target.scrollTop = scrollPosition;
+    }, 0);
+  
+    // Add touch event handlers to prevent keyboard dismissal
+    e.target.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+    });
+  
+    e.target.addEventListener('touchmove', (event) => {
+      event.preventDefault();
+    });
+  };
 
     //const packageSelected = packages[selectedPackage];
     const pkg = {
