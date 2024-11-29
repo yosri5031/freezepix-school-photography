@@ -738,17 +738,35 @@ const handleRegistrationSubmit = async (e) => {
     setIsLoading(false);
   }
 };
-
+const StableInput = React.memo(({ 
+  value, 
+  onChange, 
+  placeholder, 
+  name 
+}) => {
+  return (
+    <input
+      type="text"
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      autoCorrect="off"
+      autoCapitalize="words"
+      spellCheck="false"
+      className="w-full p-2 border rounded"
+    />
+  );
+});
 
   // Registration Form Component
   const RegistrationForm = () => {
     
-
+    
     const handleInputChange = useCallback((field) => (e) => {
-      const newValue = e.target.value;
       setFormData(prevData => ({
         ...prevData,
-        [field]: newValue
+        [field]: e.target.value
       }));
     }, []);
 
@@ -880,64 +898,46 @@ const handleRegistrationSubmit = async (e) => {
     </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="parentFirstName"
-          placeholder="Parent First Name"
-          value={formData.parentFirstName}
-          onChange={handleInputChange('parentFirstName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="parentLastName"
-          placeholder="Parent Last Name"
-          value={formData.parentLastName}
-          onChange={handleInputChange('parentLastName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="studentFirstName"
-          placeholder="Student First Name"
-          value={formData.studentFirstName}
-          onChange={handleInputChange('studentFirstName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="text"
-          name="studentLastName"
-          placeholder="Student Last Name"
-          value={formData.studentLastName}
-          onChange={handleInputChange('studentLastName')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          autoCapitalize="words"
-          spellCheck="false"
-        />
-        <input
-          type="email"
-          name="parentEmail"
-          placeholder="Parent Email"
-          value={formData.parentEmail}
-          onChange={handleInputChange('parentEmail')}
-          className="w-full p-2 border rounded"
-          required
-          autoCorrect="off"
-          spellCheck="false"
-        />
+        <StableInput
+        name="parentFirstName"
+        placeholder="Parent First Name"
+        value={formData.parentFirstName}
+        onChange={handleInputChange('parentFirstName')}
+        required
+        autoCapitalize="words"
+      />
+      <StableInput
+        name="parentLastName"
+        placeholder="Parent Last Name"
+        value={formData.parentLastName}
+        onChange={handleInputChange('parentLastName')}
+        required
+        autoCapitalize="words"
+      />
+      <StableInput
+        name="studentFirstName"
+        placeholder="Student First Name"
+        value={formData.studentFirstName}
+        onChange={handleInputChange('studentFirstName')}
+        required
+        autoCapitalize="words"
+      />
+      <StableInput
+        name="studentLastName"
+        placeholder="Student Last Name"
+        value={formData.studentLastName}
+        onChange={handleInputChange('studentLastName')}
+        required
+        autoCapitalize="words"
+      />
+      <StableInput
+        type="email"
+        name="parentEmail"
+        placeholder="Parent Email"
+        value={formData.parentEmail}
+        onChange={handleInputChange('parentEmail')}
+        required
+      />
           
 
           {/* Payment Method Selection */}
