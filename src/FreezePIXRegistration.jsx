@@ -897,16 +897,6 @@ const StableInput = React.memo(({
       };
 
     const priceDetails = calculateTotal();
-
-    const renderPrice = () => {
-      const country = selectedSchool?.country;
-      const priceDetails = calculateTotal();
-  
-      if (country === 'Tunisia') {
-        return `${(priceDetails.total / 2).toFixed(2)} TND`;
-      }
-      return `$${priceDetails.total.toFixed(2)}`;
-    };
     return (
       <div className="space-y-4">
         {/* Package Summary */}
