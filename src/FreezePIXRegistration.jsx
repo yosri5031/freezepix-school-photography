@@ -763,32 +763,37 @@ const StableInput = React.memo(({
   const RegistrationForm = () => {
     
     
-    const handleInputChange = (field) => (e) => {
-      const newValue = e.target.value;
-      const caretPosition = e.target.selectionStart;
-      const scrollPosition = e.target.scrollTop;
+    // Create refs for inputs
+  const inputRefs = {
+    parentFirstName: useRef(null),
+    parentLastName: useRef(null),
+    studentFirstName: useRef(null),
+    studentLastName: useRef(null),
+    parentEmail: useRef(null)
+  };
+
+  const handleInputChange = (field) => (e) => {
+    const inputElement = e.target;
+    const newValue = inputElement.value;
     
-      // Update form data
-      setFormData(prevData => ({
-        ...prevData,
-        [field]: newValue
-      }));
-    
-      // Preserve caret position and scroll state
-      setTimeout(() => {
-        // Ensure the input exists and has focus
-        const inputElement = e.target;
-        if (inputElement) {
-          try {
-            inputElement.selectionStart = caretPosition;
-            inputElement.selectionEnd = caretPosition;
-            inputElement.scrollTop = scrollPosition;
-          } catch (error) {
-            console.warn('Could not restore caret position', error);
-          }
-        }
-      }, 0);
-    };
+    // Capture cursor position immediately
+    const caretPosition = inputElement.selectionStart;
+
+    // Update form data
+    setFormData(prevData => ({
+      ...prevData,
+      [field]: newValue
+    }));
+
+    // Use requestAnimationFrame for more reliable focus preservation
+    requestAnimationFrame(() => {
+      const currentInputRef = inputRefs[field].current;
+      if (currentInputRef) {
+        currentInputRef.focus();
+        currentInputRef.setSelectionRange(caretPosition, caretPosition);
+      }
+    });
+  };
 
     const handleSubmit = async (event) => {
       event.preventDefault();
@@ -919,6 +924,7 @@ const StableInput = React.memo(({
 
         <form onSubmit={handleSubmit} className="space-y-4">
         <StableInput
+        ref={inputRefs.parentFirstName}
         name="parentFirstName"
         placeholder="Parent First Name"
         value={formData.parentFirstName}
@@ -927,6 +933,7 @@ const StableInput = React.memo(({
         autoCapitalize="words"
       />
       <StableInput
+      ref={inputRefs.parentLastName}
         name="parentLastName"
         placeholder="Parent Last Name"
         value={formData.parentLastName}
@@ -935,6 +942,7 @@ const StableInput = React.memo(({
         autoCapitalize="words"
       />
       <StableInput
+        ref={inputRefs.studentFirstName}
         name="studentFirstName"
         placeholder="Student First Name"
         value={formData.studentFirstName}
@@ -943,6 +951,7 @@ const StableInput = React.memo(({
         autoCapitalize="words"
       />
       <StableInput
+        ref={inputRefs.studentLastName}
         name="studentLastName"
         placeholder="Student Last Name"
         value={formData.studentLastName}
@@ -951,7 +960,8 @@ const StableInput = React.memo(({
         autoCapitalize="words"
       />
       <StableInput
-        type="email"
+         ref={inputRefs.parentEmail}
+        type="text"
         name="parentEmail"
         placeholder="Parent Email"
         value={formData.parentEmail}
