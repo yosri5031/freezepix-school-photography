@@ -182,8 +182,80 @@ const FreezePIXRegistration = () => {
     return { events, eventsLoading, eventsError };
   };
 
+  // Add these to your useEffect hooks
+useEffect(() => {
+  // Check URL for successful payment
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+  
+  if (sessionId) {
+    verifyPayment(sessionId);
+  }
+}, []);
+
+const verifyPayment = async (sessionId) => {
+  try {
+    const response = await axios.get(`https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-payment-verification?session_id=${sessionId}`);
+    if (response.data.success) {
+      setCurrentStep(5); // Move to confirmation step
+      setRegistrationConfirmation(true);
+    }
+  } catch (error) {
+    console.error('Payment verification failed:', error);
+  }
+};
 
 
+  const CheckoutForm = ({ amount, onSuccess }) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+  
+    const handleCheckout = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError(null);
+  
+      try {
+        // Create checkout session
+        const response = await axios.post('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout', {
+          amount: amount * 100, // Convert to cents
+          currency: 'usd'
+        });
+  
+        const { sessionId } = response.data;
+  
+        // Redirect to Stripe checkout
+        const { error } = await stripe.redirectToCheckout({
+          sessionId
+        });
+  
+        if (error) {
+          throw new Error(error.message);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    return (
+      <div className="max-w-md mx-auto p-4">
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        <button
+          onClick={handleCheckout}
+          disabled={loading || !stripe}
+          className={`w-full py-2 px-4 rounded ${
+            loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
+          } text-white font-semibold`}
+        >
+          {loading ? 'Processing...' : `Pay $${amount}`}
+        </button>
+      </div>
+    );
+  };
 
 // Add state for packages and schools
 const [packages, setPackages] = useState({
@@ -1116,11 +1188,14 @@ const handleRegistrationSubmit = async (e) => {
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && (
   <Elements stripe={stripePromise}>
-    {/*<CheckoutForm
-      
-    /> */}
-    <h2> We will add stripe checkout session ASAP</h2>
-  </Elements>
+  <CheckoutForm 
+    amount={19.99} // Replace with your actual package price
+    onSuccess={() => {
+      setCurrentStep(currentStep + 1);
+      setRegistrationConfirmation(true);
+    }}
+  />
+</Elements>
 )}
  </>
               )}
