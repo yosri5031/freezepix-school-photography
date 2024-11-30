@@ -629,7 +629,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
 
   const [loading, setLoading] = useState(false);
 
-  const QRCodeGenerator = ({ registrationData }) => {
+  const QRCodeGenerator = ({ registrationData, selectedSchool, selectedEvent }) => {
     const [qrCodeUrl, setQRCodeUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -655,15 +655,14 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
       }
     };
   
+    useEffect(() => {
+      generateQRCode();
+    }, []); // Runs only once when the component mounts
+  
     return (
       <div>
         {!qrCodeUrl ? (
-          <button
-            onClick={generateQRCode}
-            disabled={loading}
-          >
-            {loading ? 'Generating...' : 'Generate QR Code'}
-          </button>
+          <p>Generating QR Code...</p>
         ) : (
           <div>
             <h3>Registration QR Code</h3>
