@@ -642,8 +642,8 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
         const response = await axios.post('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/generate-qr-code', {
           registrationId: registrationData.registrationId,
           studentName: `${registrationData.studentFirstName} ${registrationData.studentLastName}`,
-          schoolName: registrationData.selectedSchool.name,
-          eventName: registrationData.selectedEvent.name
+          schoolName: registrationData.selectedSchool._id,
+          eventName: registrationData.selectedEvent._id
         });
   
         setQRCodeUrl(response.data.qrCodeUrl);
