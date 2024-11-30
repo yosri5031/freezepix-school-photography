@@ -629,7 +629,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
 
   const [loading, setLoading] = useState(false);
 
-  const QRCodeGenerator = ({ registrationData, selectedSchool, selectedEvent }) => {
+  const QRCodeGenerator = ({ registrationData}) => {
     const [qrCodeUrl, setQRCodeUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
