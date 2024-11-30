@@ -627,9 +627,53 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
     return parseFloat(basePrice.toFixed(2));
   };
 
+  const [loading, setLoading] = useState(false);
 
-
-  // Confirmation Page Component
+  const QRCodeGenerator = ({ registrationData }) => {
+    const [qrCodeUrl, setQRCodeUrl] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+  
+    const generateQRCode = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        const response = await axios.post('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/generate-qr-code', {
+          registrationId: registrationData.registrationId,
+          studentName: `${registrationData.studentFirstName} ${registrationData.studentLastName}`,
+          schoolName: registrationData.selectedSchool.name,
+          eventName: registrationData.selectedEvent.name
+        });
+  
+        setQRCodeUrl(response.data.qrCodeUrl);
+      } catch (err) {
+        setError('Failed to generate QR Code');
+        console.error('QR Code generation error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    return (
+      <div>
+        {!qrCodeUrl ? (
+          <button
+            onClick={generateQRCode}
+            disabled={loading}
+          >
+            {loading ? 'Generating...' : 'Generate QR Code'}
+          </button>
+        ) : (
+          <div>
+            <h3>Registration QR Code</h3>
+            <img src={qrCodeUrl} alt="QR Code" />
+          </div>
+        )}
+        {error && <p>{error}</p>}
+      </div>
+    );
+  };
   // Confirmation Page Component
   const ConfirmationPage = () => {
     const handleRegisterNewChild = () => {
@@ -649,10 +693,12 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
         <h2 className="text-2xl font-bold text-gray-800">
           {t('tunisia.confirmationTitle')}
         </h2>
+        
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-green-700 font-semibold">
             {t('tunisia.confirmationMessage')}
           </p>
+          
           <div className="mt-4 space-y-2">
             <div>
               <span className="font-bold">Registration ID:</span>
@@ -667,23 +713,26 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
               </span>
             </div>
           </div>
-          
-          {/* Additional Registration Details */}
+  
+          {/* QR Code Generation Section */}
+          <QRCodeGenerator registrationData={registrationConfirmation} />
+  
+          {/* Existing registration details */}
           <div className="mt-4 text-sm text-gray-600">
             <p>Student: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
             <p>School: {selectedSchool?.name}</p>
             <p>Event: {selectedEvent?.name}</p>
           </div>
         </div>
-        
+  
         {selectedSchool.country === 'Tunisia' && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
             <p className="font-semibold mt-2">{t('tunisia.daycarePayment')}</p>
           </div>
         )}
-        
+  
         <div className="flex justify-center space-x-4 mt-6">
-          <button 
+          <button
             onClick={handleRegisterNewChild}
             className="px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
