@@ -211,23 +211,31 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const calculateTax = (amount, country) => {
-    if (country === 'Canada') {
-      // Example tax rates - adjust according to your needs
+  const calculateTax = (amount, selectedSchool) => {
+    if (selectedSchool?.country === 'Canada') {
       const taxRates = {
-        'ON': 0.13, // 13% HST
-        'BC': 0.12, // 12% GST + PST
-        'AB': 0.05, // 5% GST
-        // Add other provinces as needed
+        'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
+        'ALBERTA': { GST: 5.0 },
+        'NEW BRUNSWICK': { HST: 15.0 },
+        'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
+        'NORTHWEST TERRITORIES': { GST: 5.0 },
+        'NOVA SCOTIA': { HST: 15.0 },
+        'NUNAVUT': { GST: 5.0 },
+        'PRINCE EDWARD ISLAND': { HST: 15.0 },
+        'QUEBEC': { GST: 5.0, QST: 9.975 },
+        'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
+        'YUKON': { GST: 5.0 },
+        'ONTARIO': { HST: 13.0 }
       };
+
+      const provinceCode = (selectedSchool.location || 'ONTARIO').toUpperCase();
+      const selectedTaxRates = taxRates[provinceCode] || { HST: 13.0 };
       
-      const provinceCode = selectedSchool.location || 'ON'; // Default to Ontario if not specified
-      const taxRate = taxRates[provinceCode] || 0.13; // Default to 13% if province not found
+      const taxRate = (selectedTaxRates.GST || 0) + (selectedTaxRates.PST || 0) + 
+                     (selectedTaxRates.QST || 0) + (selectedTaxRates.HST || 0);
       
-      return Math.round(amount * taxRate * 100); // Convert to cents
+      return parseFloat(((amount * taxRate) / 100).toFixed(2));
     }
-    
-    // For US or other countries - adjust tax calculation as needed
     return 0;
   };
 
@@ -245,52 +253,34 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
     try {
       const currency = selectedSchool?.country === 'Canada' ? 'cad' : 'usd';
       const amountInCents = Math.round(amount * 100);
-      
-      const taxRates = {
-          'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
-          'ALBERTA': { GST: 5.0 },
-          'NEW BRUNSWICK': { HST: 15.0 },
-          'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
-          'NORTHWEST TERRITORIES': { GST: 5.0 },
-          'NOVA SCOTIA': { HST: 15.0 },
-          'NUNAVUT': { GST: 5.0 },
-          'PRINCE EDWARD ISLAND': { HST: 15.0 },
-          'QUEBEC': { GST: 5.0, QST: 9.975 },
-          'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
-          'YUKON': { GST: 5.0 },
-          'ONTARIO': { HST: 13.0 }
-      };
-      
-      const provinceCode = (selectedSchool.location || 'ONTARIO').toUpperCase();
-      const selectedTaxRates = taxRates[provinceCode] || { HST: 13.0 }; // Default to 13% HST if province not found
-      
-      const taxAmount = (selectedTaxRates.GST || 0) + (selectedTaxRates.PST || 0) + (selectedTaxRates.QST || 0) + (selectedTaxRates.HST || 0);
-      
+      const taxAmount = calculateTax(amount, selectedSchool);
+      const taxAmountInCents = Math.round(taxAmount * 100);
+
       const response = await axios.post(
-          'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout',
-          {
-              amount: amountInCents,
-              currency,
-              taxAmount,
-              selectedSchool
-          },
-          {
-              headers: {
-                  'Content-Type': 'application/json'
-              }
+        'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout',
+        {
+          amount: amountInCents,
+          currency,
+          taxAmount: taxAmountInCents,
+          selectedSchool
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
           }
+        }
       );
-      
+
       const { sessionId } = response.data;
       
       const result = await stripe.redirectToCheckout({
-          sessionId
+        sessionId
       });
-      
+
       if (result.error) {
-          throw new Error(result.error.message);
+        throw new Error(result.error.message);
       }
-  } catch (err) {
+    } catch (err) {
       console.error('Checkout error:', err);
       setError(err.message || 'An error occurred during checkout');
     } finally {
@@ -298,9 +288,9 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
     }
   };
 
-  // Calculate total amount including tax for display
-  const taxAmount = calculateTax(amount, selectedSchool?.country) / 100; // Convert back to dollars
-  const totalAmount = amount + taxAmount;
+  // Calculate display amounts
+  const taxAmount = calculateTax(amount, selectedSchool);
+  const totalAmount = parseFloat((amount + taxAmount).toFixed(2));
   const currencySymbol = selectedSchool?.country === 'Canada' ? 'CAD' : 'USD';
 
   return (
@@ -310,22 +300,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
           {error}
         </div>
       )}
-      <div className="mb-4 space-y-2">
-        <div className="flex justify-between">
-          <span>Package Price:</span>
-          <span>{currencySymbol} ${amount.toFixed(2)}</span>
-        </div>
-        {taxAmount > 0 && (
-          <div className="flex justify-between">
-            <span>{selectedSchool?.country === 'Canada' ? 'HST/GST' : 'Tax'}:</span>
-            <span>{currencySymbol} ${taxAmount.toFixed(2)}</span>
-          </div>
-        )}
-        <div className="flex justify-between font-bold border-t pt-2">
-          <span>Total:</span>
-          <span>{currencySymbol} ${totalAmount.toFixed(2)}</span>
-        </div>
-      </div>
+      
       <button
         onClick={handleCheckout}
         disabled={loading || !stripe}
