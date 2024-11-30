@@ -206,10 +206,30 @@ const verifyPayment = async (sessionId) => {
 };
 
 
-const CheckoutForm = ({ amount, onSuccess }) => {
+const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
   const stripe = useStripe();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const calculateTax = (amount, country) => {
+    if (country === 'Canada') {
+      // Example tax rates - adjust according to your needs
+      const taxRates = {
+        'ON': 0.13, // 13% HST
+        'BC': 0.12, // 12% GST + PST
+        'AB': 0.05, // 5% GST
+        // Add other provinces as needed
+      };
+      
+      const provinceCode = selectedSchool.location || 'ON'; // Default to Ontario if not specified
+      const taxRate = taxRates[provinceCode] || 0.13; // Default to 13% if province not found
+      
+      return Math.round(amount * taxRate * 100); // Convert to cents
+    }
+    
+    // For US or other countries - adjust tax calculation as needed
+    return 0;
+  };
 
   const handleCheckout = async (e) => {
     e.preventDefault();
@@ -223,35 +243,65 @@ const CheckoutForm = ({ amount, onSuccess }) => {
     setError(null);
 
     try {
+      const currency = selectedSchool?.country === 'Canada' ? 'cad' : 'usd';
+      const amountInCents = Math.round(amount * 100);
+      
+      const taxRates = {
+          'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
+          'ALBERTA': { GST: 5.0 },
+          'NEW BRUNSWICK': { HST: 15.0 },
+          'NEWFOUNDLAND AND LABRADOR': { HST: 15.0 },
+          'NORTHWEST TERRITORIES': { GST: 5.0 },
+          'NOVA SCOTIA': { HST: 15.0 },
+          'NUNAVUT': { GST: 5.0 },
+          'PRINCE EDWARD ISLAND': { HST: 15.0 },
+          'QUEBEC': { GST: 5.0, QST: 9.975 },
+          'SASKATCHEWAN': { GST: 5.0, PST: 6.0 },
+          'YUKON': { GST: 5.0 },
+          'ONTARIO': { HST: 13.0 }
+      };
+      
+      const provinceCode = (selectedSchool.location || 'ONTARIO').toUpperCase();
+      const selectedTaxRates = taxRates[provinceCode] || { HST: 13.0 }; // Default to 13% HST if province not found
+      
+      const taxAmount = (selectedTaxRates.GST || 0) + (selectedTaxRates.PST || 0) + (selectedTaxRates.QST || 0) + (selectedTaxRates.HST || 0);
+      
       const response = await axios.post(
-        'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout',
-        {
-          amount: Math.round(amount * 100), // Convert to cents
-          currency: 'usd'
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
+          'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout',
+          {
+              amount: amountInCents,
+              currency,
+              taxAmount,
+              selectedSchool
+          },
+          {
+              headers: {
+                  'Content-Type': 'application/json'
+              }
           }
-        }
       );
-
+      
       const { sessionId } = response.data;
       
       const result = await stripe.redirectToCheckout({
-        sessionId
+          sessionId
       });
-
+      
       if (result.error) {
-        throw new Error(result.error.message);
+          throw new Error(result.error.message);
       }
-    } catch (err) {
+  } catch (err) {
       console.error('Checkout error:', err);
       setError(err.message || 'An error occurred during checkout');
     } finally {
       setLoading(false);
     }
   };
+
+  // Calculate total amount including tax for display
+  const taxAmount = calculateTax(amount, selectedSchool?.country) / 100; // Convert back to dollars
+  const totalAmount = amount + taxAmount;
+  const currencySymbol = selectedSchool?.country === 'Canada' ? 'CAD' : 'USD';
 
   return (
     <div className="max-w-md mx-auto p-4">
@@ -260,6 +310,22 @@ const CheckoutForm = ({ amount, onSuccess }) => {
           {error}
         </div>
       )}
+      <div className="mb-4 space-y-2">
+        <div className="flex justify-between">
+          <span>Package Price:</span>
+          <span>{currencySymbol} ${amount.toFixed(2)}</span>
+        </div>
+        {taxAmount > 0 && (
+          <div className="flex justify-between">
+            <span>{selectedSchool?.country === 'Canada' ? 'HST/GST' : 'Tax'}:</span>
+            <span>{currencySymbol} ${taxAmount.toFixed(2)}</span>
+          </div>
+        )}
+        <div className="flex justify-between font-bold border-t pt-2">
+          <span>Total:</span>
+          <span>{currencySymbol} ${totalAmount.toFixed(2)}</span>
+        </div>
+      </div>
       <button
         onClick={handleCheckout}
         disabled={loading || !stripe}
@@ -269,7 +335,7 @@ const CheckoutForm = ({ amount, onSuccess }) => {
             : 'bg-blue-600 hover:bg-blue-700'
         } text-white font-semibold`}
       >
-        {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+        {loading ? 'Processing...' : `Pay ${currencySymbol} $${totalAmount.toFixed(2)}`}
       </button>
     </div>
   );
@@ -1208,6 +1274,7 @@ const handleRegistrationSubmit = async (e) => {
   <Elements stripe={stripePromise}>
   <CheckoutForm 
     amount={19.99} // Replace with your actual package price
+    selectedSchool={selectedSchool} 
     onSuccess={() => {
       setCurrentStep(currentStep + 1);
       setRegistrationConfirmation(true);
