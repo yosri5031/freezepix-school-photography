@@ -38,30 +38,26 @@ const AddressForm = ({ type, data, onChange }) => {
 
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
-   
+  
     // Update local state
-    const updatedData = {
-      ...localData,
+    setLocalData(prevData => ({
+      ...prevData,
       [field]: newValue
-    };
-
-    // Check if all required fields are filled
-    const allFieldsFilled = requiredFields.every(
-      requiredField => updatedData[requiredField].trim() !== ''
-    );
-
-    // Update local state
-    setLocalData(updatedData);
-
-    // Only update parent form data when all fields are filled
-    if (allFieldsFilled) {
+    }));
+  };
+  
+  const handleInputComplete = (field) => () => {
+    // Check if the input for this field is complete (full word entered)
+    const currentValue = localData[field];
+    
+    // Only update parent form data when the input is complete
+    if (currentValue && currentValue.trim() !== '') {
       onChange({
         ...data,
-        ...updatedData
+        [field]: currentValue
       });
     }
   };
-
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -71,7 +67,8 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent First Name"
         value={localData.parentFirstName|| ''}
         onChange={handleInputChange('parentFirstName')}
-        className="w-full p-2 border rounded"
+        onBlur={handleInputComplete('parentFirstName')}
+                className="w-full p-2 border rounded"
         />
       <input
         type="text"
@@ -79,6 +76,7 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent Last Name"
         value={localData.parentLastName || ''}
         onChange={handleInputChange('parentLastName')}
+        onBlur={handleInputComplete('parentLastName')}
         className="w-full p-2 border rounded"
         />
       <input
@@ -87,6 +85,7 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Student First Name"
         value={localData.studentFirstName || ''}
         onChange={handleInputChange('studentFirstName')}
+        onBlur={handleInputComplete('studentFirstName')}
         className="w-full p-2 border rounded"
         />
       <input
@@ -95,6 +94,7 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Student Last Name"
         value={localData.studentLastName || ''}
         onChange={handleInputChange('studentLastName')}
+        onBlur={handleInputComplete('studentLastName')}
         className="w-full p-2 border rounded"
         />
 
@@ -104,6 +104,7 @@ const AddressForm = ({ type, data, onChange }) => {
         placeholder="Parent Email"
         value={localData.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
+        onBlur={handleInputComplete('parentEmail')}
         className="w-full p-1 border rounded"
         />
     
