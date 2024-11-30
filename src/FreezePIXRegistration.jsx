@@ -206,56 +206,74 @@ const verifyPayment = async (sessionId) => {
 };
 
 
-  const CheckoutForm = ({ amount, onSuccess }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-  
-    const handleCheckout = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-      setError(null);
-  
-      try {
-        // Create checkout session
-        const response = await axios.post('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout', {
-          amount: amount * 100, // Convert to cents
+const CheckoutForm = ({ amount, onSuccess }) => {
+  const stripe = useStripe();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleCheckout = async (e) => {
+    e.preventDefault();
+    
+    if (!stripe) {
+      setError('Stripe has not been initialized');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/photo-registration-checkout',
+        {
+          amount: Math.round(amount * 100), // Convert to cents
           currency: 'usd'
-        });
-  
-        const { sessionId } = response.data;
-  
-        // Redirect to Stripe checkout
-        const { error } = await stripe.redirectToCheckout({
-          sessionId
-        });
-  
-        if (error) {
-          throw new Error(error.message);
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      );
+
+      const { sessionId } = response.data;
+      
+      const result = await stripe.redirectToCheckout({
+        sessionId
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message);
       }
-    };
-  
-    return (
-      <div className="max-w-md mx-auto p-4">
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        <button
-          onClick={handleCheckout}
-          disabled={loading || !stripe}
-          className={`w-full py-2 px-4 rounded ${
-            loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-          } text-white font-semibold`}
-        >
-          {loading ? 'Processing...' : `Pay $${amount}`}
-        </button>
-      </div>
-    );
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setError(err.message || 'An error occurred during checkout');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  return (
+    <div className="max-w-md mx-auto p-4">
+      {error && (
+        <div className="text-red-500 mb-4 p-2 bg-red-50 rounded">
+          {error}
+        </div>
+      )}
+      <button
+        onClick={handleCheckout}
+        disabled={loading || !stripe}
+        className={`w-full py-2 px-4 rounded ${
+          loading || !stripe 
+            ? 'bg-gray-400 cursor-not-allowed' 
+            : 'bg-blue-600 hover:bg-blue-700'
+        } text-white font-semibold`}
+      >
+        {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+      </button>
+    </div>
+  );
+};
 
 // Add state for packages and schools
 const [packages, setPackages] = useState({
