@@ -132,6 +132,7 @@ const FreezePIXRegistration = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFormFilled, setIsFormFilled] = useState(false);
   const [formData, setFormData] = useState({
     parentFirstName: '',
     parentLastName: '',
@@ -300,7 +301,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
           {error}
         </div>
       )}
-      
+         {isFormFilled && (
       <button
         onClick={handleCheckout}
         disabled={loading || !stripe}
@@ -311,7 +312,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
         } text-white font-semibold`}
       >
         {loading ? 'Processing...' : `Pay ${currencySymbol} $${totalAmount.toFixed(2)}`}
-      </button>
+      </button> ) }
     </div>
   );
 };
@@ -1138,7 +1139,6 @@ const handleRegistrationSubmit = async (e) => {
       };
 
     const priceDetails = calculateTotal();
-    const [isFormFilled, setIsFormFilled] = useState(false);
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
