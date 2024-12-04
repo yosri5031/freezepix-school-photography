@@ -357,6 +357,12 @@ useEffect(() => {
         registration: 'Complete Registration',
         package : 'Select Package',
       },
+      buttons: {
+        next: 'Next',
+        previous: 'Previous',
+        register: 'Register My Child',
+        submit: 'Complete Registration'
+      },
       countries: [
         { value: 'canada', name: 'Canada' },
         { value: 'usa', name: 'United States' },
@@ -380,12 +386,7 @@ useEffect(() => {
         { value: 'fall-2024', name: 'Fall 2024 Photo Day', date: 'September 15, 2024' },
         { value: 'spring-2025', name: 'Spring 2025 Photo Day', date: 'March 20, 2025' }
       ],
-      buttons: {
-        next: 'Next',
-        previous: 'Previous',
-        register: 'Register My Child',
-        submit: 'Complete Registration'
-      },
+      
       form: {
         firstName: 'Parent First Name',
         lastName: 'Parent Last Name',
@@ -432,11 +433,17 @@ useEffect(() => {
       // French translations remain the same as in the original code
       steps: {
         country: 'Sélectionner le Pays',
-        school: 'Choisir l\'École',
-        event: 'Choisir l\'Événement Photo',
-        registration: 'Compléter l\'Inscription',
+        school: 'Choisir l\'école',
+        event: 'Choisir l\'événement Photo',
+        registration: 'Compléter l\'inscription',
         package : 'Sélectionner un offre',
 
+      },
+      buttons: {
+        next: 'Suivant',
+        previous: 'Précédent',
+        register: 'Inscrire mon enfant',
+        submit: 'Terminer l\'inscription'
       },
       countries: [
         { value: 'canada', name: 'Canada' },
