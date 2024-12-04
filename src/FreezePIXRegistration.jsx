@@ -1284,17 +1284,21 @@ useEffect(() => {
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && (
  <Elements stripe={stripePromise}>
- <CheckoutForm
-   amount={19.99} // Replace with your actual package price
-   selectedSchool={selectedSchool}
-   disabled={!isFormFilled} // Disable the button if the form is not filled
-   onSuccess={() => {
-     setCurrentStep(currentStep + 1);
-     setRegistrationConfirmation(true);
-   }}
- />
- {isFormFilled ? null : <div className="text-red-500">Please fill out all fields to proceed</div>}
-</Elements>
+   <CheckoutForm
+     amount={19.99}
+     selectedSchool={selectedSchool}
+     disabled={!isFormFilled} // This should disable the form when not all fields are filled
+     onSuccess={() => {
+       setCurrentStep(currentStep + 1);
+       setRegistrationConfirmation(true);
+     }}
+   />
+   {!isFormFilled && (
+     <div className="text-red-500 mt-2">
+       Please fill out all required fields to proceed
+     </div>
+   )}
+ </Elements>
 )}
  </>
               )}
