@@ -559,9 +559,24 @@ useEffect(() => {
     };
   
     const handleSchoolSelect = (school) => {
-      // Your existing code for handling school selection
-      // ...
-  
+      if (!school) return;
+    
+      // Simplified school object
+      const processedSchool = {
+        ...school,
+        _id: typeof school._id === 'string' ? school._id : school._id.toString()
+      };
+    
+      console.log('Selected school:', processedSchool); // Debug log
+      setSelectedSchool(processedSchool);
+      setFormData(prev => ({
+        ...prev,
+        schoolId: processedSchool._id
+      }));
+    
+      if (school.country) {
+        setSelectedCountry(school.country);
+      }
       setCurrentStep(prevStep => prevStep + 1);
     };
   
