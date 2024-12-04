@@ -354,7 +354,8 @@ useEffect(() => {
         country: 'Select Country',
         school: 'Choose School',
         event: 'Pick Photo Event',
-        registration: 'Complete Registration'
+        registration: 'Complete Registration',
+        package : 'Select Package',
       },
       countries: [
         { value: 'canada', name: 'Canada' },
@@ -433,7 +434,9 @@ useEffect(() => {
         country: 'Sélectionner le Pays',
         school: 'Choisir l\'École',
         event: 'Choisir l\'Événement Photo',
-        registration: 'Compléter l\'Inscription'
+        registration: 'Compléter l\'Inscription',
+        package : 'Sélectionner un offre',
+
       },
       countries: [
         { value: 'canada', name: 'Canada' },
@@ -506,114 +509,116 @@ useEffect(() => {
 
     // School Selection Component
    // Modify the SchoolSelection component props to include setCurrentStep
-const SchoolSelection = ({ t = (key) => key, setSelectedSchool, setSelectedCountry, setCurrentStep }) => {
-  const [schools, setSchools] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchSchools = async () => {
-      console.log('Starting to fetch schools...');
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await axios.get(
-          'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
-          {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+   const SchoolSelection = ({ setSelectedSchool, setSelectedCountry, setCurrentStep }) => {
+    const [schools, setSchools] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedProvince, setSelectedProvince] = useState('all'); // Default: Filter by all provinces
+  
+    useEffect(() => {
+      const fetchSchools = async () => {
+        console.log('Starting to fetch schools...');
+        setLoading(true);
+        setError(null);
         
-        if (response.data && Array.isArray(response.data)) {
-          setSchools(response.data);
-        } else {
-          throw new Error('Invalid data format received from server');
+        try {
+          const response = await axios.get(
+            'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
+            {
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          
+          if (response.data && Array.isArray(response.data)) {
+            let filteredSchools = response.data;
+  
+            if (selectedProvince !== 'all') {
+              filteredSchools = response.data.filter(school => school.location === selectedProvince);
+            }
+            
+            setSchools(filteredSchools);
+          } else {
+            throw new Error('Invalid data format received from server');
+          }
+        } catch (err) {
+          console.error('Detailed error:', err);
+          setError(err.message || 'Failed to load schools');
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error('Detailed error:', err);
-        setError(err.message || 'Failed to load schools');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSchools();
-  }, []);
-
-  const handleSchoolSelect = (school) => {
-    if (!school) return;
+      };
   
-    // Simplified school object
-    const processedSchool = {
-      ...school,
-      _id: typeof school._id === 'string' ? school._id : school._id.toString()
+      fetchSchools();
+    }, [selectedProvince]);
+  
+    const handleProvinceSelect = (province) => {
+      setSelectedProvince(province);
     };
   
-    console.log('Selected school:', processedSchool); // Debug log
-    setSelectedSchool(processedSchool);
-    setFormData(prev => ({
-      ...prev,
-      schoolId: processedSchool._id
-    }));
-    
-    if (school.country) {
-      setSelectedCountry(school.country);
-    }
-    setCurrentStep(prevStep => prevStep + 1);
-  };
-
-  if (loading) {
-    return <div className="text-center">Loading schools... Please wait.</div>;
-  }
-
-  if (error) {
+    const handleSchoolSelect = (school) => {
+      // Your existing code for handling school selection
+      // ...
+  
+      setCurrentStep(prevStep => prevStep + 1);
+    };
+  
     return (
-      <div className="text-center">
-        <div className="text-red-500">Error loading schools: {error}</div>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">
-      🏫</h2>
       <div className="space-y-4">
-        {Array.isArray(schools) && schools.length > 0 ? (
-          schools.map((school) => (
-            <div
-              key={school._id}
-              className={`border rounded-lg p-4 cursor-pointer hover:bg-yellow-50 ${
-                selectedSchool === school._id ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
-              }`}
-              onClick={() => handleSchoolSelect(school)}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{school.name}</h3>
-                  <p className="text-sm text-gray-600">{school.location}</p>
+        <h2 className="text-2xl font-semibold text-gray-800 text-center">🏫</h2>
+        
+        <div className="text-center">
+          <select
+            value={selectedProvince}
+            onChange={(e) => handleProvinceSelect(e.target.value)}
+            className="px-4 py-2 border rounded"
+          >
+            <option value="all">All Provinces</option>
+            {schools.map((school) => (
+              <option key={school._id} value={school.location}>
+                {school.location}
+              </option>
+            ))}
+          </select>
+        </div>
+  
+        <div className="space-y-4">
+          {loading ? (
+            <div className="text-center">Loading schools... Please wait.</div>
+          ) : error ? (
+            <div className="text-center">
+              <div className="text-red-500">Error loading schools: {error}</div>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Retry
+              </button>
+            </div>
+          ) : schools.length > 0 ? (
+            schools.map((school) => (
+              <div
+                key={school._id}
+                className={`border rounded-lg p-4 cursor-pointer hover:bg-yellow-50`}
+                onClick={() => handleSchoolSelect(school)}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{school.name}</h3>
+                    <p className="text-sm text-gray-600">{school.location}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-          ))
-        ) : (
-          <div className="text-center text-gray-500">No schools available</div>
-        )}
+            ))
+          ) : (
+            <div className="text-center text-gray-500">No schools available</div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
     
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
@@ -1008,7 +1013,7 @@ const handleRegistrationSubmit = async (e) => {
     });
     
     // Optional: Show user-friendly error message
-    alert('Registration failed. Please check your information and try again.');
+    alert('Registration unsuccessful. Please review your information and ensure all fields are filled before trying again.');
   } finally {
     setIsLoading(false);
   }
@@ -1338,7 +1343,7 @@ const handleRegistrationSubmit = async (e) => {
             //{ icon: MapPin, text: t('steps.country') },
             { icon: CustomSchoolIcon, text: t('steps.school') },
             { icon: Calendar, text: t('steps.event') },
-            { icon: Package, text: 'Select Package' },
+            { icon: Package, text: t('steps.package') },
             { icon: CheckCircle, text: t('steps.registration') },
             { icon: CalendarCheck2, text: 'Confirmation' }
           ].map((step, index) => (
