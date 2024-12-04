@@ -1138,6 +1138,16 @@ const handleRegistrationSubmit = async (e) => {
       };
 
     const priceDetails = calculateTotal();
+    const [isFormFilled, setIsFormFilled] = useState(false);
+// Check if the form is filled whenever formData changes
+useEffect(() => {
+  // Check if the address form is filled
+  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail) {
+    setIsFormFilled(true);
+  } else {
+    setIsFormFilled(false);
+  }
+}, [formData]);
     return (
       <div className="space-y-4">
     {/* Package Summary */}
@@ -1273,15 +1283,17 @@ const handleRegistrationSubmit = async (e) => {
       
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && (
-  <Elements stripe={stripePromise}>
-  <CheckoutForm 
-    amount={19.99} // Replace with your actual package price
-    selectedSchool={selectedSchool} 
-    onSuccess={() => {
-      setCurrentStep(currentStep + 1);
-      setRegistrationConfirmation(true);
-    }}
-  />
+ <Elements stripe={stripePromise}>
+ <CheckoutForm
+   amount={19.99} // Replace with your actual package price
+   selectedSchool={selectedSchool}
+   disabled={!isFormFilled} // Disable the button if the form is not filled
+   onSuccess={() => {
+     setCurrentStep(currentStep + 1);
+     setRegistrationConfirmation(true);
+   }}
+ />
+ {isFormFilled ? null : <div className="text-red-500">Please fill out all fields to proceed</div>}
 </Elements>
 )}
  </>
