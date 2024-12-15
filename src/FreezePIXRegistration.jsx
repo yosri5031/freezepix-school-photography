@@ -882,7 +882,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
             </div>
             <div>
               <span className="font-bold">{t('confirmation.qr')}:</span>
-              <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono inline-block">
+              <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono inline-block center-text text-center">
                 {registrationConfirmation?.uniqueQRCode || 'N/A'}
               </span>
             </div>
