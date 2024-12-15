@@ -868,7 +868,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
           {t('tunisia.confirmationTitle')}
         </h2>
         
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
           <p className="text-green-700 font-semibold">
             {t('tunisia.confirmationMessage')}
           </p>
@@ -876,13 +876,13 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
           <div className="mt-4 space-y-2">
             <div>
               <span className="font-bold"> {t('confirmation.register')}:</span>
-              <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono">
+              <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono text-center">
                 {registrationConfirmation?.registrationId || 'N/A'}
               </span>
             </div>
             <div>
               <span className="font-bold">{t('confirmation.qr')}:</span>
-              <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono">
+              <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono inline-block">
                 {registrationConfirmation?.uniqueQRCode || 'N/A'}
               </span>
             </div>
