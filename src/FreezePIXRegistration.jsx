@@ -366,6 +366,13 @@ useEffect(() => {
         register: 'Register My Child',
         submit: 'Complete Registration'
       },
+      confirmation : {
+        register: 'Registration ID',
+        qr: 'Unique QR Code',
+        student: 'Student',
+        school: 'School',
+        event: 'Event'
+      },
       countries: [
         { value: 'canada', name: 'Canada' },
         { value: 'usa', name: 'United States' },
@@ -447,6 +454,13 @@ useEffect(() => {
         previous: 'Précédent',
         register: 'Inscrire mon enfant',
         submit: 'Terminer l\'inscription'
+      },
+      confirmation : {
+        register: 'ID d\'inscription',
+        qr: 'Code QR ',
+        student: 'Étudiant',
+        school: 'École',
+        event: 'Événement'
       },
       countries: [
         { value: 'canada', name: 'Canada' },
@@ -861,13 +875,13 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
           
           <div className="mt-4 space-y-2">
             <div>
-              <span className="font-bold">Registration ID:</span>
+              <span className="font-bold"> {t('confirmation.register')}:</span>
               <span className="ml-2 bg-green-100 px-2 py-1 rounded text-green-800 font-mono">
                 {registrationConfirmation?.registrationId || 'N/A'}
               </span>
             </div>
             <div>
-              <span className="font-bold">Unique QR Code:</span>
+              <span className="font-bold">{t('confirmation.qr')}:</span>
               <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono">
                 {registrationConfirmation?.uniqueQRCode || 'N/A'}
               </span>
@@ -879,9 +893,9 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
   
           {/* Existing registration details */}
           <div className="mt-4 text-sm text-gray-600">
-            <p>Student: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
-            <p>School: {selectedSchool?.name}</p>
-            <p>Event: {selectedEvent?.name}</p>
+            <p>{t('confirmation.student')}: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
+            <p>{t('confirmation.school')}: {selectedSchool?.name}</p>
+            <p>{t('confirmation.event')}: {selectedEvent?.name}</p>
           </div>
         </div>
   
@@ -931,7 +945,7 @@ const PackageSelection = () => {
           <div 
             key={key}
             className={`border rounded-lg p-4 cursor-pointer ${
-              selectedPackage === key ? 'bg-yellow-100 border-yellow-500' : 'bg-white'
+              selectedPackage === key ? 'bg-white border-yellow-500' : 'bg-white'
             }`}
             onClick={() => {
               setSelectedPackage(key);
