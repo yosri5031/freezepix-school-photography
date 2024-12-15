@@ -357,6 +357,8 @@ useEffect(() => {
         event: 'Pick Photo Event',
         registration: 'Complete Registration',
         package : 'Select Package',
+        register :'Register Another Child'
+
       },
       buttons: {
         next: 'Next',
@@ -438,7 +440,7 @@ useEffect(() => {
         event: 'Choisir l\'événement Photo',
         registration: 'Compléter l\'inscription',
         package : 'Sélectionner un offre',
-
+        register :'Enregistrer un autre enfant'
       },
       buttons: {
         next: 'Suivant',
@@ -894,7 +896,7 @@ const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousSt
             onClick={handleRegisterNewChild}
             className="px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600"
           >
-            Register Another Child
+          {t('steps.register')}
           </button>
         </div>
       </div>
