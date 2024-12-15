@@ -945,7 +945,7 @@ const PackageSelection = () => {
           <div 
             key={key}
             className={`border rounded-lg p-4 cursor-pointer ${
-              selectedPackage === key ? 'bg-white border-yellow-500' : 'bg-white'
+              selectedPackage === key ? 'border rounded-lg p-4 cursor-pointer hover:bg-blue-50' : 'bg-white'
             }`}
             onClick={() => {
               setSelectedPackage(key);
