@@ -217,7 +217,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
   const [error, setError] = useState(null);
 
   const calculateTax = (amount, selectedSchool) => {
-    if (selectedSchool?.country === 'Canada') {
+    if (selectedSchool?.country === 'CA') {
       const taxRates = {
         'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
         'ALBERTA': { GST: 5.0 },
@@ -256,7 +256,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
     setError(null);
 
     try {
-      const currency = selectedSchool?.country === 'Canada' ? 'cad' : 'usd';
+      const currency = selectedSchool?.country === 'CA' ? 'cad' : 'usd';
       const amountInCents = Math.round(amount * 100);
       const taxAmount = calculateTax(amount, selectedSchool);
       const taxAmountInCents = Math.round(taxAmount * 100);
@@ -296,7 +296,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
   // Calculate display amounts
   const taxAmount = calculateTax(amount, selectedSchool);
   const totalAmount = parseFloat((amount + taxAmount).toFixed(2));
-  const currencySymbol = selectedSchool?.country === 'Canada' ? 'CAD' : 'USD';
+  const currencySymbol = selectedSchool?.country === 'CA' ? 'CAD' : 'USD';
 
   return (
     <div className="max-w-md mx-auto p-4">
@@ -1106,7 +1106,7 @@ const handleRegistrationSubmit = async (e) => {
         const country = selectedSchool.country.toUpperCase();
         const taxRates = TAX_RATES[country];
         
-        if (country === 'CANADA' && selectedSchool.location && taxRates) {
+        if (country === 'CA' && selectedSchool.location && taxRates) {
           const province = selectedSchool.location.toUpperCase();
           const provinceTaxRates = taxRates[province];
       
@@ -1236,7 +1236,7 @@ useEffect(() => {
         <div className="flex justify-between">
             <span>Subtotal:</span>
             <span>
-                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
+                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
             </span>
         </div>
 
@@ -1262,7 +1262,7 @@ useEffect(() => {
             <div className="flex justify-between font-bold">
                 <span>Total:</span>
                 <span>
-                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'Canada' ? 'CAD' : 'USD'}
+                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
                 </span>
             </div>
         </div>
