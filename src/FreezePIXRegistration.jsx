@@ -13,6 +13,8 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import {HelcimPayButton } from './HelcimPayButton';
+import { initializeHelcimPayCheckout } from './helcimService';
 import mongoose from 'mongoose';
 
 
@@ -133,6 +135,7 @@ const FreezePIXRegistration = () => {
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFormFilled, setIsFormFilled] = useState(false);
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [formData, setFormData] = useState({
     parentFirstName: '',
     parentLastName: '',
@@ -530,6 +533,181 @@ useEffect(() => {
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
   };
+
+  const handleSecretTokenReceived = (token) => {
+  setSecretToken(token);
+};
+
+const handleHelcimPaymentSuccess = async (paymentData) => {
+  const generateOrderNumber = () => {
+    const timestamp = Date.now().toString();
+    const random = Math.floor(Math.random() * 999999).toString().padStart(6, '0');
+    const prefix = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return `FPX-${prefix}-${timestamp.slice(-6)}${random}`;
+  };
+
+  // Add verification before proceeding
+  const verifyOrderNumber = async (orderNum) => {
+    try {
+      const response = await axios.get(
+        `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/orders/verify/${orderNum}`
+      );
+      return !response.data.exists;
+    } catch (error) {
+      console.error('Order number verification failed:', error);
+      return false;
+    }
+  };
+
+  // Generate and verify order number
+  let orderNumber;
+  let isUnique = false;
+  let attempts = 0;
+  const maxAttempts = 5;
+
+  while (!isUnique && attempts < maxAttempts) {
+    orderNumber = generateOrderNumber();
+    try {
+      isUnique = await verifyOrderNumber(orderNumber);
+      if (isUnique) break;
+    } catch (error) {
+      console.error('Verification attempt failed:', error);
+    }
+    attempts++;
+    await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between attempts
+  }
+
+  if (!isUnique) {
+    throw new Error('Failed to generate unique order number after multiple attempts');
+  }
+  setCurrentOrderNumber(orderNumber);
+
+  const country = initialCountries.find(c => c.value === selectedCountry);
+
+  // Rest of your existing code...
+  const processPhotosWithProgress = async () => {
+    try {
+      const optimizedPhotosWithPrices = await processImagesInBatches(
+        selectedPhotos.map(photo => ({
+          ...photo,
+          price: photo.price || calculateItemPrice(photo, country)
+        })),
+        (progress) => {
+          setUploadProgress(Math.round(progress));
+          if (progress % 20 === 0) {
+            saveStateWithCleanup({
+              orderNumber,
+              progress,
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+      );
+      return optimizedPhotosWithPrices;
+    } catch (processError) {
+      console.error('Photo processing error:', processError);
+      throw new Error(t('errors.photoProcessingFailed'));
+    }
+  };
+
+  const optimizedPhotosWithPrices = await processPhotosWithProgress();
+
+  try {
+    console.log('Payment Success Handler - Processing payment:', paymentData);
+    setIsProcessingOrder(true);
+    
+    const orderData = {
+      orderNumber,
+      email: formData.email,
+      phone: formData.phone,
+      shippingAddress: formData.billingAddress,
+      billingAddress: formData.billingAddress,
+      orderItems: optimizedPhotosWithPrices.map(photo => ({
+        ...photo,
+        file: photo.file,
+        thumbnail: photo.thumbnail,
+        id: photo.id,
+        quantity: photo.quantity,
+        size: photo.size,
+        price: photo.price,
+        productType: photo.productType
+      })),
+      totalAmount: paymentData.amount,
+      subtotal: paymentData.amount - 20,
+      shippingFee: 20,
+      taxAmount: 0,
+      discount: 0,
+      currency: paymentData.currency,
+      orderNote: "",
+      paymentMethod: "helcim",
+      customerDetails: {
+        name: formData.billingAddress.firstName,
+        country: selectedCountry
+      },
+      selectedCountry
+    };
+
+    // Add timestamp to ensure uniqueness
+    orderData.createdAt = new Date().toISOString();
+
+    console.log('Submitting order with data:', orderData);
+
+    // Submit order with optimized chunking
+    const maxRetries = 3;
+    let retryCount = 0;
+    let orderSubmitted = false;
+
+    while (retryCount < maxRetries && !orderSubmitted) {
+      try {
+        const orderResponse = await submitOrderWithOptimizedChunking(orderData);
+        if (orderResponse ) {
+          orderSubmitted = true;
+          console.log('Order submitted successfully:', orderResponse);
+          
+          // Send confirmation email
+          try {
+            await sendOrderConfirmationEmail({
+              ...orderData,
+              paymentDetails: {
+                ...orderData.paymentDetails,
+                cardLastFour: paymentData.cardNumber?.slice(-4)
+              }
+            });
+            console.log('Confirmation email sent successfully');
+          } catch (emailError) {
+            console.error('Failed to send confirmation email:', emailError);
+            // Continue with success flow even if email fails
+          }
+
+          // Update UI state
+          setOrderSuccess(true);
+          setSelectedPhotos([]);
+          setError(null);
+          window.removeHelcimPayIframe(); // Assuming this function exists
+
+          
+          // Clear session storage
+          clearStateStorage();
+          break;
+        }
+        throw new Error('Order submission failed');
+      } catch (error) {
+        console.error(`Order submission attempt ${retryCount + 1} failed:`, error);
+        retryCount++;
+        if (retryCount === maxRetries) {
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+      }
+    }
+  } catch (error) {
+    console.error('Payment processing error:', error);
+    setError(error.response?.data?.error || 'Failed to process payment or submit order');
+    setOrderSuccess(false);
+  } finally {
+    setIsProcessingOrder(false);
+  }
+};
 
     // School Selection Component
    // Modify the SchoolSelection component props to include setCurrentStep
@@ -1299,22 +1477,17 @@ useEffect(() => {
       
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && (
- <Elements stripe={stripePromise}>
-   <CheckoutForm
-     amount={19.99}
-     selectedSchool={selectedSchool}
-     disabled={!isFormFilled} // This should disable the form when not all fields are filled
-     onSuccess={() => {
-       setCurrentStep(currentStep + 1);
-       setRegistrationConfirmation(true);
-     }}
-   />
-   {!isFormFilled && (
-     <div className="text-red-500 mt-2">
-       Please fill out all required fields to proceed
-     </div>
-   )}
- </Elements>
+ <HelcimPayButton
+  onPaymentSuccess={handleRegistrationSubmit}
+  isProcessing={isProcessingOrder}
+ 
+  selectedCountry={selectedCountry}
+  total={priceDetails.total}
+  setOrderSuccess={setOrderSuccess}
+  setError={setError}
+  setIsProcessingOrder={setIsProcessingOrder}
+  onSecretTokenReceived={handleSecretTokenReceived} // Add this new prop
+/>
 )}
  </>
               )}
