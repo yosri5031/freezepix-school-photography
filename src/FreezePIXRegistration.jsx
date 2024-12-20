@@ -1314,7 +1314,6 @@ useEffect(() => {
   total={priceDetails.total}
   setError={setError}
   setIsProcessingOrder={setIsProcessingOrder}
-  onSecretTokenReceived={handleSecretTokenReceived} // Add this new prop
 />
 )}
  </>
