@@ -1019,10 +1019,10 @@ const handleRegistrationSubmit = async (e) => {
         : '',
       paymentMethod: formData.paymentMethod,
       paymentStatus: formData.paymentMethod === 'daycare'
-        ? 'awaiting_daycare_payment'
+        ? 'payment_pending'
         : formData.paymentMethod === 'interac'
-        ? 'awaiting_interac'
-        : 'pending'
+        ? 'payment_pending'
+        : 'open'
     };
 
     // Additional validation before submission
