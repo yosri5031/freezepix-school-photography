@@ -1084,7 +1084,7 @@ const handleRegistrationSubmit = async (e) => {
       // Add tax calculation function
       const TAX_RATES = {
         'TUNISIA': { TND: 0.19 },
-        'CANADA': {
+        'CA': {
           'BRITISH COLUMBIA': { GST: 5.0, PST: 7.0 },
           'ALBERTA': { GST: 5.0 },
           'NEW BRUNSWICK': { HST: 15.0 },
