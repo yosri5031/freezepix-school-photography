@@ -10,7 +10,6 @@ const HelcimPayButton = ({
   selectedCountry, 
   calculateTotals,
   total, 
-  setOrderSuccess,
   setError,
   setIsProcessingOrder
 }) => {

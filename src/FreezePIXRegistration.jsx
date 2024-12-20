@@ -134,6 +134,7 @@ const FreezePIXRegistration = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [formData, setFormData] = useState({
@@ -534,9 +535,7 @@ useEffect(() => {
     setPaymentMethod(event.target.value);
   };
 
-  const handleSecretTokenReceived = (token) => {
-  setSecretToken(token);
-};
+ 
 
 
 
@@ -1311,10 +1310,8 @@ useEffect(() => {
  <HelcimPayButton
   onPaymentSuccess={handleRegistrationSubmit}
   isProcessing={isProcessingOrder}
- 
   selectedCountry={selectedCountry}
   total={priceDetails.total}
-  setOrderSuccess={setOrderSuccess}
   setError={setError}
   setIsProcessingOrder={setIsProcessingOrder}
   onSecretTokenReceived={handleSecretTokenReceived} // Add this new prop
