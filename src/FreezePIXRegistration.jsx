@@ -124,7 +124,7 @@ const FreezePIXRegistration = () => {
     if (selectedSchool) {
       setFormData(prev => ({
         ...prev,
-        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'interac'
+        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'credit'
       }));
     }
   }, [selectedSchool]);
