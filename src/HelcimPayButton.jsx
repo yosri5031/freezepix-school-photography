@@ -192,7 +192,7 @@ const HelcimPayButton = ({
             ? 'Processing...' 
             : !scriptLoaded
               ? 'Loading Payment System...'
-              : 'Pay Order'
+              : 'Pay Registration'
         }
       </button>
 
