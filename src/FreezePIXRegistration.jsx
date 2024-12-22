@@ -623,9 +623,9 @@ useEffect(() => {
             className="px-4 py-2 border rounded"
           >
             <option value="all">All Provinces</option>
-            {schools.map((school) => (
-              <option key={school._id} value={school.location}>
-                {school.location}
+            {[...new Set(schools.map(school => school.location))].map((location) => (
+              <option key={location} value={location}>
+                {location}
               </option>
             ))}
           </select>
@@ -654,7 +654,7 @@ useEffect(() => {
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="font-semibold text-lg">{school.name}</h3>
-                    <p className="text-sm text-gray-600">{school.city} - {school.location} </p>
+                    <p className="text-sm text-gray-600">{school.city} - {school.location}</p>
                   </div>
                 </div>
               </div>
@@ -666,7 +666,6 @@ useEffect(() => {
       </div>
     );
   };
-    
 
 const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
   const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
