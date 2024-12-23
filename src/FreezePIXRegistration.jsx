@@ -1051,6 +1051,7 @@ const handleRegistrationSubmit = async (e) => {
       registrationId: response.data.registrationId
     });
     setCurrentStep(currentStep + 1);
+    window.removeHelcimPayIframe(); // Assuming this function exists
   } catch (error) {
     console.error('Registration error details:', {
       message: error.message,
