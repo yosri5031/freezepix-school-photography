@@ -545,16 +545,18 @@ useEffect(() => {
     const [schools, setSchools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedProvince, setSelectedProvince] = useState('all'); // Default: Filter by all provinces
+    const [selectedProvince, setSelectedProvince] = useState('all');
+    const [schoolsWithEvents, setSchoolsWithEvents] = useState([]);
   
     useEffect(() => {
-      const fetchSchools = async () => {
+      const fetchSchoolsAndEvents = async () => {
         console.log('Starting to fetch schools...');
         setLoading(true);
         setError(null);
         
         try {
-          const response = await axios.get(
+          // Fetch schools
+          const schoolsResponse = await axios.get(
             'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
             {
               headers: {
@@ -563,15 +565,38 @@ useEffect(() => {
               }
             }
           );
-          
-          if (response.data && Array.isArray(response.data)) {
-            let filteredSchools = response.data;
   
+          if (schoolsResponse.data && Array.isArray(schoolsResponse.data)) {
+            // For each school, check if it has events
+            const schoolsWithEventsData = await Promise.all(
+              schoolsResponse.data.map(async (school) => {
+                try {
+                  const eventsResponse = await axios.get(
+                    `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${school._id}`
+                  );
+                  
+                  // Only include schools that have events
+                  if (eventsResponse.data && eventsResponse.data.length > 0) {
+                    return school;
+                  }
+                  return null;
+                } catch (error) {
+                  console.error(`Error fetching events for school ${school._id}:`, error);
+                  return null;
+                }
+              })
+            );
+  
+            // Filter out null values (schools without events)
+            const validSchools = schoolsWithEventsData.filter(school => school !== null);
+            
+            let filteredSchools = validSchools;
             if (selectedProvince !== 'all') {
-              filteredSchools = response.data.filter(school => school.location === selectedProvince);
+              filteredSchools = validSchools.filter(school => school.location === selectedProvince);
             }
             
             setSchools(filteredSchools);
+            setSchoolsWithEvents(filteredSchools);
           } else {
             throw new Error('Invalid data format received from server');
           }
@@ -583,7 +608,7 @@ useEffect(() => {
         }
       };
   
-      fetchSchools();
+      fetchSchoolsAndEvents();
     }, [selectedProvince]);
   
     const handleProvinceSelect = (province) => {
@@ -593,13 +618,12 @@ useEffect(() => {
     const handleSchoolSelect = (school) => {
       if (!school) return;
     
-      // Simplified school object
       const processedSchool = {
         ...school,
         _id: typeof school._id === 'string' ? school._id : school._id.toString()
       };
     
-      console.log('Selected school:', processedSchool); // Debug log
+      console.log('Selected school:', processedSchool);
       setSelectedSchool(processedSchool);
       setFormData(prev => ({
         ...prev,
@@ -614,7 +638,7 @@ useEffect(() => {
   
     return (
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center">🏫</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 text-center"></h2>
         
         <div className="text-center">
           <select
@@ -623,7 +647,7 @@ useEffect(() => {
             className="px-4 py-2 border rounded"
           >
             <option value="all">All Provinces</option>
-            {[...new Set(schools.map(school => school.location))].map((location) => (
+            {[...new Set(schoolsWithEvents.map(school => school.location))].map((location) => (
               <option key={location} value={location}>
                 {location}
               </option>
@@ -644,8 +668,8 @@ useEffect(() => {
                 Retry
               </button>
             </div>
-          ) : schools.length > 0 ? (
-            schools.map((school) => (
+          ) : schoolsWithEvents.length > 0 ? (
+            schoolsWithEvents.map((school) => (
               <div
                 key={school._id}
                 className={`border rounded-lg p-4 cursor-pointer hover:bg-yellow-50`}
@@ -660,7 +684,7 @@ useEffect(() => {
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-500">No schools available</div>
+            <div className="text-center text-gray-500">No schools available with upcoming events</div>
           )}
         </div>
       </div>
