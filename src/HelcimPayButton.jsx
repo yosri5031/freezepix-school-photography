@@ -20,7 +20,6 @@ const HelcimPayButton = ({
   const secretTokenRef = useRef(null);
   const scriptRef = useRef(null);
 
-  // Load Helcim Pay.js script
   useEffect(() => {
     const loadScript = () => {
       scriptRef.current = document.createElement('script');
@@ -40,19 +39,31 @@ const HelcimPayButton = ({
       document.head.appendChild(scriptRef.current);
     };
 
-    // Check if script is already loaded
     if (!document.querySelector('script[src="https://secure.helcim.app/helcim-pay/services/start.js"]')) {
       loadScript();
     } else {
       setScriptLoaded(true);
     }
 
+    // Add event listener for Helcim window closure
+    const handleHelcimClose = () => {
+      if (window.removeHelcimPayIframe) {
+        console.log('Helcim window closed');
+        setScriptLoaded(true);
+        setIsProcessingOrder(false);
+        setLoading(false);
+      }
+    };
+
+    window.addEventListener('removeHelcimPayIframe', handleHelcimClose);
+
     return () => {
       if (scriptRef.current) {
         document.head.removeChild(scriptRef.current);
       }
+      window.removeEventListener('removeHelcimPayIframe', handleHelcimClose);
     };
-  }, [setError]);
+  }, [setError, setIsProcessingOrder]);
 
   useEffect(() => {
     const handleHelcimResponse = async (event) => {
@@ -102,8 +113,6 @@ const HelcimPayButton = ({
             };
       
             console.log('Payment approved, proceeding with success handler:', paymentDetails);
-      
-            // Assuming onPaymentSuccess is an asynchronous function
             await onPaymentSuccess(paymentDetails);
       
             setPaymentStatus({
@@ -154,7 +163,6 @@ const HelcimPayButton = ({
       secretTokenRef.current = response.secretToken;
       console.log('Stored secret token:', response.secretToken);
 
-      // Add a small delay to ensure the script is fully initialized
       setTimeout(() => {
         if (window.appendHelcimPayIframe) {
           window.appendHelcimPayIframe(response.checkoutToken, true);
