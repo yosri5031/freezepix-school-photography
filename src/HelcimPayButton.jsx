@@ -17,8 +17,16 @@ const HelcimPayButton = ({
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [localProcessing, setLocalProcessing] = useState(false);
   const secretTokenRef = useRef(null);
   const scriptRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      setLocalProcessing(false);
+      setIsProcessingOrder(false);
+    };
+  }, [setIsProcessingOrder]);
 
   useEffect(() => {
     const loadScript = () => {
@@ -51,6 +59,7 @@ const HelcimPayButton = ({
         console.log('Helcim window closed');
         setScriptLoaded(true);
         setIsProcessingOrder(false);
+        setLocalProcessing(false);
         setLoading(false);
       }
     };
@@ -77,6 +86,7 @@ const HelcimPayButton = ({
         });
         setError('Payment was aborted: ' + event.data.eventMessage);
         setIsProcessingOrder(false);
+        setLocalProcessing(false);
         return;
       }
 
@@ -127,6 +137,7 @@ const HelcimPayButton = ({
           console.error('Error processing payment success:', error);
           setError(error.message || 'Failed to process payment');
           setIsProcessingOrder(false);
+          setLocalProcessing(false);
         }
       }
     };
@@ -138,6 +149,7 @@ const HelcimPayButton = ({
   const handlePayment = async () => {
     setLoading(true);
     setIsProcessingOrder(true);
+    setLocalProcessing(true);
     
     try {
       if (!scriptLoaded) {
@@ -180,6 +192,7 @@ const HelcimPayButton = ({
       });
       setError(error.message);
       setIsProcessingOrder(false);
+      setLocalProcessing(false);
     } finally {
       setTimeout(() => {
         setLoading(false);
@@ -192,11 +205,11 @@ const HelcimPayButton = ({
       <button 
         onClick={handlePayment}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        disabled={disabled || isProcessing || loading || !scriptLoaded}
+        disabled={disabled || localProcessing || loading || !scriptLoaded || isProcessing}
       >
         {loading 
           ? 'Loading...' 
-          : isProcessing 
+          : localProcessing
             ? 'Processing...' 
             : !scriptLoaded
               ? 'Loading Payment System...'
