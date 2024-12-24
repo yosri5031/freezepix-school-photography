@@ -63,82 +63,118 @@ const AddressForm = ({ type, data, onChange }) => {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <input
-        type="text"
-        inputMode="text"
-        placeholder="Parent First Name"
-        value={localData.parentFirstName || ''}
-        onChange={handleInputChange('parentFirstName')}
-        onBlur={handleInputComplete('parentFirstName')}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="text"
-        inputMode="text"
-        placeholder="Parent Last Name"
-        value={localData.parentLastName || ''}
-        onChange={handleInputChange('parentLastName')}
-        onBlur={handleInputComplete('parentLastName')}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="text"
-        inputMode="text"
-        placeholder="Student First Name"
-        value={localData.studentFirstName || ''}
-        onChange={handleInputChange('studentFirstName')}
-        onBlur={handleInputComplete('studentFirstName')}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="text"
-        inputMode="text"
-        placeholder="Student Last Name"
-        value={localData.studentLastName || ''}
-        onChange={handleInputChange('studentLastName')}
-        onBlur={handleInputComplete('studentLastName')}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="email"
-        inputMode="text"
-        placeholder="Parent Email"
-        value={localData.parentEmail || ''}
-        onChange={handleInputChange('parentEmail')}
-        onBlur={handleInputComplete('parentEmail')}
-        className="w-full p-2 border rounded"
-        required
-      />
-      
-      {/* Optional Phone Number Field */}
-      <input
-        type="tel"
-        inputMode="numeric"
-        placeholder="Parent Phone (Optional)"
-        value={localData.ParentPhone || ''}
-        onChange={(e) => {
-          // Only allow numbers
-          const value = e.target.value.replace(/[^\d]/g, '');
-          handleInputChange('ParentPhone')({ target: { value } });
-        }}
-        onBlur={handleInputComplete('ParentPhone')}
-        className="w-full p-2 border rounded"
-        pattern="[0-9]*"
-      />
-      
-      {/* Optional Grade Selection */}
+      {/* Parent First Name */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Parent First Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.parentFirstName || ''}
+          onChange={handleInputChange('parentFirstName')}
+          onBlur={handleInputComplete('parentFirstName')}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+  
+      {/* Parent Last Name */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Parent Last Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.parentLastName || ''}
+          onChange={handleInputChange('parentLastName')}
+          onBlur={handleInputComplete('parentLastName')}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+  
+      {/* Student First Name */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Student First Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.studentFirstName || ''}
+          onChange={handleInputChange('studentFirstName')}
+          onBlur={handleInputComplete('studentFirstName')}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+  
+      {/* Student Last Name */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Student Last Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.studentLastName || ''}
+          onChange={handleInputChange('studentLastName')}
+          onBlur={handleInputComplete('studentLastName')}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+  
+      {/* Parent Email */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Parent Email <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          inputMode="text"
+          value={localData.parentEmail || ''}
+          onChange={handleInputChange('parentEmail')}
+          onBlur={handleInputComplete('parentEmail')}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+  
+      {/* Parent Phone (Optional) */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+          Parent Phone
+        </label>
+        <input
+          type="tel"
+          inputMode="numeric"
+          value={localData.ParentPhone || ''}
+          onChange={(e) => {
+            // Only allow numbers
+            const value = e.target.value.replace(/[^\d]/g, '');
+            handleInputChange('ParentPhone')({ target: { value } });
+          }}
+          onBlur={handleInputComplete('ParentPhone')}
+          className="w-full p-2 border rounded"
+          pattern="[0-9]*"
+        />
+      </div>
+  
+      {/* Grade Selection (Optional) */}
       <div className="col-span-2">
+        <label className="mb-1 text-sm font-medium block">
+          Student Grade
+        </label>
         <select
           value={localData.studentGrade || ''}
           onChange={handleInputChange('studentGrade')}
           onBlur={handleInputComplete('studentGrade')}
           className="w-full p-2 border rounded"
         >
-          <option value="">Select Grade (Optional)</option>
+          <option value="">Select Grade</option>
           {[...Array(10)].map((_, index) => (
             <option key={index + 1} value={index + 1}>
               Grade {index + 1}

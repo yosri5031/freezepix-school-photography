@@ -16,20 +16,26 @@ const HelcimPayButton = ({
   const [checkoutToken, setCheckoutToken] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);  // New state for initial loading
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [localProcessing, setLocalProcessing] = useState(false);
   const secretTokenRef = useRef(null);
   const scriptRef = useRef(null);
   const processingTimeoutRef = useRef(null);
+  const loadingTimeoutRef = useRef(null);  // New ref for loading timeout
 
-  // Clear all states on unmount
+  // Clear all states and timeouts on unmount
   useEffect(() => {
     return () => {
       setLocalProcessing(false);
       setIsProcessingOrder(false);
       setLoading(false);
+      setInitialLoading(false);
       if (processingTimeoutRef.current) {
         clearTimeout(processingTimeoutRef.current);
+      }
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
       }
     };
   }, [setIsProcessingOrder]);
@@ -59,19 +65,16 @@ const HelcimPayButton = ({
       setScriptLoaded(true);
     }
 
-    // Handle Helcim window closure
     const handleHelcimClose = () => {
       console.log('Helcim window closed');
       resetStates();
     };
 
-    // Handle browser back button
     const handlePopState = () => {
       console.log('Browser back button pressed');
       resetStates();
     };
 
-    // Handle page visibility change
     const handleVisibilityChange = () => {
       if (document.hidden) {
         console.log('Page hidden');
@@ -98,8 +101,12 @@ const HelcimPayButton = ({
     setIsProcessingOrder(false);
     setLocalProcessing(false);
     setLoading(false);
+    setInitialLoading(false);
     if (processingTimeoutRef.current) {
       clearTimeout(processingTimeoutRef.current);
+    }
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
     }
   };
 
@@ -177,8 +184,8 @@ const HelcimPayButton = ({
 
   const handlePayment = async () => {
     setLoading(true);
+    setInitialLoading(true);  // Start initial loading state
     setIsProcessingOrder(true);
-    setLocalProcessing(true);
     
     try {
       if (!scriptLoaded) {
@@ -203,6 +210,12 @@ const HelcimPayButton = ({
       setCheckoutToken(response.checkoutToken);
       secretTokenRef.current = response.secretToken;
       console.log('Stored secret token:', response.secretToken);
+
+      // Set 5-second timeout for loading state
+      loadingTimeoutRef.current = setTimeout(() => {
+        setInitialLoading(false);
+        setLocalProcessing(true);
+      }, 5000);
 
       // Set a timeout to reset states if the iframe doesn't load
       processingTimeoutRef.current = setTimeout(() => {
@@ -240,12 +253,12 @@ const HelcimPayButton = ({
         disabled={disabled || localProcessing || loading || !scriptLoaded || isProcessing}
       >
         {loading 
-          ? 'Loading...' 
-          : localProcessing
-            ? 'Processing...' 
-            : !scriptLoaded
-              ? 'Loading Payment System...'
-              : 'Pay Registration'
+          ? initialLoading
+            ? 'Loading...'
+            : 'Processing...'
+          : !scriptLoaded
+            ? 'Loading Payment System...'
+            : 'Pay Registration'
         }
       </button>
 
