@@ -725,91 +725,106 @@ useEffect(() => {
     );
   };
 
-const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
-  const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
-
-  console.log('Selected school in EventSelection:', selectedSchool); // Debug log
-  console.log('Events:', events); // Debug log
-
-  const handleEventSelect = (event) => {
-    if (!event) return;
-
-    const eventId = typeof event._id === 'string' ? event._id : event._id.toString();
-    
-    setSelectedEvent(event);
-    setFormData(prev => ({
-      ...prev,
-      eventId: eventId
-    }));
-    nextStep();
-  };
-
-  if (eventsLoading) {
-    return (
-      <div className="text-center">
-        <Loader className="animate-spin inline-block" />
-        <p>Loading events...</p>
-      </div>
-    );
-  }
-
-  if (eventsError) {
-    return (
-      <div className="text-center text-red-500">
-        <p>Error loading events: {eventsError}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">
-        {t('steps.event')}
-      </h2>
+  const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
+    const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
+  
+    console.log('Selected school in EventSelection:', selectedSchool);
+    console.log('Events:', events);
+  
+    // Function to format date to English alphabetic format
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
       
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      
+      return `${day} ${month} ${year}`;
+    };
+  
+    const handleEventSelect = (event) => {
+      if (!event) return;
+  
+      const eventId = typeof event._id === 'string' ? event._id : event._id.toString();
+      
+      setSelectedEvent(event);
+      setFormData(prev => ({
+        ...prev,
+        eventId: eventId
+      }));
+      nextStep();
+    };
+  
+    if (eventsLoading) {
+      return (
+        <div className="text-center">
+          <Loader className="animate-spin inline-block" />
+          <p>Loading events...</p>
+        </div>
+      );
+    }
+  
+    if (eventsError) {
+      return (
+        <div className="text-center text-red-500">
+          <p>Error loading events: {eventsError}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+  
+    return (
       <div className="space-y-4">
-        {events && events.length > 0 ? (
-          events.map((event) => (
-            <div
-              key={event._id}
-              className="border rounded-lg p-4 cursor-pointer hover:bg-blue-50"
-              onClick={() => handleEventSelect(event)}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{event.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    <Calendar className="inline-block w-4 h-4 mr-2" />
-                    {new Date(event.date).toLocaleDateString()}
-                  </p>
+        <h2 className="text-2xl font-semibold text-gray-800 text-center">
+          {t('steps.event')}
+        </h2>
+        
+        <div className="space-y-4">
+          {events && events.length > 0 ? (
+            events.map((event) => (
+              <div
+                key={event._id}
+                className="border rounded-lg p-4 cursor-pointer hover:bg-blue-50"
+                onClick={() => handleEventSelect(event)}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{event.name}</h3>
+                    <p className="text-sm text-gray-600">
+                      <Calendar className="inline-block w-4 h-4 mr-2" />
+                      {formatDate(event.date)}
+                    </p>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500">
+              No events available for this school
             </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-500">
-            No events available for this school
-          </div>
-        )}
+          )}
+        </div>
+  
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={previousStep}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          >
+            {t('buttons.previous')}
+          </button>
+        </div>
       </div>
-
-      <div className="flex justify-between mt-6">
-        <button
-          onClick={previousStep}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-        >
-          {t('buttons.previous')}
-        </button>
-      </div>
-    </div>
-  );
-};
+    );
+  };
     
   
 
