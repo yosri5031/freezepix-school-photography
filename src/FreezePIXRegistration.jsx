@@ -27,7 +27,9 @@ const AddressForm = ({ type, data, onChange }) => {
     parentLastName: data.parentLastName || '',
     studentFirstName: data.studentFirstName || '',
     studentLastName: data.studentLastName || '',
-    parentEmail: data.parentEmail || ''
+    parentEmail: data.parentEmail || '',
+    parentPhone: data.parentPhone || '',     // Add this
+    studentGrade: data.studentGrade || ''    // Add this
   });
 
   const requiredFields = [
