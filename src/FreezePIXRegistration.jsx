@@ -547,6 +547,7 @@ useEffect(() => {
     const [error, setError] = useState(null);
     const [selectedProvince, setSelectedProvince] = useState('all');
     const [schoolsWithEvents, setSchoolsWithEvents] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
   
     useEffect(() => {
       const fetchSchoolsAndEvents = async () => {
@@ -555,7 +556,6 @@ useEffect(() => {
         setError(null);
         
         try {
-          // Fetch schools
           const schoolsResponse = await axios.get(
             'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/schools',
             {
@@ -567,7 +567,6 @@ useEffect(() => {
           );
   
           if (schoolsResponse.data && Array.isArray(schoolsResponse.data)) {
-            // For each school, check if it has events
             const schoolsWithEventsData = await Promise.all(
               schoolsResponse.data.map(async (school) => {
                 try {
@@ -575,7 +574,6 @@ useEffect(() => {
                     `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${school._id}`
                   );
                   
-                  // Only include schools that have events
                   if (eventsResponse.data && eventsResponse.data.length > 0) {
                     return school;
                   }
@@ -587,16 +585,11 @@ useEffect(() => {
               })
             );
   
-            // Filter out null values (schools without events)
             const validSchools = schoolsWithEventsData.filter(school => school !== null);
+            setSchoolsWithEvents(validSchools);
             
-            let filteredSchools = validSchools;
-            if (selectedProvince !== 'all') {
-              filteredSchools = validSchools.filter(school => school.location === selectedProvince);
-            }
-            
-            setSchools(filteredSchools);
-            setSchoolsWithEvents(filteredSchools);
+            // Initial filtering will be done in the filterSchools function
+            setSchools(validSchools);
           } else {
             throw new Error('Invalid data format received from server');
           }
@@ -609,10 +602,36 @@ useEffect(() => {
       };
   
       fetchSchoolsAndEvents();
-    }, [selectedProvince]);
+    }, []);
+
+    // New function to filter schools based on both province and search query
+    const filterSchools = () => {
+      let filteredSchools = schoolsWithEvents;
+
+      // Filter by province if not 'all'
+      if (selectedProvince !== 'all') {
+        filteredSchools = filteredSchools.filter(school => 
+          school.location === selectedProvince
+        );
+      }
+
+      // Filter by search query if it exists
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        filteredSchools = filteredSchools.filter(school =>
+          school.name.toLowerCase().includes(query)
+        );
+      }
+
+      return filteredSchools;
+    };
   
     const handleProvinceSelect = (province) => {
       setSelectedProvince(province);
+    };
+
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
     };
   
     const handleSchoolSelect = (school) => {
@@ -635,24 +654,39 @@ useEffect(() => {
       }
       setCurrentStep(prevStep => prevStep + 1);
     };
+
+    // Get filtered schools based on both province and search
+    const filteredSchools = filterSchools();
   
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800 text-center"></h2>
         
-        <div className="text-center">
-          <select
-            value={selectedProvince}
-            onChange={(e) => handleProvinceSelect(e.target.value)}
-            className="px-4 py-2 border rounded"
-          >
-            <option value="all">All Provinces</option>
-            {[...new Set(schoolsWithEvents.map(school => school.location))].map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
+        <div className="space-y-2">
+          <div className="text-center">
+            <select
+              value={selectedProvince}
+              onChange={(e) => handleProvinceSelect(e.target.value)}
+              className="px-4 py-2 border rounded"
+            >
+              <option value="all">All Provinces</option>
+              {[...new Set(schoolsWithEvents.map(school => school.location))].map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="text-center">
+            <input
+              type="text"
+              placeholder="Search school name..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="px-4 py-2 border rounded w-64"
+            />
+          </div>
         </div>
   
         <div className="space-y-4">
@@ -668,8 +702,8 @@ useEffect(() => {
                 Retry
               </button>
             </div>
-          ) : schoolsWithEvents.length > 0 ? (
-            schoolsWithEvents.map((school) => (
+          ) : filteredSchools.length > 0 ? (
+            filteredSchools.map((school) => (
               <div
                 key={school._id}
                 className={`border rounded-lg p-4 cursor-pointer hover:bg-yellow-50`}
@@ -684,7 +718,7 @@ useEffect(() => {
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-500">No schools available with upcoming events</div>
+            <div className="text-center text-gray-500">No schools found matching your criteria</div>
           )}
         </div>
       </div>
