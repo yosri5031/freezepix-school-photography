@@ -1209,7 +1209,6 @@ const handleRegistrationSubmit = async (e) => {
       fullError: error
     });
     
-    alert('Registration unsuccessful. Please review your information and try again.');
   } finally {
     setIsLoading(false);
   }
