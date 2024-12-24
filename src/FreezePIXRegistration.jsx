@@ -151,13 +151,13 @@ const AddressForm = ({ type, data, onChange }) => {
         <input
           type="tel"
           inputMode="numeric"
-          value={localData.ParentPhone || ''}
+          value={localData.parentPhone || ''}
           onChange={(e) => {
             // Only allow numbers
             const value = e.target.value.replace(/[^\d]/g, '');
-            handleInputChange('ParentPhone')({ target: { value } });
+            handleInputChange('parentPhone')({ target: { value } });
           }}
-          onBlur={handleInputComplete('ParentPhone')}
+          onBlur={handleInputComplete('parentPhone')}
           className="w-full p-2 border rounded"
           pattern="[0-9]*"
         />
