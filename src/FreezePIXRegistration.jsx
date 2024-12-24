@@ -67,11 +67,12 @@ const AddressForm = ({ type, data, onChange }) => {
         type="text"
         inputMode="text"
         placeholder="Parent First Name"
-        value={localData.parentFirstName|| ''}
+        value={localData.parentFirstName || ''}
         onChange={handleInputChange('parentFirstName')}
         onBlur={handleInputComplete('parentFirstName')}
-                className="w-full p-2 border rounded"
-        />
+        className="w-full p-2 border rounded"
+        required
+      />
       <input
         type="text"
         inputMode="text"
@@ -80,7 +81,8 @@ const AddressForm = ({ type, data, onChange }) => {
         onChange={handleInputChange('parentLastName')}
         onBlur={handleInputComplete('parentLastName')}
         className="w-full p-2 border rounded"
-        />
+        required
+      />
       <input
         type="text"
         inputMode="text"
@@ -89,7 +91,8 @@ const AddressForm = ({ type, data, onChange }) => {
         onChange={handleInputChange('studentFirstName')}
         onBlur={handleInputComplete('studentFirstName')}
         className="w-full p-2 border rounded"
-        />
+        required
+      />
       <input
         type="text"
         inputMode="text"
@@ -98,18 +101,51 @@ const AddressForm = ({ type, data, onChange }) => {
         onChange={handleInputChange('studentLastName')}
         onBlur={handleInputComplete('studentLastName')}
         className="w-full p-2 border rounded"
-        />
-
-<input
-        type="text"
+        required
+      />
+      <input
+        type="email"
         inputMode="text"
         placeholder="Parent Email"
         value={localData.parentEmail || ''}
         onChange={handleInputChange('parentEmail')}
         onBlur={handleInputComplete('parentEmail')}
-        className="w-full p-1 border rounded"
-        />
-    
+        className="w-full p-2 border rounded"
+        required
+      />
+      
+      {/* Optional Phone Number Field */}
+      <input
+        type="tel"
+        inputMode="numeric"
+        placeholder="Parent Phone (Optional)"
+        value={localData.ParentPhone || ''}
+        onChange={(e) => {
+          // Only allow numbers
+          const value = e.target.value.replace(/[^\d]/g, '');
+          handleInputChange('ParentPhone')({ target: { value } });
+        }}
+        onBlur={handleInputComplete('ParentPhone')}
+        className="w-full p-2 border rounded"
+        pattern="[0-9]*"
+      />
+      
+      {/* Optional Grade Selection */}
+      <div className="col-span-2">
+        <select
+          value={localData.studentGrade || ''}
+          onChange={handleInputChange('studentGrade')}
+          onBlur={handleInputComplete('studentGrade')}
+          className="w-full p-2 border rounded"
+        >
+          <option value="">Select Grade (Optional)</option>
+          {[...Array(10)].map((_, index) => (
+            <option key={index + 1} value={index + 1}>
+              Grade {index + 1}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
@@ -143,6 +179,8 @@ const FreezePIXRegistration = () => {
     parentEmail: '',
     studentFirstName: '',
     studentLastName: '',
+    parentPhone: '',
+    studentGrade: '',
     paymentMethod: 'credit',
     schoolId: selectedSchool?._id || '',
     eventId: selectedEvent?._id || '',
@@ -326,7 +364,7 @@ const [packages, setPackages] = useState({
   basic: {
     name: 'Basic Package',
     price: 19.99,
-    description: '1 Digital Photo'
+    description: 'Digital Photo'
   }
 });
 
@@ -1004,7 +1042,7 @@ const PackageSelection = () => {
     basic: {
       name: 'basic',
       price: calculatePackagePrice(19.99),
-      description: '1 Digital Photo'
+      description: 'Digital Photo'
     }
   };
 
@@ -1079,6 +1117,8 @@ const handleRegistrationSubmit = async (e) => {
       parentEmail: formData.parentEmail,
       studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
+      parentPhone: formData.parentPhone,
+      studentGrade: formData.studentGrade,
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
             ? selectedSchool._id 
@@ -1148,9 +1188,9 @@ const handleRegistrationSubmit = async (e) => {
     const pkg = {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
       name: "Basic",
-      value: "1 Digital Photo",
+      value: "Digital Photo",
       price: 19.99,
-      description: "1 Digital Photo",
+      description: "Digital Photo",
       isActive: true
     };
 
@@ -1379,15 +1419,15 @@ useEffect(() => {
                   )}
       
                   {/* Option de paiement par carte de crédit */}
-                  {paymentMethod === 'credit' && (
- <HelcimPayButton
-  onPaymentSuccess={handleRegistrationSubmit}
-  isProcessing={isProcessingOrder}
-  selectedCountry={selectedCountry}
-  total={priceDetails.total}
-  setError={setError}
-  setIsProcessingOrder={setIsProcessingOrder}
-/>
+                  {paymentMethod === 'credit' && isFormFilled && (
+  <HelcimPayButton 
+    onPaymentSuccess={handleRegistrationSubmit}
+    isProcessing={isProcessingOrder}
+    selectedCountry={selectedCountry}
+    total={priceDetails.total}
+    setError={setError}
+    setIsProcessingOrder={setIsProcessingOrder}
+  />
 )}
  </>
               )}
