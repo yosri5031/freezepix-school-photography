@@ -1153,7 +1153,7 @@ const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
 
   try {
-    // Ensure IDs are properly converted to strings
+    // Explicitly override the payment method based on radio selection
     const registrationData = {
       parentFirstName: formData.parentFirstName,
       parentLastName: formData.parentLastName,
@@ -1172,25 +1172,19 @@ const handleRegistrationSubmit = async (e) => {
             ? selectedEvent._id 
             : selectedEvent._id.toString())
         : '',
-      paymentMethod: formData.paymentMethod,
-      paymentStatus: formData.paymentMethod === 'daycare'
-        ? 'payment_pending'
-        : formData.paymentMethod === 'interac'
-        ? 'payment_pending'
+      // Force payment method based on radio selection
+      paymentMethod: selectedSchool.country === 'Tunisia' 
+        ? 'daycare' 
+        : paymentMethod === 'interac' 
+          ? 'interac' 
+          : 'credit',
+      paymentStatus: paymentMethod === 'interac' 
+        ? 'payment_pending' 
         : 'open'
     };
 
-    // Additional validation before submission
-    if (!registrationData.schoolId || !registrationData.eventId) {
-      throw new Error('School or Event ID is missing');
-    }
-
-    // Log the data being sent with more detailed information
-    console.log('Sending registration data:', {
-      ...registrationData,
-      schoolIdType: typeof registrationData.schoolId,
-      eventIdType: typeof registrationData.eventId
-    });
+    // Log the data being sent to verify
+    console.log('Sending registration data:', registrationData);
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
@@ -1215,8 +1209,7 @@ const handleRegistrationSubmit = async (e) => {
       fullError: error
     });
     
-    // Optional: Show user-friendly error message
-    alert('Registration unsuccessful. Please review your information and ensure all fields are filled before trying again.');
+    alert('Registration unsuccessful. Please review your information and try again.');
   } finally {
     setIsLoading(false);
   }
@@ -1508,25 +1501,28 @@ useEffect(() => {
          </button>
         )}
 
-        {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
-          <button 
-          type="submit"
-          onClick={handleRegistrationSubmit}
-          disabled={isLoading}
-          className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <Loader className="animate-spin h-5 w-5 mr-2" />
-              Loading...
-            </div>
-          ) : (
-            `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
-          )}
-        </button>
-        )}
+{selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
+  <button 
+    type="button" // Changed from 'submit' to 'button'
+    onClick={(e) => {
+      e.preventDefault();
+      handleRegistrationSubmit(e);
+    }}
+    disabled={isLoading}
+    className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
+      isLoading ? 'opacity-50 cursor-not-allowed' : ''
+    }`}
+  >
+    {isLoading ? (
+      <div className="flex items-center justify-center">
+        <Loader className="animate-spin h-5 w-5 mr-2" />
+        Loading...
+      </div>
+    ) : (
+      `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
+    )}
+  </button>
+)}
       </div>
         </form>
       </div>
