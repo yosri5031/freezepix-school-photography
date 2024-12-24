@@ -198,13 +198,13 @@ const FreezePIXRegistration = () => {
     if (selectedSchool) {
       setFormData(prev => ({
         ...prev,
-        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : 'credit'
+        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : ''
       }));
     }
   }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
   const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
-  const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
+  const [paymentMethod, setPaymentMethod] = useState('interac'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
