@@ -75,7 +75,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onChange={handleInputChange('parentFirstName')}
           onBlur={handleInputComplete('parentFirstName')}
           className="w-full p-2 border rounded"
-          required
+          
         />
       </div>
   
@@ -91,7 +91,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onChange={handleInputChange('parentLastName')}
           onBlur={handleInputComplete('parentLastName')}
           className="w-full p-2 border rounded"
-          required
+          
         />
       </div>
   
@@ -107,7 +107,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onChange={handleInputChange('studentFirstName')}
           onBlur={handleInputComplete('studentFirstName')}
           className="w-full p-2 border rounded"
-          required
+          
         />
       </div>
   
@@ -123,7 +123,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onChange={handleInputChange('studentLastName')}
           onBlur={handleInputComplete('studentLastName')}
           className="w-full p-2 border rounded"
-          required
+          
         />
       </div>
   
@@ -139,7 +139,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onChange={handleInputChange('parentEmail')}
           onBlur={handleInputComplete('parentEmail')}
           className="w-full p-2 border rounded"
-          required
+          
         />
       </div>
   
