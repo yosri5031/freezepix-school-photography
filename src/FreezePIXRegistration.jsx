@@ -608,7 +608,12 @@ useEffect(() => {
   
  
   const handlePaymentMethodChange = (event) => {
-    setPaymentMethod(event.target.value);
+    const newPaymentMethod = event.target.value;
+    setPaymentMethod(newPaymentMethod);
+    setFormData(prevData => ({
+      ...prevData,
+      paymentMethod: newPaymentMethod
+    }));
   };
 
  
