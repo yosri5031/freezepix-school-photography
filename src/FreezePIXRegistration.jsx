@@ -1021,6 +1021,13 @@ useEffect(() => {
       setPaymentMethod('credit');
       setRegistrationConfirmation(null);
     };
+
+    const styles = {
+      bigBoldText: {
+        fontSize: '1.5em',
+        fontWeight: 'bold',
+      }
+    };
   
     return (
       <div className="text-center space-y-6 p-6">
@@ -1041,7 +1048,8 @@ useEffect(() => {
                 {registrationConfirmation?.registrationId || 'N/A'}
               </span>
             </div>
-            <div>
+           {/* <div>
+               
               <span className="font-bold">{t('confirmation.qr')}:</span>
               <span className="ml-2 bg-blue-100 px-2 py-1 rounded text-blue-800 font-mono inline-block center-text text-center">
                 {registrationConfirmation?.uniqueQRCode || 'N/A'}
@@ -1049,16 +1057,15 @@ useEffect(() => {
             </div>
           </div>
   
-          {/* QR Code Generation Section */}
-          <QRCodeGenerator registrationData={registrationConfirmation} />
+          {/* QR Code Generation Section 
+          <QRCodeGenerator registrationData={registrationConfirmation} />*/}
   
           {/* Existing registration details */}
           <div className="mt-4 text-sm text-gray-600">
-            <p>{t('confirmation.student')}: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
-            <p>{t('confirmation.school')}: {selectedSchool?.name}</p>
-            <p>{t('confirmation.event')}: {selectedEvent?.name}</p>
-          </div>
-        </div>
+  <p className="big-bold-text" style={styles.bigBoldText}>{t('confirmation.student')}: {registrationConfirmation?.studentFirstName} {registrationConfirmation?.studentLastName}</p>
+  <p className="big-bold-text" style={styles.bigBoldText}>{t('confirmation.school')}: {selectedSchool?.name}</p>
+  <p className="big-bold-text" style={styles.bigBoldText}>{t('confirmation.event')}: {selectedEvent?.name}</p>
+</div>
   
         {selectedSchool.country === 'Tunisia' && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
@@ -1074,6 +1081,7 @@ useEffect(() => {
           {t('steps.register')}
           </button>
         </div>
+      </div>
       </div>
     );
   };
