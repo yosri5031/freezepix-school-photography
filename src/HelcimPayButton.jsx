@@ -54,9 +54,30 @@ const HelcimPayButton = ({
       scriptRef.current.onerror = () => {
         console.error('Failed to load Helcim Pay.js script');
         setError('Failed to load payment system');
+        resetStates();
       };
 
       document.head.appendChild(scriptRef.current);
+    };
+
+    // Handle Helcim window closure
+    const handleHelcimClose = () => {
+      console.log('Helcim window closed');
+      resetStates();
+    };
+
+    // Handle browser back button
+    const handlePopState = () => {
+      console.log('Browser back button pressed');
+      resetStates();
+    };
+
+    // Handle page visibility change
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('Page hidden');
+        processingTimeoutRef.current = setTimeout(resetStates, 10000);
+      }
     };
 
     if (!document.querySelector('script[src="https://secure.helcim.app/helcim-pay/services/start.js"]')) {
@@ -64,23 +85,6 @@ const HelcimPayButton = ({
     } else {
       setScriptLoaded(true);
     }
-
-    const handleHelcimClose = () => {
-      console.log('Helcim window closed');
-      resetStates();
-    };
-
-    const handlePopState = () => {
-      console.log('Browser back button pressed');
-      resetStates();
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        console.log('Page hidden');
-        processingTimeoutRef.current = setTimeout(resetStates, 1000);
-      }
-    };
 
     window.addEventListener('removeHelcimPayIframe', handleHelcimClose);
     window.addEventListener('popstate', handlePopState);
@@ -93,6 +97,7 @@ const HelcimPayButton = ({
       window.removeEventListener('removeHelcimPayIframe', handleHelcimClose);
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      resetStates();
     };
   }, [setError, setIsProcessingOrder]);
 
@@ -112,6 +117,8 @@ const HelcimPayButton = ({
 
   useEffect(() => {
     const handleHelcimResponse = async (event) => {
+      // Handle mobile-specific data structure
+  const eventData = event.data.eventStatus ? event.data : JSON.parse(event.data);
       console.log('Received Helcim response:', event.data);
 
       if (event.data.eventStatus === 'ABORTED') {
@@ -125,19 +132,20 @@ const HelcimPayButton = ({
         return;
       }
 
-      if (event.data.eventStatus === 'SUCCESS') {
+      if (eventData.eventStatus === 'SUCCESS') {
         try {
           let parsedEventMessage;
           try {
-            parsedEventMessage = typeof event.data.eventMessage === 'string' 
-              ? JSON.parse(event.data.eventMessage) 
-              : event.data.eventMessage;
-      
-            if (typeof parsedEventMessage.data === 'string') {
-              parsedEventMessage.data = JSON.parse(parsedEventMessage.data);
+            parsedEventMessage = typeof eventData.eventMessage === 'string' 
+              ? JSON.parse(eventData.eventMessage) 
+              : eventData.eventMessage;
+            
+            // Additional mobile browser compatibility check
+            if (typeof parsedEventMessage === 'string') {
+              parsedEventMessage = JSON.parse(parsedEventMessage);
             }
           } catch (parseError) {
-            console.error('Error parsing event message:', parseError);
+            console.error('Parse error:', parseError);
             resetStates();
             throw new Error('Invalid payment response format');
           }
@@ -160,7 +168,6 @@ const HelcimPayButton = ({
       
             console.log('Payment approved, proceeding with success handler:', paymentDetails);
             await onPaymentSuccess(paymentDetails);
-      
             setPaymentStatus({
               success: true,
               message: 'Payment Successful',
@@ -183,19 +190,21 @@ const HelcimPayButton = ({
   }, [onPaymentSuccess, setError, setIsProcessingOrder]);
 
   const handlePayment = async () => {
+    setLocalProcessing(true);
     setLoading(true);
-    setInitialLoading(true);  // Start initial loading state
     setIsProcessingOrder(true);
+    setError(null);
     
     try {
+      // Check for mobile browser
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
       if (!scriptLoaded) {
-        throw new Error('Payment system is still loading. Please try again in a moment.');
+        throw new Error(isMobile ? 
+          'Please wait for the payment system to load on your mobile device.' : 
+          'Payment system is still loading. Please try again in a moment.');
       }
-
-      if (!window.appendHelcimPayIframe) {
-        throw new Error('Payment system not properly initialized. Please refresh the page and try again.');
-      }
-
+  
       const response = await initializeHelcimPayCheckout({
         selectedCountry,
         total
@@ -206,33 +215,33 @@ const HelcimPayButton = ({
       if (!response.checkoutToken) {
         throw new Error('Failed to get valid checkout token');
       }
-
+  
       setCheckoutToken(response.checkoutToken);
       secretTokenRef.current = response.secretToken;
-      console.log('Stored secret token:', response.secretToken);
-
-      // Set 5-second timeout for loading state
-      loadingTimeoutRef.current = setTimeout(() => {
-        setInitialLoading(false);
-        setLocalProcessing(true);
-      }, 5000);
-
-      // Set a timeout to reset states if the iframe doesn't load
+  
+      // Adjust timeout for mobile devices
+      const timeoutDuration = isMobile ? 20000 : 10000;
+      
       processingTimeoutRef.current = setTimeout(() => {
         if (!document.querySelector('.helcim-pay-iframe')) {
           resetStates();
-          setError('Payment window failed to open. Please try again.');
+          setError(isMobile ? 
+            'Payment window failed to open on mobile. Please try again or use a desktop browser.' : 
+            'Payment window failed to open. Please try again.');
         }
-      }, 10000);
-
+      }, timeoutDuration);
+  
+      // Add delay for mobile browsers
+      const appendDelay = isMobile ? 1500 : 500;
+      
       setTimeout(() => {
         if (window.appendHelcimPayIframe) {
           window.appendHelcimPayIframe(response.checkoutToken, true);
         } else {
-          throw new Error('Payment system not ready. Please try again.');
+          throw new Error('Payment system not ready. Please refresh and try again.');
         }
-      }, 500);
-
+      }, appendDelay);
+  
     } catch (error) {
       console.error('Payment Initialization Error:', error);
       setPaymentStatus({
