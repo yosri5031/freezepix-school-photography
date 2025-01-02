@@ -401,7 +401,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
 const [packages, setPackages] = useState({
   basic: {
     name: 'Basic Package',
-    price: 19.99,
+    price: 0.03,
     description: 'Digital Photo'
   }
 });
@@ -1093,7 +1093,7 @@ const PackageSelection = () => {
   const calculatedPackages = {
     basic: {
       name: 'basic',
-      price: calculatePackagePrice(19.99),
+      price: calculatePackagePrice(0.03),
       description: 'Digital Photo'
     }
   };
@@ -1233,7 +1233,7 @@ const handleRegistrationSubmit = async (e) => {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
       name: "Basic",
       value: "Digital Photo",
-      price: 19.99,
+      price: 0.03,
       description: "Digital Photo",
       isActive: true
     };
