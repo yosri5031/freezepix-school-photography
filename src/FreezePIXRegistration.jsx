@@ -435,7 +435,8 @@ useEffect(() => {
       select: {
 grade:'Grade',
 select_grade:'Select Grade',
-student_grade: 'Student Grade'
+student_grade: 'Student Grade',
+all_provinces: 'All Provinces'
       },
       steps: {
         country: 'Select Country',
@@ -527,7 +528,7 @@ student_grade: 'Student Grade'
     },
     fr: {
       // French translations remain the same as in the original code
-      select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève' },
+      select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève', all_provinces: 'Tous les provinces' },
       steps: {
         country: 'Sélectionner le Pays',
         school: 'Choisir l\'école',
@@ -757,7 +758,7 @@ student_grade: 'Student Grade'
               onChange={(e) => handleProvinceSelect(e.target.value)}
               className="px-4 py-2 border rounded"
             >
-              <option value="all">All Provinces</option>
+              <option value="all">{t('select.all_provinces')}</option>
               {[...new Set(schoolsWithEvents.map(school => school.location))].map((location) => (
                 <option key={location} value={location}>
                   {location}
@@ -769,7 +770,7 @@ student_grade: 'Student Grade'
           <div className="text-center">
             <input
               type="text"
-              placeholder="Search school name..."
+              placeholder="Search / Recherche "
               value={searchQuery}
               onChange={handleSearchChange}
               className="px-4 py-2 border rounded w-64"
