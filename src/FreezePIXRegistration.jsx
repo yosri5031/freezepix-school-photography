@@ -1370,6 +1370,7 @@ useEffect(() => {
                   value="credit"
                   checked={paymentMethod === 'credit'}
                   onChange={handlePaymentMethodChange}
+                  defaultChecked // Add this line to set the radio button as checked by default
                   className="mr-2"
                 />
                 {t('canada.credit')}
