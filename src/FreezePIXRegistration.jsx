@@ -20,8 +20,200 @@ import mongoose from 'mongoose';
 
 
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
+
+// Translations (kept the same as in the previous version)
+const translations = {
+  en: {
+    select: {
+grade:'Grade',
+select_grade:'Select Grade',
+student_grade: 'Student Grade',
+all_provinces: 'All Provinces'
+    },
+    steps: {
+      country: 'Select Country',
+      photo_package: 'Select Your Photo Package',
+      school: 'Choose School',
+      event: 'Pick Photo Event',
+      registration: 'Complete Registration',
+      package : 'Select Package',
+      register :'Register Another Child'
+
+    },
+    buttons: {
+      next: 'Next',
+      previous: 'Previous',
+      register: 'Register My Child',
+      submit: 'Complete Registration'
+    },
+    confirmation : {
+      register: 'Registration ID',
+      qr: 'Unique QR Code',
+      student: 'Student',
+      school: 'School',
+      event: 'Event',
+      error: 'No schools found matching your criteria'
+    },
+    countries: [
+      { value: 'canada', name: 'Canada' },
+      { value: 'usa', name: 'United States' },
+      { value: 'tunisia', name: 'Tunisia' }
+    ],
+    schools: {
+      canada: [
+        { value: 'springfield-elementary', name: 'Springfield Elementary', location: 'Ontario' },
+        { value: 'oakwood-middle', name: 'Oakwood Middle School', location: 'Quebec' }
+      ],
+      usa: [
+        { value: 'riverside-high', name: 'Riverside High School', location: 'California' },
+        { value: 'lincoln-elementary', name: 'Lincoln Elementary', location: 'New York' }
+      ],
+      tunisia: [
+        { value: 'tunis-daycare', name: 'Tunis International Daycare', location: 'Tunis' },
+        { value: 'sousse-kindergarten', name: 'Sousse Early Learning Center', location: 'Sousse' }
+      ]
+    },
+    events: [
+      { value: 'fall-2024', name: 'Fall 2024 Photo Day', date: 'September 15, 2024' },
+      { value: 'spring-2025', name: 'Spring 2025 Photo Day', date: 'March 20, 2025' }
+    ],
+    
+    form: {
+      firstName: 'Parent First Name',
+      lastName: 'Parent Last Name',
+      studentName: 'Student First Name',
+      studentLastName: 'Student Last Name',
+      parentEmail: 'Parent Email',
+      parentPhone: 'Parent Phone'
+      
+    },
+    canada : {
+    options: 'Payment Options for Canada',
+    select : 'Select Payment Method:',
+    interac: 'Interac E-Transfer',
+    credit: 'Credit Card Payment',
+    send: 'Send payment to:',
+    placing: 'After completing the registration, complete the Interac E-Transfer to the provided email.',
+    credit_c: 'Credit Card Payment',
+    message_c : 'Please complete your payment to place the order'
+
+  },
+  
+  checkout: {
+    cardNumber: 'Card Number',
+  expiryDate: 'Expiry Date', 
+  cvc: 'CVC',
+  zipCode: 'Zip Code',
+  postalCode: 'Postal Code',
+  postalCodeRequired: 'Postal code is required',
+  invalidPostalCode: 'Invalid postal code for the selected country',
+  serverError: 'An error occurred on our server. Please try again.',
+  networkError: 'Network error. Please check your connection.',
+  paymentProcessingError: 'Unable to process payment. Please try again.',
+  processing: 'Processing...',
+  payNow: 'Pay Now',
+  tryAgain: 'Try Again'
+  },
+  tunisia: {
+    paymentNote: 'Prices are in TND at half the USD rate',
+    daycarePayment: 'Pay at Daycare',
+    confirmationTitle: 'Registration Successful!',
+    confirmationMessage: 'Your child is now registered.'
+  }
+  },
+  fr: {
+    // French translations remain the same as in the original code
+    select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève', all_provinces: 'Tous les provinces' },
+    form: {
+      firstName: 'Prénom du parent',
+      lastName: 'Nom de famille du parent',
+      studentName: 'Prénom de d\'élève',
+      studentLastName: 'Nom de famille de d\'élève',
+      parentEmail: 'Email du parent',
+    parentPhone: 'Téléphone des parents'
+  },
+    steps: {
+      country: 'Sélectionner le Pays',
+      school: 'Choisir l\'école',
+      photo_package: 'Sélectionnez votre package',
+      event: 'Choisir l\'événement Photo',
+      registration: 'Compléter l\'inscription',
+      package : 'Sélectionner un offre',
+      register :'Enregistrer un autre enfant'
+    },
+    buttons: {
+      next: 'Suivant',
+      previous: 'Précédent',
+      register: 'Inscrire mon enfant',
+      submit: 'Terminer l\'inscription'
+    },
+    confirmation : {
+      register: 'ID d\'inscription',
+      qr: 'Code QR ',
+      student: 'Étudiant',
+      school: 'École',
+      event: 'Événement',
+      error: 'Aucune école trouvée correspondant à vos critères'
+    },
+    countries: [
+      { value: 'canada', name: 'Canada' },
+      { value: 'usa', name: 'États-Unis' },
+      { value: 'tunisia', name: 'Tunisie' }
+
+    ],
+    schools: {
+      // ... [previous schools]
+      tunisia: [
+        { value: 'tunis-daycare', name: 'Garderie Internationale de Tunis', location: 'Tunis' },
+        { value: 'sousse-kindergarten', name: 'Centre d\'Apprentissage Précoce de Sousse', location: 'Sousse' }
+      ]
+    },
+    canada: {
+      options: 'Options de paiement pour le Canada',
+      select : 'Sélectionnez le mode de paiement :',
+      interac: 'Virement Interac',
+      credit: 'Paiement par carte de crédit',
+      send: 'Envoyer le paiement à :',
+      placing: 'Après avoir terminé l\'inscription, veuillez compléter le virement Interac à l\'adresse e-mail fournie.',
+      credit_c: 'Paiement par carte de crédit',
+      message_c : 'Veuillez effectuer votre paiement pour passer la commande'
+  },
+  checkout: {
+    cardNumber: 'Numéro de carte',
+    expiryDate: 'Date d\'expiration',
+    cvc: 'CVC',
+    zipCode: 'Code postal',
+    postalCode: 'Code postal',
+    postalCodeRequired: 'Le code postal est requis',
+    invalidPostalCode: 'Code postal invalide pour le pays sélectionné',
+    serverError: 'Une erreur s\'est produite sur notre serveur. Veuillez réessayer.',
+    networkError: 'Erreur réseau. Veuillez vérifier votre connexion.',
+    paymentProcessingError: 'Impossible de traiter le paiement. Veuillez réessayer.',
+    processing: 'En cours de traitement...',
+    payNow: 'Payer maintenant',
+    tryAgain: 'Réessayer'
+},
+tunisia: {
+  paymentNote: 'Les prix sont en TND à la moitié du taux USD',
+  daycarePayment: 'Payer à la garderie',
+  confirmationTitle: 'Inscription Réussie !',
+  confirmationMessage: 'Votre enfant est maintenant inscrit.'
+}
+  }
+};
+
+// Existing translation function
+const t = (key) => {
+  try {
+    const keys = key.split('.');
+    return keys.reduce((obj, k) => obj[k], translations[language] || translations['en']);
+  } catch (error) {
+    console.warn(`Translation key not found: ${key}`);
+    return key;
+  }
+};
+
 const AddressForm = ({ type, data, onChange }) => {
-  const { t } = useTranslation();
   const [localData, setLocalData] = useState({
     parentFirstName: data.parentFirstName || '',
     parentLastName: data.parentLastName || '',
@@ -68,7 +260,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Parent First Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Parent First Name <span className="text-red-500">*</span>
+        {t('form.firstName')}<span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -84,7 +276,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Parent Last Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Parent Last Name <span className="text-red-500">*</span>
+        {t('form.lastName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -100,7 +292,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Student First Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Student First Name <span className="text-red-500">*</span>
+        {t('form.studentName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -116,7 +308,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Student Last Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Student Last Name <span className="text-red-500">*</span>
+        {t('form.studentLastName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -132,7 +324,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Parent Email */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Parent Email <span className="text-red-500">*</span>
+        {t('form.parentEmail')} <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
@@ -148,7 +340,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Parent Phone (Optional) */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Parent Phone
+        {t('form.parentPhone')}
         </label>
         <input
           type="tel"
@@ -176,7 +368,7 @@ const AddressForm = ({ type, data, onChange }) => {
           onBlur={handleInputComplete('studentGrade')}
           className="w-full p-2 border rounded"
         >
-          <option value="">            {t('select.select_grade')}
+          <option value="">{t('select.select_grade')}
           </option>
           {[...Array(10)].map((_, index) => (
             <option key={index + 1} value={index + 1}>
@@ -429,185 +621,7 @@ useEffect(() => {
 
   
 
-  // Translations (kept the same as in the previous version)
-  const translations = {
-    en: {
-      select: {
-grade:'Grade',
-select_grade:'Select Grade',
-student_grade: 'Student Grade',
-all_provinces: 'All Provinces'
-      },
-      steps: {
-        country: 'Select Country',
-        photo_package: 'Select Your Photo Package',
-        school: 'Choose School',
-        event: 'Pick Photo Event',
-        registration: 'Complete Registration',
-        package : 'Select Package',
-        register :'Register Another Child'
-
-      },
-      buttons: {
-        next: 'Next',
-        previous: 'Previous',
-        register: 'Register My Child',
-        submit: 'Complete Registration'
-      },
-      confirmation : {
-        register: 'Registration ID',
-        qr: 'Unique QR Code',
-        student: 'Student',
-        school: 'School',
-        event: 'Event'
-      },
-      countries: [
-        { value: 'canada', name: 'Canada' },
-        { value: 'usa', name: 'United States' },
-        { value: 'tunisia', name: 'Tunisia' }
-      ],
-      schools: {
-        canada: [
-          { value: 'springfield-elementary', name: 'Springfield Elementary', location: 'Ontario' },
-          { value: 'oakwood-middle', name: 'Oakwood Middle School', location: 'Quebec' }
-        ],
-        usa: [
-          { value: 'riverside-high', name: 'Riverside High School', location: 'California' },
-          { value: 'lincoln-elementary', name: 'Lincoln Elementary', location: 'New York' }
-        ],
-        tunisia: [
-          { value: 'tunis-daycare', name: 'Tunis International Daycare', location: 'Tunis' },
-          { value: 'sousse-kindergarten', name: 'Sousse Early Learning Center', location: 'Sousse' }
-        ]
-      },
-      events: [
-        { value: 'fall-2024', name: 'Fall 2024 Photo Day', date: 'September 15, 2024' },
-        { value: 'spring-2025', name: 'Spring 2025 Photo Day', date: 'March 20, 2025' }
-      ],
-      
-      form: {
-        firstName: 'Parent First Name',
-        lastName: 'Parent Last Name',
-        studentName: 'Student First Name',
-        studentLastName: 'Student Last Name',
-        parentEmail: 'Parent Email',
-        
-      },
-      canada : {
-      options: 'Payment Options for Canada',
-      select : 'Select Payment Method:',
-      interac: 'Interac E-Transfer',
-      credit: 'Credit Card Payment',
-      send: 'Send payment to:',
-      placing: 'After completing the registration, complete the Interac E-Transfer to the provided email.',
-      credit_c: 'Credit Card Payment',
-      message_c : 'Please complete your payment to place the order'
-
-    },
-    
-    checkout: {
-      cardNumber: 'Card Number',
-    expiryDate: 'Expiry Date', 
-    cvc: 'CVC',
-    zipCode: 'Zip Code',
-    postalCode: 'Postal Code',
-    postalCodeRequired: 'Postal code is required',
-    invalidPostalCode: 'Invalid postal code for the selected country',
-    serverError: 'An error occurred on our server. Please try again.',
-    networkError: 'Network error. Please check your connection.',
-    paymentProcessingError: 'Unable to process payment. Please try again.',
-    processing: 'Processing...',
-    payNow: 'Pay Now',
-    tryAgain: 'Try Again'
-    },
-    tunisia: {
-      paymentNote: 'Prices are in TND at half the USD rate',
-      daycarePayment: 'Pay at Daycare',
-      confirmationTitle: 'Registration Successful!',
-      confirmationMessage: 'Your child is now registered.'
-    }
-    },
-    fr: {
-      // French translations remain the same as in the original code
-      select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève', all_provinces: 'Tous les provinces' },
-      steps: {
-        country: 'Sélectionner le Pays',
-        school: 'Choisir l\'école',
-        event: 'Choisir l\'événement Photo',
-        registration: 'Compléter l\'inscription',
-        package : 'Sélectionner un offre',
-        register :'Enregistrer un autre enfant'
-      },
-      buttons: {
-        next: 'Suivant',
-        previous: 'Précédent',
-        register: 'Inscrire mon enfant',
-        submit: 'Terminer l\'inscription'
-      },
-      confirmation : {
-        register: 'ID d\'inscription',
-        qr: 'Code QR ',
-        student: 'Étudiant',
-        school: 'École',
-        event: 'Événement'
-      },
-      countries: [
-        { value: 'canada', name: 'Canada' },
-        { value: 'usa', name: 'États-Unis' },
-        { value: 'tunisia', name: 'Tunisie' }
-
-      ],
-      schools: {
-        // ... [previous schools]
-        tunisia: [
-          { value: 'tunis-daycare', name: 'Garderie Internationale de Tunis', location: 'Tunis' },
-          { value: 'sousse-kindergarten', name: 'Centre d\'Apprentissage Précoce de Sousse', location: 'Sousse' }
-        ]
-      },
-      canada: {
-        options: 'Options de paiement pour le Canada',
-        select : 'Sélectionnez le mode de paiement :',
-        interac: 'Virement Interac',
-        credit: 'Paiement par carte de crédit',
-        send: 'Envoyer le paiement à :',
-        placing: 'Après avoir terminé l\'inscription, veuillez compléter le virement Interac à l\'adresse e-mail fournie.',
-        credit_c: 'Paiement par carte de crédit',
-        message_c : 'Veuillez effectuer votre paiement pour passer la commande'
-    },
-    checkout: {
-      cardNumber: 'Numéro de carte',
-      expiryDate: 'Date d\'expiration',
-      cvc: 'CVC',
-      zipCode: 'Code postal',
-      postalCode: 'Code postal',
-      postalCodeRequired: 'Le code postal est requis',
-      invalidPostalCode: 'Code postal invalide pour le pays sélectionné',
-      serverError: 'Une erreur s\'est produite sur notre serveur. Veuillez réessayer.',
-      networkError: 'Erreur réseau. Veuillez vérifier votre connexion.',
-      paymentProcessingError: 'Impossible de traiter le paiement. Veuillez réessayer.',
-      processing: 'En cours de traitement...',
-      payNow: 'Payer maintenant',
-      tryAgain: 'Réessayer'
-  },
-  tunisia: {
-    paymentNote: 'Les prix sont en TND à la moitié du taux USD',
-    daycarePayment: 'Payer à la garderie',
-    confirmationTitle: 'Inscription Réussie !',
-    confirmationMessage: 'Votre enfant est maintenant inscrit.'
-  }
-    }
-  };
-
-  // Existing translation function
-  const t = (key) => {
-    try {
-      const keys = key.split('.');
-      return keys.reduce((obj, k) => obj[k], translations[language] || translations['en']);
-    } catch (error) {
-      console.warn(`Translation key not found: ${key}`);
-      return key;
-    }
-  };
+  
 
   // Step navigation handlers
   const nextStep = () => setCurrentStep(prev => prev + 1);
@@ -808,7 +822,7 @@ all_provinces: 'All Provinces'
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-500">No schools found matching your criteria</div>
+            <div className="text-center text-gray-500">{t('confirmation.error')}</div>
           )}
         </div>
       </div>
