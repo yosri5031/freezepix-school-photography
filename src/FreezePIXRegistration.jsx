@@ -168,7 +168,7 @@ const AddressForm = ({ type, data, onChange }) => {
       {/* Grade Selection (Optional) */}
       <div className="col-span-2">
         <label className="mb-1 text-sm font-medium block">
-          Student Grade
+        {t('select.student_grade')}
         </label>
         <select
           value={localData.studentGrade || ''}
@@ -176,10 +176,11 @@ const AddressForm = ({ type, data, onChange }) => {
           onBlur={handleInputComplete('studentGrade')}
           className="w-full p-2 border rounded"
         >
-          <option value="">Select Grade</option>
+          <option value="">            {t('select.select_grade')}
+          </option>
           {[...Array(10)].map((_, index) => (
             <option key={index + 1} value={index + 1}>
-              Grade {index + 1}
+              {t('select.grade')} {index + 1}
             </option>
           ))}
         </select>
@@ -431,6 +432,11 @@ useEffect(() => {
   // Translations (kept the same as in the previous version)
   const translations = {
     en: {
+      select: {
+grade:'Grade',
+select_grade:'Select Grade',
+student_grade: 'Student Grade'
+      },
       steps: {
         country: 'Select Country',
         school: 'Choose School',
@@ -521,6 +527,7 @@ useEffect(() => {
     },
     fr: {
       // French translations remain the same as in the original code
+      select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève' },
       steps: {
         country: 'Sélectionner le Pays',
         school: 'Choisir l\'école',
