@@ -194,14 +194,13 @@ const HelcimPayButton = ({
     setLoading(true);
     setIsProcessingOrder(true);
     setError(null);
-    
+  
     try {
-      // Check for mobile browser
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
+  
       if (!scriptLoaded) {
-        throw new Error(isMobile ? 
-          'Please wait for the payment system to load on your mobile device.' : 
+        throw new Error(isMobile ?
+          'Please wait for the payment system to load on your mobile device.' :
           'Payment system is still loading. Please try again in a moment.');
       }
   
@@ -209,34 +208,37 @@ const HelcimPayButton = ({
         selectedCountry,
         total
       });
-      
+  
       console.log('Helcim initialization response:', response);
-      
+  
       if (!response.checkoutToken) {
-        throw new Error('Failed to get valid checkout token');
+        throw new Error('Failed to get a valid checkout token');
       }
   
       setCheckoutToken(response.checkoutToken);
       secretTokenRef.current = response.secretToken;
   
-      // Adjust timeout for mobile devices
-      const timeoutDuration = isMobile ? 20000 : 10000;
-      
+      const timeoutDuration = 5000; // Set the timeout duration to 5 seconds for both PC and mobile
+  
       processingTimeoutRef.current = setTimeout(() => {
         if (!document.querySelector('.helcim-pay-iframe')) {
           resetStates();
-          setError(isMobile ? 
-            'Payment window failed to open on mobile. Please try again or use a desktop browser.' : 
+          setError(isMobile ?
+            'Payment window failed to open on mobile. Please try again or use a desktop browser.' :
             'Payment window failed to open. Please try again.');
         }
       }, timeoutDuration);
   
-      // Add delay for mobile browsers
       const appendDelay = isMobile ? 1500 : 500;
-      
+  
       setTimeout(() => {
         if (window.appendHelcimPayIframe) {
           window.appendHelcimPayIframe(response.checkoutToken, true);
+          
+          // Add a delay before resetting the loading status
+          setTimeout(() => {
+            setLoading(false);
+          }, 5000); // Adjust the duration to 5000 milliseconds (5 seconds)
         } else {
           throw new Error('Payment system not ready. Please refresh and try again.');
         }
