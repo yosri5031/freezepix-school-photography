@@ -22,6 +22,7 @@ import mongoose from 'mongoose';
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
 
 // Translations (kept the same as in the previous version)
+const [language, setLanguage] = useState('en');
 const translations = {
   en: {
     select: {
