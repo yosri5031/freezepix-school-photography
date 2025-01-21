@@ -401,7 +401,7 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
 const [packages, setPackages] = useState({
   basic: {
     name: 'Basic Package',
-    price: 0.03,
+    price: 19.99,
     description: 'Digital Photo'
   }
 });
@@ -1093,7 +1093,7 @@ const PackageSelection = () => {
   const calculatedPackages = {
     basic: {
       name: 'basic',
-      price: calculatePackagePrice(0.03),
+      price: calculatePackagePrice(19.99),
       description: 'Digital Photo'
     }
   };
@@ -1233,7 +1233,7 @@ const handleRegistrationSubmit = async (e) => {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
       name: "Basic",
       value: "Digital Photo",
-      price: 0.03,
+      price: 19.99,
       description: "Digital Photo",
       isActive: true
     };
@@ -1431,27 +1431,7 @@ useEffect(() => {
  {selectedSchool.country !== 'Tunisia' && (
             <>
                   {/* Option de paiement Interac */}
-                  {paymentMethod === 'interac' && (
-                    <div className="border rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{t('canada.interac')}</h4>
-                          <p className="text-sm text-gray-600">{t('canada.send')}</p>
-                          <p className="font-bold">Info@freezepix.com</p>
-                        </div>
-                        <img 
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp9FibB-R9ac8XXEootfuHyEdTuaeJ9bZiQQ&s" 
-                          alt="Interac E-Transfer" 
-                          className="h-12 w-auto"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t('canada.placing')}
-                      </p>
-                      {/* Bouton de commande pour Interac */}
-                      
-                    </div>
-                  )}
+                  
       
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && isFormFilled && (
