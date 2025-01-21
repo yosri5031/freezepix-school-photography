@@ -1363,16 +1363,7 @@ useEffect(() => {
           {selectedSchool.country !== 'Tunisia' && (
             <div className="mb-4">
               <h4 className="font-medium">{t('canada.select')}</h4>
-              <label className="block">
-                <input
-                  type="radio"
-                  value="interac"
-                  checked={paymentMethod === 'interac'}
-                  onChange={handlePaymentMethodChange}
-                  className="mr-2"
-                />
-                {t('canada.interac')}
-              </label>
+              
               <label className="block">
                 <input
                   type="radio"
