@@ -22,7 +22,94 @@ import mongoose from 'mongoose';
 const stripePromise = loadStripe('pk_live_51Nefi9KmwKMSxU2Df5F2MRHCcFSbjZRPWRT2KwC6xIZgkmAtVLFbXW2Nu78jbPtI9ta8AaPHPY6WsYsIQEOuOkWK00tLJiKQsQ');
 
 // Translations (kept the same as in the previous version)
-const [language, setLanguage] = useState('en');
+
+
+const FreezePIXRegistration = () => {
+  // State management for multi-step registration
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedSchool, setSelectedSchool] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(null); 
+    useEffect(() => {
+    if (selectedSchool) {
+      setFormData(prev => ({
+        ...prev,
+        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : ''
+      }));
+    }
+  }, [selectedSchool]);
+  const [language, setLanguage] = useState('en');
+  const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
+  const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
+  const [showIntro, setShowIntro] = useState(true);
+  const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isFormFilled, setIsFormFilled] = useState(false);
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+  const [formData, setFormData] = useState({
+    parentFirstName: '',
+    parentLastName: '',
+    parentEmail: '',
+    studentFirstName: '',
+    studentLastName: '',
+    parentPhone: '',
+    studentGrade: '',
+    paymentMethod: 'credit',
+    schoolId: selectedSchool?._id || '',
+    eventId: selectedEvent?._id || '',
+  });
+ 
+  const useEvents = (selectedSchool) => {
+    const [events, setEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(true);
+    const [eventsError, setEventsError] = useState(null);
+  
+    useEffect(() => {
+      const fetchEvents = async () => {
+        if (!selectedSchool || !selectedSchool._id) {
+          setEventsLoading(false);
+          return;
+        }
+  
+        // Simplified ID extraction
+        const schoolId = typeof selectedSchool._id === 'string' 
+          ? selectedSchool._id 
+          : selectedSchool._id.toString();
+  
+        try {
+          setEventsLoading(true);
+          const response = await axios.get(
+            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
+          );
+          
+          console.log('Events response:', response.data); // Debug log
+          setEvents(response.data);
+        } catch (error) {
+          console.error('Events fetch error:', error);
+          setEventsError(error.message);
+        } finally {
+          setEventsLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, [selectedSchool]);
+  
+    return { events, eventsLoading, eventsError };
+  };
+
+  // Add these to your useEffect hooks
+useEffect(() => {
+  // Check URL for successful payment
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+  
+  if (sessionId) {
+    verifyPayment(sessionId);
+  }
+}, []);
+
 const translations = {
   en: {
     select: {
@@ -381,92 +468,6 @@ const AddressForm = ({ type, data, onChange }) => {
     </div>
   );
 };
-
-const FreezePIXRegistration = () => {
-  // State management for multi-step registration
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedSchool, setSelectedSchool] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState(null); 
-    useEffect(() => {
-    if (selectedSchool) {
-      setFormData(prev => ({
-        ...prev,
-        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : ''
-      }));
-    }
-  }, [selectedSchool]);
-  const [language, setLanguage] = useState('en');
-  const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
-  const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
-  const [showIntro, setShowIntro] = useState(true);
-  const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isFormFilled, setIsFormFilled] = useState(false);
-  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
-  const [formData, setFormData] = useState({
-    parentFirstName: '',
-    parentLastName: '',
-    parentEmail: '',
-    studentFirstName: '',
-    studentLastName: '',
-    parentPhone: '',
-    studentGrade: '',
-    paymentMethod: 'credit',
-    schoolId: selectedSchool?._id || '',
-    eventId: selectedEvent?._id || '',
-  });
- 
-  const useEvents = (selectedSchool) => {
-    const [events, setEvents] = useState([]);
-    const [eventsLoading, setEventsLoading] = useState(true);
-    const [eventsError, setEventsError] = useState(null);
-  
-    useEffect(() => {
-      const fetchEvents = async () => {
-        if (!selectedSchool || !selectedSchool._id) {
-          setEventsLoading(false);
-          return;
-        }
-  
-        // Simplified ID extraction
-        const schoolId = typeof selectedSchool._id === 'string' 
-          ? selectedSchool._id 
-          : selectedSchool._id.toString();
-  
-        try {
-          setEventsLoading(true);
-          const response = await axios.get(
-            `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${schoolId}`
-          );
-          
-          console.log('Events response:', response.data); // Debug log
-          setEvents(response.data);
-        } catch (error) {
-          console.error('Events fetch error:', error);
-          setEventsError(error.message);
-        } finally {
-          setEventsLoading(false);
-        }
-      };
-  
-      fetchEvents();
-    }, [selectedSchool]);
-  
-    return { events, eventsLoading, eventsError };
-  };
-
-  // Add these to your useEffect hooks
-useEffect(() => {
-  // Check URL for successful payment
-  const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get('session_id');
-  
-  if (sessionId) {
-    verifyPayment(sessionId);
-  }
-}, []);
 
 const verifyPayment = async (sessionId) => {
   try {
