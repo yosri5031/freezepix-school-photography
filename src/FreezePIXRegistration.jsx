@@ -440,6 +440,7 @@ all_provinces: 'All Provinces'
       },
       steps: {
         country: 'Select Country',
+        photo_package: 'Select Your Photo Package',
         school: 'Choose School',
         event: 'Pick Photo Event',
         registration: 'Complete Registration',
@@ -1116,7 +1117,7 @@ const PackageSelection = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-800 text-center">
-        Select Your Photo Package
+      {t('steps.photo_package')}
       </h2>
       <div className="space-y-4">
         {Object.entries(calculatedPackages).map(([key, pkg]) => (
