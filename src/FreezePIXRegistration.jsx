@@ -39,7 +39,7 @@ const FreezePIXRegistration = () => {
     }
   }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
-  const [selectedPackage, setSelectedPackage] = useState('basic'); // Default to 'basic'
+  const [selectedPackage, setSelectedPackage] = useState('Digital'); // Default to 'basic'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
@@ -594,8 +594,8 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
 
 // Add state for packages and schools
 const [packages, setPackages] = useState({
-  basic: {
-    name: 'Basic Package',
+  Digital: {
+    name: 'Digital',
     price: 19.99,
     description: 'Digital Photo'
   }
@@ -1116,8 +1116,8 @@ useEffect(() => {
 // Package Selection Component
 const PackageSelection = () => {
   const calculatedPackages = {
-    basic: {
-      name: 'basic',
+    Digital: {
+      name: 'Digital ',
       price: calculatePackagePrice(19.99),
       description: 'Digital Photo'
     }
@@ -1256,7 +1256,7 @@ const handleRegistrationSubmit = async (e) => {
     //const packageSelected = packages[selectedPackage];
     const pkg = {
       _id: { $oid: "6746d9b30d449c3529961fd2" },
-      name: "Basic",
+      name: "Digital",
       value: "Digital Photo",
       price: 19.99,
       description: "Digital Photo",
