@@ -1354,6 +1354,7 @@ const handleRegistrationSubmit = async (e) => {
     
 
    
+    const selectedPkg = packages[selectedPackage]; // Define selectedPkg based on selectedPackage
 
       // Add tax calculation function
       const TAX_RATES = {
