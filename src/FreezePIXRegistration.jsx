@@ -148,7 +148,7 @@ const FreezePIXRegistration = () => {
       const now = new Date();
       const startDate = new Date(discount.startDate);
       const endDate = discount.endDate ? new Date(discount.endDate) : null;
-      
+  
       return isMatchingCode && 
              discount.isActive && 
              (!endDate || endDate > now) && 
@@ -160,6 +160,7 @@ const FreezePIXRegistration = () => {
       return false;
     }
   
+    setAppliedDiscount(validDiscount); // Save the valid discount
     setDiscountError('');
     return true;
   };
@@ -1584,7 +1585,7 @@ const handleRegistrationSubmit = async (e) => {
     originalSubtotal: selectedPkg.price,
     discountAmount,
     subtotal,
-    total: subtotal
+    total: subtotal + taxes // Assuming taxes is calculated separately
   };
 };
       
@@ -1686,13 +1687,13 @@ useEffect(() => {
     {/* Discount Code Input */}
   <div className="mb-4">
     <div className="flex space-x-2">
-      <input
-        type="text"
-        placeholder="Enter discount code"
-        value={discountCode}
-        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-        className="flex-1 p-2 border rounded"
-      />
+     <input
+  type="text"
+  placeholder="Enter discount code"
+  value={discountCode}
+  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+  className="flex-1 p-2 border rounded"
+/>
       <button
         onClick={() => validateDiscountCode(discountCode)}
         className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
@@ -1741,7 +1742,12 @@ useEffect(() => {
                 </div>
             ))
         }
-
+{priceDetails.discountAmount > 0 && (
+  <div className="flex justify-between text-green-600">
+    <span>Discount:</span>
+    <span>-{priceDetails.discountAmount.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}</span>
+  </div>
+)}
         <div className="border-t pt-2 mt-2">
             <div className="flex justify-between font-bold">
                 <span>Total:</span>
