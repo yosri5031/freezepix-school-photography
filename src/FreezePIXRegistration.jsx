@@ -1264,7 +1264,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
                   <div>
                     <h3 className="font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
                     <p className="text-sm text-gray-600">
-                      {key === 'digital' ? 'High resolution digital photo' :
+                      {key === 'digital' ? 'High resolution digital photo sent by email' :
                        key === 'crystal' ? '3D engraved crystal with LED base' :
                        `Professional print ${key.includes('print') ? key.replace('print', '') : ''}`}
                     </p>
