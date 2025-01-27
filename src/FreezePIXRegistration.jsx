@@ -39,7 +39,7 @@ const FreezePIXRegistration = () => {
     }
   }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
-  const [selectedPackage, setSelectedPackage] = useState('Standard'); // Default to 'basic'
+  const [selectedPackage, setSelectedPackage] = useState('Standard'); // Default to 'standard'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
@@ -1458,13 +1458,13 @@ useEffect(() => {
     <div className="bg-gray-100 rounded-lg p-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="font-semibold">{selectedPkg.name}</h3>
-          <p className="text-sm text-gray-600">{selectedPkg.description}</p>
+          <h3 className="font-semibold">{selectedPkg?.name || 'package not selected'} </h3>
+          <p className="text-sm text-gray-600">{selectedPkg?.description || 'package not selected'}</p>
         </div>
         <div className="font-bold text-xl text-green-600">
   {selectedSchool.country === 'Tunisia' ? 
-    `${(calculatePackagePrice(selectedPkg.price) / 2).toFixed(2)} TND` : 
-    `$${selectedPkg.price.toFixed(2)}`}
+    `${(calculatePackagePrice(selectedPkg?.price) / 2).toFixed(2)} TND` : 
+    `$${selectedPkg?.price.toFixed(2)}`}
 </div>
       </div>
     </div>
