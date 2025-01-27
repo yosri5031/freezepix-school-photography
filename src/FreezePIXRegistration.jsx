@@ -1113,6 +1113,8 @@ useEffect(() => {
   };
   // Confirmation Page Component
   const ConfirmationPage = () => {
+    // Get package details based on the selected package
+  const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
     const handleRegisterNewChild = () => {
       // Reset all state to initial values
       setCurrentStep(1);
@@ -1239,6 +1241,10 @@ const PackageSelection = () => {
             }`}
             onClick={() => {
               setSelectedPackage(key);
+              setFormData(prev => ({
+                ...prev,
+                packageSelection: key // Add package selection to form data
+              }));
               nextStep();
             }}
           >
@@ -1280,7 +1286,7 @@ const PackageSelection = () => {
 
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
-  const selectedPkg = packages[selectedPackage];
+  const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
   console.log('Selected Package:', selectedPkg);
   try {
     // Explicitly override the payment method based on radio selection
@@ -1354,7 +1360,8 @@ const handleRegistrationSubmit = async (e) => {
     
 
    
-    const selectedPkg = packages[selectedPackage]; // Define selectedPkg based on selectedPackage
+    const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
+    // Define selectedPkg based on selectedPackage
 
       // Add tax calculation function
       const TAX_RATES = {
@@ -1377,7 +1384,7 @@ const handleRegistrationSubmit = async (e) => {
       
       const calculateTotal = () => {
         // Ensure selectedPackage is defined and exists in packages
-        const selectedPkg = packages[selectedPackage];
+        const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
         if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
       
         const country = selectedSchool.country.toUpperCase();
