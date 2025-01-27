@@ -1616,9 +1616,9 @@ const handleRegistrationSubmit = async (e) => {
     const priceDetails = calculateTotal();
 
 const OrderSummary = ({ 
-  priceDetails, 
-  selectedSchool, 
-  discountCode, 
+  priceDetails = {}, // Provide default empty object
+  selectedSchool = {}, // Provide default empty object
+  discountCode = '', 
   setDiscountCode, 
   validateDiscountCode, 
   discountError 
@@ -1659,10 +1659,12 @@ const OrderSummary = ({
 
       <div className="space-y-2">
         {/* Original Price */}
-        <div className="flex justify-between">
-          <span>Original Price:</span>
-          <span>{priceDetails.originalSubtotal?.toFixed(2)} {getCurrencySymbol()}</span>
-        </div>
+        {priceDetails.originalSubtotal !== undefined && (
+          <div className="flex justify-between">
+            <span>Original Price:</span>
+            <span>{priceDetails.originalSubtotal.toFixed(2)} {getCurrencySymbol()}</span>
+          </div>
+        )}
 
         {/* Discount if applicable */}
         {priceDetails.discountAmount > 0 && (
@@ -1673,13 +1675,15 @@ const OrderSummary = ({
         )}
 
         {/* Subtotal after discount */}
-        <div className="flex justify-between">
-          <span>Subtotal:</span>
-          <span>{priceDetails.subtotal.toFixed(2)} {getCurrencySymbol()}</span>
-        </div>
+        {priceDetails.subtotal !== undefined && (
+          <div className="flex justify-between">
+            <span>Subtotal:</span>
+            <span>{priceDetails.subtotal.toFixed(2)} {getCurrencySymbol()}</span>
+          </div>
+        )}
 
         {/* Taxes */}
-        {selectedSchool.country === 'Tunisia' && (
+        {selectedSchool.country === 'Tunisia' && priceDetails.subtotal && (
           <div className="flex justify-between text-gray-600">
             <span>TVA (19%):</span>
             <span>{(priceDetails.subtotal * 0.19).toFixed(2)} {getCurrencySymbol()}</span>
@@ -1694,16 +1698,19 @@ const OrderSummary = ({
         ))}
 
         {/* Total */}
-        <div className="border-t pt-2 mt-2">
-          <div className="flex justify-between font-bold">
-            <span>Total:</span>
-            <span>{priceDetails.total.toFixed(2)} {getCurrencySymbol()}</span>
+        {priceDetails.total !== undefined && (
+          <div className="border-t pt-2 mt-2">
+            <div className="flex justify-between font-bold">
+              <span>Total:</span>
+              <span>{priceDetails.total.toFixed(2)} {getCurrencySymbol()}</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
+
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
