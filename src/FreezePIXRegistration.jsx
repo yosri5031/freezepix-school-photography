@@ -1736,12 +1736,7 @@ useEffect(() => {
                 </div>
             ))
         }
-{priceDetails.discountAmount > 0 && (
-  <div className="flex justify-between text-green-600">
-    <span>Discount:</span>
-    <span>-{priceDetails.discountAmount.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}</span>
-  </div>
-)}
+
         <div className="border-t pt-2 mt-2">
             <div className="flex justify-between font-bold">
                 <span>Total:</span>
