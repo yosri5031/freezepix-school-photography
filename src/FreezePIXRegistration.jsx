@@ -39,7 +39,7 @@ const FreezePIXRegistration = () => {
     }
   }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
-  const [selectedPackage, setSelectedPackage] = useState('Digital'); // Default to 'basic'
+  const [selectedPackage, setSelectedPackage] = useState('Standard'); // Default to 'basic'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
@@ -55,6 +55,10 @@ const FreezePIXRegistration = () => {
     studentLastName: '',
     parentPhone: '',
     studentGrade: '',
+    Street: '',
+    city: '',
+    Province: '',
+    zip:'',
     paymentMethod: 'credit',
     schoolId: selectedSchool?._id || '',
     eventId: selectedEvent?._id || '',
@@ -172,7 +176,11 @@ all_provinces: 'All Provinces'
       studentName: 'Student First Name',
       studentLastName: 'Student Last Name',
       parentEmail: 'Parent Email',
-      parentPhone: 'Parent Phone'
+      parentPhone: 'Parent Phone',
+      street:'Street',
+      city: 'City',
+      province: 'Province',
+      zip: 'Zip Code'
       
     },
     canada : {
@@ -218,7 +226,11 @@ all_provinces: 'All Provinces'
       studentName: 'Prénom de d\'élève',
       studentLastName: 'Nom de famille de d\'élève',
       parentEmail: 'Email du parent',
-    parentPhone: 'Téléphone des parents'
+    parentPhone: 'Téléphone des parents',
+    street:'Adresse',
+      city: 'Ville',
+      province: 'Province',
+      zip: 'Code postal'
   },
     steps: {
       country: 'Sélectionner le Pays',
@@ -309,7 +321,11 @@ const AddressForm = ({ type, data, onChange }) => {
     studentLastName: data.studentLastName || '',
     parentEmail: data.parentEmail || '',
     parentPhone: data.parentPhone || '',     // Add this
-    studentGrade: data.studentGrade || ''    // Add this
+    studentGrade: data.studentGrade || '',
+    street: data.street || '',
+    city: data.city || '',
+    province: data.province || '',
+    zip: data.zip || ''    // Add this
   });
 
   const requiredFields = [
@@ -317,7 +333,11 @@ const AddressForm = ({ type, data, onChange }) => {
     'parentLastName', 
     'studentFirstName', 
     'studentLastName', 
-    'parentEmail'
+    'parentEmail',
+    'street',
+    'city',
+    'province',
+    'zip'
   ];
 
   const handleInputChange = (field) => (e) => {
@@ -444,7 +464,64 @@ const AddressForm = ({ type, data, onChange }) => {
           pattern="[0-9]*"
         />
       </div>
-  
+
+      {/* address */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+        {t('form.street')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.street || ''}
+          onChange={handleInputChange('street')}
+          onBlur={handleInputComplete('street')}
+          className="w-full p-2 border rounded"
+          
+        /> </div>
+
+        <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+        {t('form.city')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.city || ''}
+          onChange={handleInputChange('city')}
+          onBlur={handleInputComplete('city')}
+          className="w-full p-2 border rounded"
+          
+        /> </div>
+
+        <div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+        {t('form.province')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.province || ''}
+          onChange={handleInputChange('province')}
+          onBlur={handleInputComplete('province')}
+          className="w-full p-2 border rounded"
+          
+        /> </div>
+
+<div className="flex flex-col">
+        <label className="mb-1 text-sm font-medium">
+        {t('form.street')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          inputMode="text"
+          value={localData.zip || ''}
+          onChange={handleInputChange('zip')}
+          onBlur={handleInputComplete('zip')}
+          className="w-full p-2 border rounded"
+          
+        /> </div>
+
       {/* Grade Selection (Optional) */}
       <div className="col-span-2">
         <label className="mb-1 text-sm font-medium block">
@@ -594,10 +671,10 @@ const CheckoutForm = ({ amount, selectedSchool, onSuccess }) => {
 
 // Add state for packages and schools
 const [packages, setPackages] = useState({
-  Digital: {
-    name: 'Digital',
-    price: 19.99,
-    description: 'Digital Photo'
+  Standard: {
+    name: 'Standard',
+    price: 50,
+    description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
   }
 });
 
@@ -1116,11 +1193,16 @@ useEffect(() => {
 // Package Selection Component
 const PackageSelection = () => {
   const calculatedPackages = {
-    Digital: {
-      name: 'Digital ',
-      price: calculatePackagePrice(19.99),
-      description: 'Digital Photo'
-    }
+    Standard: {
+      name: 'Standard',
+      price: calculatePackagePrice(50),
+      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+    },
+    Premium: {
+      name: 'Premium',
+      price: calculatePackagePrice(100),
+      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+    }   
   };
 
   // Determine if the selected school is in a Tunisian city
@@ -1195,6 +1277,10 @@ const handleRegistrationSubmit = async (e) => {
       studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
       parentPhone: formData.parentPhone,
+      street: formData.Street,
+      city: formData.city,
+      province: formData.Province,
+      zip: formData.zip,
       studentGrade: formData.studentGrade,
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
@@ -1253,15 +1339,7 @@ const handleRegistrationSubmit = async (e) => {
   const RegistrationForm = () => {
     
 
-    //const packageSelected = packages[selectedPackage];
-    const pkg = {
-      _id: { $oid: "6746d9b30d449c3529961fd2" },
-      name: "Digital",
-      value: "Digital Photo",
-      price: 19.99,
-      description: "Digital Photo",
-      isActive: true
-    };
+   
 
       // Add tax calculation function
       const TAX_RATES = {
@@ -1348,7 +1426,7 @@ const handleRegistrationSubmit = async (e) => {
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
-  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail) {
+  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail && formData.Street && formData.city && formData.Province && formData.zip) {
     setIsFormFilled(true);
   } else {
     setIsFormFilled(false);
