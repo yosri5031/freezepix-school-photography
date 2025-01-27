@@ -1261,6 +1261,10 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
 
   if (!isOpen) return null;
 
+  const basicPackageImages = {
+    digital: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
+  };
+
   const standardPackageImages = {
     digital: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
     print8x10: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
@@ -1274,7 +1278,16 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
   };
 
   const getPackageImages = () => {
-    return packageDetails.name === 'Premium' ? premiumPackageImages : standardPackageImages;
+    switch (packageDetails.name) {
+      case 'Basic':
+        return basicPackageImages;
+      case 'Standard':
+        return standardPackageImages;
+      case 'Premium':
+        return premiumPackageImages;
+      default:
+        return basicPackageImages;
+    }
   };
 
   return (
@@ -1350,6 +1363,11 @@ const PackageSelection = () => {
   const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
 
   const calculatedPackages = {
+    Basic: {
+      name: 'Basic',
+      price: calculatePackagePrice(20),
+      description: 'digital photo'
+    },
     Standard: {
       name: 'Standard',
       price: calculatePackagePrice(50),
