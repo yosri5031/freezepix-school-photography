@@ -139,30 +139,30 @@ const FreezePIXRegistration = () => {
   }, []);
 
   // Add discount validation function
-const validateDiscountCode = async (code) => {
-  try {
-    const response = await axios.get(
-      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/discount-codes/${code}`
-    );
-    
-    if (response.data && response.data.isActive) {
+  const validateDiscountCode = (code) => {
+    if (!code) return false;
+  
+    const upperCode = code.toUpperCase();
+    const validDiscount = availableDiscounts.find(discount => {
+      const isMatchingCode = discount.code.toUpperCase() === upperCode;
       const now = new Date();
-      const startDate = new Date(response.data.startDate);
-      const endDate = response.data.endDate ? new Date(response.data.endDate) : null;
+      const startDate = new Date(discount.startDate);
+      const endDate = discount.endDate ? new Date(discount.endDate) : null;
       
-      if (startDate <= now && (!endDate || endDate >= now)) {
-        setAppliedDiscount(response.data);
-        setDiscountError('');
-      } else {
-        setDiscountError('This discount code has expired');
-      }
-    } else {
+      return isMatchingCode && 
+             discount.isActive && 
+             (!endDate || endDate > now) && 
+             startDate <= now;
+    });
+  
+    if (!validDiscount) {
       setDiscountError('Invalid discount code');
+      return false;
     }
-  } catch (error) {
-    setDiscountError('Error validating discount code');
-  }
-};
+  
+    setDiscountError('');
+    return true;
+  };
   // Add these to your useEffect hooks
 useEffect(() => {
   // Check URL for successful payment
@@ -1706,14 +1706,7 @@ useEffect(() => {
   </div>
 
   <div className="space-y-2">
-    <div className="flex justify-between">
-      <span>Original Price:</span>
-      <span>
-        {priceDetails.originalSubtotal.toFixed(2)} 
-        {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
-      </span>
-    </div>
-
+    
     {priceDetails.discountAmount > 0 && (
       <div className="flex justify-between text-green-600">
         <span>Discount:</span>
