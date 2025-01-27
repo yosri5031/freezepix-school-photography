@@ -45,6 +45,10 @@ const FreezePIXRegistration = () => {
   const [registrationConfirmation, setRegistrationConfirmation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [discountCode, setDiscountCode] = useState('');
+    const [discountError, setDiscountError] = useState('');
+    const [availableDiscounts, setAvailableDiscounts] = useState([]);
+  const [appliedDiscount, setAppliedDiscount] = useState(null);
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [formData, setFormData] = useState({
@@ -107,6 +111,58 @@ const FreezePIXRegistration = () => {
     return { events, eventsLoading, eventsError };
   };
 
+  //fetch discounts
+  useEffect(() => {
+    const fetchDiscountCodes = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/discount-codes');
+        // Filter only active discounts and check dates
+        const activeDiscounts = response.data.filter(discount => {
+          const now = new Date();
+          const startDate = new Date(discount.startDate);
+          const endDate = discount.endDate ? new Date(discount.endDate) : null;
+          
+          return discount.isActive && 
+                 (!endDate || endDate > now) && 
+                 startDate <= now;
+        });
+        setAvailableDiscounts(activeDiscounts);
+      } catch (error) {
+        console.error('Error fetching discount codes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDiscountCodes();
+  }, []);
+
+  // Add discount validation function
+const validateDiscountCode = async (code) => {
+  try {
+    const response = await axios.get(
+      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/discount-codes/${code}`
+    );
+    
+    if (response.data && response.data.isActive) {
+      const now = new Date();
+      const startDate = new Date(response.data.startDate);
+      const endDate = response.data.endDate ? new Date(response.data.endDate) : null;
+      
+      if (startDate <= now && (!endDate || endDate >= now)) {
+        setAppliedDiscount(response.data);
+        setDiscountError('');
+      } else {
+        setDiscountError('This discount code has expired');
+      }
+    } else {
+      setDiscountError('Invalid discount code');
+    }
+  } catch (error) {
+    setDiscountError('Error validating discount code');
+  }
+};
   // Add these to your useEffect hooks
 useEffect(() => {
   // Check URL for successful payment
@@ -1482,40 +1538,55 @@ const handleRegistrationSubmit = async (e) => {
       };
       
       const calculateTotal = () => {
-        // Ensure selectedPackage is defined and exists in packages
-        if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
-      
-        const country = selectedSchool.country.toUpperCase();
-        const taxRates = TAX_RATES[country];
-      
-        // Calculate subtotal based on the selected package price
-        const subtotal = selectedPkg.price;
-      
-        if (country === 'CA' && selectedSchool.location && taxRates) {
-          const province = selectedSchool.location.toUpperCase();
-          const provinceTaxRates = taxRates[province];
-      
-          if (provinceTaxRates) {
-            const taxes = calculateTaxes(subtotal, provinceTaxRates);
-      
-            return {
-              subtotal,
-              taxDetails: taxes.taxDetails,
-              total: taxes.totalAmount
-            };
-          }
-        } else if (country === 'TUNISIA' && taxRates) {
-          const tunisiaTaxRate = taxRates.TND;
-          const discountedSubtotal = subtotal / 2; // Assuming a discount for Tunisia
-      
-          return {
-            subtotal: discountedSubtotal,
-            total: discountedSubtotal * (1 + tunisiaTaxRate)
-          };
-        }
-      
-        return { subtotal, total: subtotal }; // No tax applied
+  if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
+
+  const country = selectedSchool.country.toUpperCase();
+  const taxRates = TAX_RATES[country];
+
+  // Calculate subtotal based on the selected package price
+  let subtotal = selectedPkg.price;
+
+  // Apply discount if available
+  let discountAmount = 0;
+  if (appliedDiscount && appliedDiscount.valueType === 'percentage') {
+    discountAmount = (subtotal * appliedDiscount.value) / 100;
+    subtotal -= discountAmount;
+  }
+
+  if (country === 'CA' && selectedSchool.location && taxRates) {
+    const province = selectedSchool.location.toUpperCase();
+    const provinceTaxRates = taxRates[province];
+
+    if (provinceTaxRates) {
+      const taxes = calculateTaxes(subtotal, provinceTaxRates);
+
+      return {
+        originalSubtotal: selectedPkg.price,
+        discountAmount,
+        subtotal,
+        taxDetails: taxes.taxDetails,
+        total: taxes.totalAmount
       };
+    }
+  } else if (country === 'TUNISIA' && taxRates) {
+    const tunisiaTaxRate = taxRates.TND;
+    const discountedSubtotal = subtotal / 2;
+
+    return {
+      originalSubtotal: selectedPkg.price,
+      discountAmount,
+      subtotal: discountedSubtotal,
+      total: discountedSubtotal * (1 + tunisiaTaxRate)
+    };
+  }
+
+  return {
+    originalSubtotal: selectedPkg.price,
+    discountAmount,
+    subtotal,
+    total: subtotal
+  };
+};
       
       const calculateTaxes = (basePrice, taxRates) => {
         let totalTax = 0;
@@ -1612,6 +1683,46 @@ useEffect(() => {
            {/* Order Summary  */}
            <div className="bg-white rounded-lg p-4 shadow-sm border">
     <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+    {/* Discount Code Input */}
+  <div className="mb-4">
+    <div className="flex space-x-2">
+      <input
+        type="text"
+        placeholder="Enter discount code"
+        value={discountCode}
+        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+        className="flex-1 p-2 border rounded"
+      />
+      <button
+        onClick={() => validateDiscountCode(discountCode)}
+        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+      >
+        Apply
+      </button>
+    </div>
+    {discountError && (
+      <p className="text-red-500 text-sm mt-1">{discountError}</p>
+    )}
+  </div>
+
+  <div className="space-y-2">
+    <div className="flex justify-between">
+      <span>Original Price:</span>
+      <span>
+        {priceDetails.originalSubtotal.toFixed(2)} 
+        {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+      </span>
+    </div>
+
+    {priceDetails.discountAmount > 0 && (
+      <div className="flex justify-between text-green-600">
+        <span>Discount:</span>
+        <span>-{priceDetails.discountAmount.toFixed(2)} 
+          {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+        </span>
+      </div>
+    )}
+    </div>
     <div className="space-y-2">
         <div className="flex justify-between">
             <span>Subtotal:</span>
