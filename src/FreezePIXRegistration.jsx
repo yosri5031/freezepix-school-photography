@@ -1625,32 +1625,6 @@ useEffect(() => {
     setIsFormFilled(false);
   }
 }, [formData]);
-
-  const [localDiscount, setLocalDiscount] = useState({
-discountCode: ''    // Add this
-  });
-
-    const handleInputChange = (field) => (e) => {
-    const newValue = e.target.value;
-  
-    // Update local state
-    setLocalDiscount(prevData => ({
-      ...prevData,
-      [field]: newValue
-    }));
-  };
-  
-  const handleInputComplete = (field) => () => {
-    // Check if the input for this field is complete (full word entered)
-    const currentValue = localDiscount[field];
-    
-    // Only update parent form data when the input is complete
-    if (currentValue && currentValue.trim() !== '') {
-      onChange({
-        [field]: currentValue
-      });
-    }
-  };
     return (
       <div className="space-y-4">
     {/* Package Summary */}
@@ -1713,8 +1687,7 @@ discountCode: ''    // Add this
   type="text"
   placeholder="Enter discount code"
   value={discountCode}
-  onChange={handleInputChange('discountCode')}
-  onBlur={handleInputComplete('discountCode')}
+  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
   className="flex-1 p-2 border rounded"
 />
       <button
