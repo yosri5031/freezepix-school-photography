@@ -510,7 +510,7 @@ const AddressForm = ({ type, data, onChange }) => {
 
 <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.street')} <span className="text-red-500">*</span>
+        {t('form.zip')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
