@@ -1192,6 +1192,98 @@ useEffect(() => {
   };
 
 
+// Package Selection Component
+const PackageSelection = () => {
+  const calculatedPackages = {
+    Standard: {
+      name: 'Standard',
+      price: calculatePackagePrice(50),
+      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+    },
+    Premium: {
+      name: 'Premium',
+      price: calculatePackagePrice(100),
+      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+    }   
+  };
+
+  const packages = {
+    Standard: {
+      name: 'Standard',
+      price: 50,
+      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+    },
+    Premium: {
+      name: 'Premium',
+      price: 100,
+      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+    }
+  };
+
+  // Determine if the selected school is in a Tunisian city
+  const isTunisianLocation = tunisianCities.some(city => 
+    translations[language].schools.tunisia.find(
+      school => school.value === selectedSchool
+    )?.location.toLowerCase().includes(city)
+  );
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+      {t('steps.photo_package')}
+      </h2>
+      <div className="space-y-4">
+        {Object.entries(packages).map(([key, pkg]) => (
+          <div 
+            key={key}
+            className={`border rounded-lg p-4 cursor-pointer ${
+              selectedPackage === key ? 'border rounded-lg p-4 cursor-pointer hover:bg-blue-50' : 'bg-white'
+            }`}
+            onClick={() => {
+              setSelectedPackage(key);
+              setFormData(prev => ({
+                ...prev,
+                packageSelection: key // Add package selection to form data
+              }));
+              nextStep();
+            }}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                <p className="text-sm text-gray-600">{pkg.description}</p>
+              </div>
+              <div className="font-bold text-xl">
+  {selectedSchool.country === 'Tunisia' ? 
+     `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
+    `$${pkg.price.toFixed(2)}`}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Previous Button */}
+      <div className="flex justify-between space-x-4">
+        <button 
+          onClick={previousStep} 
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+        >
+          {t('buttons.previous')}
+        </button>
+      </div>
+
+      {/* Optional Price Explanation for Tunisian Locations */}
+      {isTunisianLocation && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+          <p className="text-yellow-700 text-sm">
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
   const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
