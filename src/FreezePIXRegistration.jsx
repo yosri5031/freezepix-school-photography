@@ -1205,6 +1205,19 @@ const PackageSelection = () => {
     }   
   };
 
+  const packages = {
+    Standard: {
+      name: 'Standard',
+      price: 50,
+      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+    },
+    Premium: {
+      name: 'Premium',
+      price: 100,
+      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+    }
+  };
+
   // Determine if the selected school is in a Tunisian city
   const isTunisianLocation = tunisianCities.some(city => 
     translations[language].schools.tunisia.find(
@@ -1218,7 +1231,7 @@ const PackageSelection = () => {
       {t('steps.photo_package')}
       </h2>
       <div className="space-y-4">
-        {Object.entries(calculatedPackages).map(([key, pkg]) => (
+        {Object.entries(packages).map(([key, pkg]) => (
           <div 
             key={key}
             className={`border rounded-lg p-4 cursor-pointer ${
@@ -1267,7 +1280,8 @@ const PackageSelection = () => {
 
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
-
+  const selectedPkg = packages[selectedPackage];
+  console.log('Selected Package:', selectedPkg);
   try {
     // Explicitly override the payment method based on radio selection
     const registrationData = {
@@ -1361,35 +1375,40 @@ const handleRegistrationSubmit = async (e) => {
       };
       
       const calculateTotal = () => {
-        if (!selectedSchool?.country || !pkg.price) return { subtotal: pkg.price, total: pkg.price };
+        // Ensure selectedPackage is defined and exists in packages
+        const selectedPkg = packages[selectedPackage];
+        if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
       
         const country = selectedSchool.country.toUpperCase();
         const taxRates = TAX_RATES[country];
-        
+      
+        // Calculate subtotal based on the selected package price
+        const subtotal = selectedPkg.price;
+      
         if (country === 'CA' && selectedSchool.location && taxRates) {
           const province = selectedSchool.location.toUpperCase();
           const provinceTaxRates = taxRates[province];
       
           if (provinceTaxRates) {
-            const taxes = calculateTaxes(pkg.price, provinceTaxRates);
+            const taxes = calculateTaxes(subtotal, provinceTaxRates);
       
             return {
-              subtotal: pkg.price,
+              subtotal,
               taxDetails: taxes.taxDetails,
               total: taxes.totalAmount
             };
           }
         } else if (country === 'TUNISIA' && taxRates) {
           const tunisiaTaxRate = taxRates.TND;
-          const subtotal = pkg.price / 2;
-          
+          const discountedSubtotal = subtotal / 2; // Assuming a discount for Tunisia
+      
           return {
-            subtotal,
-            total: subtotal * (1 + tunisiaTaxRate)
+            subtotal: discountedSubtotal,
+            total: discountedSubtotal * (1 + tunisiaTaxRate)
           };
         }
       
-        return { subtotal: pkg.price, total: pkg.price };
+        return { subtotal, total: subtotal }; // No tax applied
       };
       
       const calculateTaxes = (basePrice, taxRates) => {
@@ -1438,13 +1457,13 @@ useEffect(() => {
     <div className="bg-gray-100 rounded-lg p-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="font-semibold">{pkg.name}</h3>
-          <p className="text-sm text-gray-600">{pkg.description}</p>
+          <h3 className="font-semibold">{selectedPkg.name}</h3>
+          <p className="text-sm text-gray-600">{selectedPkg.description}</p>
         </div>
         <div className="font-bold text-xl text-green-600">
   {selectedSchool.country === 'Tunisia' ? 
-    `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
-    `$${pkg.price.toFixed(2)}`}
+    `${(calculatePackagePrice(selectedPkg.price) / 2).toFixed(2)} TND` : 
+    `$${selectedPkg.price.toFixed(2)}`}
 </div>
       </div>
     </div>
