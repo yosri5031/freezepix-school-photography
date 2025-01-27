@@ -1,7 +1,7 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
-import { School as CustomSchoolIcon } from 'lucide-react';
+import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { loadStripe } from "@stripe/stripe-js";
 import {
   CardNumberElement,
@@ -1198,9 +1198,100 @@ useEffect(() => {
     );
   };
 
+//product details popup
+const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
+  const [zoomedImage, setZoomedImage] = useState(null);
+
+  if (!isOpen) return null;
+
+  const standardPackageImages = {
+    digital: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+    print8x10: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+    print5x7: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
+    wallets: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg"
+  };
+
+  const premiumPackageImages = {
+    ...standardPackageImages,
+    crystal: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911"
+  };
+
+  const getPackageImages = () => {
+    return packageDetails.name === 'Premium' ? premiumPackageImages : standardPackageImages;
+  };
+
+  return (
+    <>
+      {zoomedImage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="relative bg-white rounded-lg w-full max-w-xl">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-lg font-bold">Image Preview</h2>
+              <button
+                onClick={() => setZoomedImage(null)}
+                className="p-2 hover:bg-gray-200 rounded-full"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-4">
+              <img
+                src={zoomedImage}
+                alt="Preview"
+                className="w-full h-auto rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white p-4 border-b">
+            <h2 className="text-lg font-bold">{packageDetails.name} Package Details</h2>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-200 rounded-full"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="p-4 grid grid-cols-1 gap-4">
+            {Object.entries(getPackageImages()).map(([key, src]) => (
+              <div key={key} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+                <div className="grid grid-cols-2 p-4 items-center">
+                  <div>
+                    <h3 className="font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                    <p className="text-sm text-gray-600">
+                      {key === 'digital' ? 'High resolution digital photo' :
+                       key === 'crystal' ? '3D engraved crystal with LED base' :
+                       `Professional print ${key.includes('print') ? key.replace('print', '') : ''}`}
+                    </p>
+                  </div>
+                  <div className="justify-self-center">
+                    <img
+                      src={src}
+                      alt={key}
+                      className="h-32 w-32 object-cover cursor-pointer rounded-lg"
+                      onClick={() => setZoomedImage(src)}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 // Package Selection Component
 const PackageSelection = () => {
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
+
   const calculatedPackages = {
     Standard: {
       name: 'Standard',
@@ -1226,6 +1317,12 @@ const PackageSelection = () => {
     nextStep();
   };
 
+  const handleDetailsClick = (e, packageData) => {
+    e.stopPropagation();
+    setSelectedPackageDetails(packageData);
+    setShowDetails(true);
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-800 text-center">
@@ -1243,7 +1340,12 @@ const PackageSelection = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                <p className="text-sm text-gray-600">{pkg.description}</p>
+                <button
+                  onClick={(e) => handleDetailsClick(e, pkg)}
+                  className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+                >
+                  Package Details
+                </button>
               </div>
               <div className="font-bold text-xl">
                 {selectedSchool.country === 'Tunisia' ? 
@@ -1255,6 +1357,13 @@ const PackageSelection = () => {
         ))}
       </div>
       
+      <PackageDetailsPopup
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+        packageDetails={selectedPackageDetails}
+        country={selectedSchool.country}
+      />
+
       <div className="flex justify-between space-x-4">
         <button 
           onClick={previousStep} 
