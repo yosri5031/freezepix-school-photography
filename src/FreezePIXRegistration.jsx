@@ -1610,7 +1610,7 @@ const handleRegistrationSubmit = async (e) => {
           }
         }
       
-        return { totalAmount: basePrice + totalTax, taxDetails };
+        return { totalAmount: totalTax, taxDetails };
       };
 
     const priceDetails = calculateTotal();
