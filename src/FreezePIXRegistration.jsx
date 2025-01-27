@@ -55,9 +55,9 @@ const FreezePIXRegistration = () => {
     studentLastName: '',
     parentPhone: '',
     studentGrade: '',
-    Street: '',
+    street: '',
     city: '',
-    Province: '',
+    province: '',
     zip:'',
     paymentMethod: 'credit',
     schoolId: selectedSchool?._id || '',
@@ -1277,9 +1277,9 @@ const handleRegistrationSubmit = async (e) => {
       studentFirstName: formData.studentFirstName,
       studentLastName: formData.studentLastName,
       parentPhone: formData.parentPhone,
-      street: formData.Street,
+      street: formData.street,
       city: formData.city,
-      province: formData.Province,
+      province: formData.province,
       zip: formData.zip,
       studentGrade: formData.studentGrade,
       schoolId: selectedSchool._id 
@@ -1426,7 +1426,7 @@ const handleRegistrationSubmit = async (e) => {
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
-  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail && formData.Street && formData.city && formData.Province && formData.zip) {
+  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail && formData.street && formData.city && formData.province && formData.zip) {
     setIsFormFilled(true);
   } else {
     setIsFormFilled(false);
