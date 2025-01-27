@@ -1576,11 +1576,13 @@ const handleRegistrationSubmit = async (e) => {
   }
 
   return {
-    originalSubtotal: selectedPkg.price,
-    discountAmount,
-    subtotal,
-    total: subtotal + taxes.totalAmount // Use the calculated taxes
-  };
+  originalSubtotal: selectedPkg.price,
+  discountAmount,
+  subtotal,
+  tax: taxes.totalAmount,
+  taxDetails: taxes.taxDetails,  // Add this line
+  total: subtotal + taxes.totalAmount
+};
 };
       
       const calculateTaxes = (basePrice, taxRates) => {
@@ -1727,15 +1729,15 @@ useEffect(() => {
         )}
 
 {priceDetails.taxDetails &&
-            Object.keys(priceDetails.taxDetails).map(key => (
-                <div key={key} className="flex justify-between text-gray-600">
-                    <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
-                    <span>
-                        {selectedSchool.country !== 'Tunisia' ? `$${priceDetails.taxDetails[key].amount.toFixed(2)}` : ''}
-                    </span>
-                </div>
-            ))
-        }
+  Object.entries(priceDetails.taxDetails).map(([key, value]) => (
+    <div key={key} className="flex justify-between text-gray-600">
+      <span>{key} ({value.rate}%):</span>
+      <span>
+        {selectedSchool.country !== 'Tunisia' ? `$${value.amount.toFixed(2)}` : ''}
+      </span>
+    </div>
+  ))
+}
 
         <div className="border-t pt-2 mt-2">
             <div className="flex justify-between font-bold">
