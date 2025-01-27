@@ -1538,7 +1538,7 @@ const handleRegistrationSubmit = async (e) => {
         }
       };
       
-      const calculateTotal = () => {
+    const calculateTotal = () => {
   if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
 
   const country = selectedSchool.country.toUpperCase();
@@ -1554,30 +1554,24 @@ const handleRegistrationSubmit = async (e) => {
     subtotal -= discountAmount;
   }
 
+  let taxes = { totalAmount: 0, taxDetails: {} }; // Initialize taxes
+
   if (country === 'CA' && selectedSchool.location && taxRates) {
     const province = selectedSchool.location.toUpperCase();
     const provinceTaxRates = taxRates[province];
 
     if (provinceTaxRates) {
-      const taxes = calculateTaxes(subtotal, provinceTaxRates);
-
-      return {
-        originalSubtotal: selectedPkg.price,
-        discountAmount,
-        subtotal,
-        taxDetails: taxes.taxDetails,
-        total: taxes.totalAmount
-      };
+      taxes = calculateTaxes(subtotal, provinceTaxRates); // Calculate taxes
     }
   } else if (country === 'TUNISIA' && taxRates) {
     const tunisiaTaxRate = taxRates.TND;
-    const discountedSubtotal = subtotal / 2;
+    const discountedSubtotal = subtotal; // Use the subtotal after discount
 
     return {
       originalSubtotal: selectedPkg.price,
       discountAmount,
       subtotal: discountedSubtotal,
-      total: discountedSubtotal * (1 + tunisiaTaxRate)
+      total: discountedSubtotal * (1 + tunisiaTaxRate) // Apply tax on the discounted subtotal
     };
   }
 
@@ -1585,7 +1579,7 @@ const handleRegistrationSubmit = async (e) => {
     originalSubtotal: selectedPkg.price,
     discountAmount,
     subtotal,
-    total: subtotal + taxes // Assuming taxes is calculated separately
+    total: subtotal + taxes.totalAmount // Use the calculated taxes
   };
 };
       
