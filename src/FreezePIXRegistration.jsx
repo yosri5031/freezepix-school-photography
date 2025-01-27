@@ -1584,126 +1584,36 @@ const handleRegistrationSubmit = async (e) => {
 };
       
       const calculateTaxes = (basePrice, taxRates) => {
-  let totalTax = 0;
-  const taxDetails = {};
-
-  if (taxRates.HST) {
-    const hst = (basePrice * taxRates.HST) / 100;
-    totalTax += hst;
-    taxDetails.HST = { rate: taxRates.HST, amount: hst };
-  } else {
-    if (taxRates.GST) {
-      const gst = (basePrice * taxRates.GST) / 100;
-      totalTax += gst;
-      taxDetails.GST = { rate: taxRates.GST, amount: gst };
-    }
-    if (taxRates.PST) {
-      const pst = (basePrice * taxRates.PST) / 100;
-      totalTax += pst;
-      taxDetails.PST = { rate: taxRates.PST, amount: pst };
-    }
-    if (taxRates.QST) {
-      const gstAmount = basePrice * taxRates.GST / 100;
-      const qst = ((basePrice + gstAmount) * taxRates.QST) / 100;
-      totalTax += qst;
-      taxDetails.QST = { rate: taxRates.QST, amount: qst };
-    }
-  }
-
-  return { totalAmount: totalTax, taxDetails }; // Changed to return just the tax amount
-};
+        let totalTax = 0;
+        const taxDetails = {};
+      
+        if (taxRates.HST) {
+          const hst = (basePrice * taxRates.HST) / 100;
+          totalTax += hst;
+          taxDetails.HST = { rate: taxRates.HST, amount: hst };
+        } else {
+          if (taxRates.GST) {
+            const gst = (basePrice * taxRates.GST) / 100;
+            totalTax += gst;
+            taxDetails.GST = { rate: taxRates.GST, amount: gst };
+          }
+          if (taxRates.PST) {
+            const pst = (basePrice * taxRates.PST) / 100;
+            totalTax += pst;
+            taxDetails.PST = { rate: taxRates.PST, amount: pst };
+          }
+          if (taxRates.QST) {
+            const gstAmount = basePrice * taxRates.GST / 100;
+            const qst = ((basePrice + gstAmount) * taxRates.QST) / 100;
+            totalTax += qst;
+            taxDetails.QST = { rate: taxRates.QST, amount: qst };
+          }
+        }
+      
+        return { totalAmount: basePrice + totalTax, taxDetails };
+      };
 
     const priceDetails = calculateTotal();
-
-const OrderSummary = ({ 
-  priceDetails, 
-  selectedSchool, 
-  discountCode, 
-  setDiscountCode, 
-  validateDiscountCode, 
-  discountError 
-}) => {
-  const getCurrencySymbol = () => {
-    switch(selectedSchool.country) {
-      case 'Tunisia': return 'TND';
-      case 'CA': return 'CAD';
-      default: return 'USD';
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border">
-      <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-      
-      {/* Discount Code Input */}
-      <div className="mb-4">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            placeholder="Enter discount code"
-            value={discountCode}
-            onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-            className="flex-1 p-2 border rounded"
-          />
-          <button
-            onClick={() => validateDiscountCode(discountCode)}
-            className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
-          >
-            Apply
-          </button>
-        </div>
-        {discountError && (
-          <p className="text-red-500 text-sm mt-1">{discountError}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        {/* Original Price */}
-        <div className="flex justify-between">
-          <span>Original Price:</span>
-          <span>{priceDetails.originalSubtotal?.toFixed(2)} {getCurrencySymbol()}</span>
-        </div>
-
-        {/* Discount if applicable */}
-        {priceDetails.discountAmount > 0 && (
-          <div className="flex justify-between text-green-600">
-            <span>Discount:</span>
-            <span>-{priceDetails.discountAmount.toFixed(2)} {getCurrencySymbol()}</span>
-          </div>
-        )}
-
-        {/* Subtotal after discount */}
-        <div className="flex justify-between">
-          <span>Subtotal:</span>
-          <span>{priceDetails.subtotal.toFixed(2)} {getCurrencySymbol()}</span>
-        </div>
-
-        {/* Taxes */}
-        {selectedSchool.country === 'Tunisia' && (
-          <div className="flex justify-between text-gray-600">
-            <span>TVA (19%):</span>
-            <span>{(priceDetails.subtotal * 0.19).toFixed(2)} {getCurrencySymbol()}</span>
-          </div>
-        )}
-
-        {priceDetails.taxDetails && Object.entries(priceDetails.taxDetails).map(([key, value]) => (
-          <div key={key} className="flex justify-between text-gray-600">
-            <span>{key} ({value.rate}%):</span>
-            <span>{value.amount.toFixed(2)} {getCurrencySymbol()}</span>
-          </div>
-        ))}
-
-        {/* Total */}
-        <div className="border-t pt-2 mt-2">
-          <div className="flex justify-between font-bold">
-            <span>Total:</span>
-            <span>{priceDetails.total.toFixed(2)} {getCurrencySymbol()}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
@@ -1766,7 +1676,77 @@ useEffect(() => {
           )}
 
            {/* Order Summary  */}
-           < OrderSummary />
+           <div className="bg-white rounded-lg p-4 shadow-sm border">
+    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+    {/* Discount Code Input */}
+  <div className="mb-4">
+    <div className="flex space-x-2">
+     <input
+  type="text"
+  placeholder="Enter discount code"
+  value={discountCode}
+  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+  className="flex-1 p-2 border rounded"
+/>
+      <button
+        onClick={() => validateDiscountCode(discountCode)}
+        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+      >
+        Apply
+      </button>
+    </div>
+    {discountError && (
+      <p className="text-red-500 text-sm mt-1">{discountError}</p>
+    )}
+  </div>
+
+  <div className="space-y-2">
+    
+    {priceDetails.discountAmount > 0 && (
+      <div className="flex justify-between text-green-600">
+        <span>Discount:</span>
+        <span>-{priceDetails.discountAmount.toFixed(2)} 
+          {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+        </span>
+      </div>
+    )}
+    </div>
+    <div className="space-y-2">
+        <div className="flex justify-between">
+            <span>Subtotal:</span>
+            <span>
+                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+            </span>
+        </div>
+
+        {selectedSchool.country === 'Tunisia' && (
+            <div className="flex justify-between text-gray-600">
+                <span>TVA (19%):</span>
+                <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
+            </div>
+        )}
+
+{priceDetails.taxDetails &&
+            Object.keys(priceDetails.taxDetails).map(key => (
+                <div key={key} className="flex justify-between text-gray-600">
+                    <span>{key} ({priceDetails.taxDetails[key].rate}%):</span>
+                    <span>
+                        {selectedSchool.country !== 'Tunisia' ? `$${priceDetails.taxDetails[key].amount.toFixed(2)}` : ''}
+                    </span>
+                </div>
+            ))
+        }
+
+        <div className="border-t pt-2 mt-2">
+            <div className="flex justify-between font-bold">
+                <span>Total:</span>
+                <span>
+                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 
 {/* Option de paiement Tunisia */}
 {selectedSchool.country === 'Tunisia' && (
