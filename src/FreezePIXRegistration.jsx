@@ -62,6 +62,10 @@ const FreezePIXRegistration = () => {
     paymentMethod: 'credit',
     schoolId: selectedSchool?._id || '',
     eventId: selectedEvent?._id || '',
+    packageSelection: '',
+  packagePrice: 0,
+  packageName: '',
+  packageDescription: ''
   });
  
   const useEvents = (selectedSchool) => {
@@ -1114,8 +1118,11 @@ useEffect(() => {
   // Confirmation Page Component
   const ConfirmationPage = () => {
     // Get package details based on the selected package
-  const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
-    const handleRegisterNewChild = () => {
+    const selectedPkg = formData.packageSelection ? {
+      name: formData.packageName,
+      price: formData.packagePrice,
+      description: formData.packageDescription
+    } : null;    const handleRegisterNewChild = () => {
       // Reset all state to initial values
       setCurrentStep(1);
       setSelectedCountry('');
@@ -1207,46 +1214,31 @@ const PackageSelection = () => {
     }   
   };
 
-  const packages = {
-    Standard: {
-      name: 'Standard',
-      price: 50,
-      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
-    },
-    Premium: {
-      name: 'Premium',
-      price: 100,
-      description: 'Digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
-    }
+  const handlePackageSelect = (packageKey, packageData) => {
+    setSelectedPackage(packageKey);
+    setFormData(prev => ({
+      ...prev,
+      packageSelection: packageKey,
+      packagePrice: packageData.price,
+      packageName: packageData.name,
+      packageDescription: packageData.description
+    }));
+    nextStep();
   };
-
-  // Determine if the selected school is in a Tunisian city
-  const isTunisianLocation = tunisianCities.some(city => 
-    translations[language].schools.tunisia.find(
-      school => school.value === selectedSchool
-    )?.location.toLowerCase().includes(city)
-  );
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-800 text-center">
-      {t('steps.photo_package')}
+        {t('steps.photo_package')}
       </h2>
       <div className="space-y-4">
-        {Object.entries(packages).map(([key, pkg]) => (
+        {Object.entries(calculatedPackages).map(([key, pkg]) => (
           <div 
             key={key}
             className={`border rounded-lg p-4 cursor-pointer ${
               selectedPackage === key ? 'border rounded-lg p-4 cursor-pointer hover:bg-blue-50' : 'bg-white'
             }`}
-            onClick={() => {
-              setSelectedPackage(key);
-              setFormData(prev => ({
-                ...prev,
-                packageSelection: key // Add package selection to form data
-              }));
-              nextStep();
-            }}
+            onClick={() => handlePackageSelect(key, pkg)}
           >
             <div className="flex justify-between items-center">
               <div>
@@ -1254,16 +1246,15 @@ const PackageSelection = () => {
                 <p className="text-sm text-gray-600">{pkg.description}</p>
               </div>
               <div className="font-bold text-xl">
-  {selectedSchool.country === 'Tunisia' ? 
-     `${(calculatePackagePrice(pkg.price) / 2).toFixed(2)} TND` : 
-    `$${pkg.price.toFixed(2)}`}
+                {selectedSchool.country === 'Tunisia' ? 
+                  `${(pkg.price / 2).toFixed(2)} TND` : 
+                  `$${pkg.price.toFixed(2)}`}
               </div>
             </div>
           </div>
         ))}
       </div>
-
-      {/* Previous Button */}
+      
       <div className="flex justify-between space-x-4">
         <button 
           onClick={previousStep} 
@@ -1272,22 +1263,18 @@ const PackageSelection = () => {
           {t('buttons.previous')}
         </button>
       </div>
-
-      {/* Optional Price Explanation for Tunisian Locations */}
-      {isTunisianLocation && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-          <p className="text-yellow-700 text-sm">
-          </p>
-        </div>
-      )}
     </div>
   );
 };
 
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
-  const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
-  console.log('Selected Package:', selectedPkg);
+  const selectedPkg = formData.packageSelection ? {
+    name: formData.packageName,
+    price: formData.packagePrice,
+    description: formData.packageDescription
+  } : null;
+    console.log('Selected Package:', selectedPkg);
   try {
     // Explicitly override the payment method based on radio selection
     const registrationData = {
@@ -1360,8 +1347,11 @@ const handleRegistrationSubmit = async (e) => {
     
 
    
-    const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
-    // Define selectedPkg based on selectedPackage
+    const selectedPkg = formData.packageSelection ? {
+      name: formData.packageName,
+      price: formData.packagePrice,
+      description: formData.packageDescription
+    } : null;    // Define selectedPkg based on selectedPackage
 
       // Add tax calculation function
       const TAX_RATES = {
@@ -1384,7 +1374,6 @@ const handleRegistrationSubmit = async (e) => {
       
       const calculateTotal = () => {
         // Ensure selectedPackage is defined and exists in packages
-        const selectedPkg = packages[formData.packageSelection] || packages[selectedPackage];
         if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
       
         const country = selectedSchool.country.toUpperCase();
@@ -1462,19 +1451,22 @@ useEffect(() => {
     return (
       <div className="space-y-4">
     {/* Package Summary */}
-    <div className="bg-gray-100 rounded-lg p-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold">{selectedPkg?.name || 'package not selected'} </h3>
-          <p className="text-sm text-gray-600">{selectedPkg?.description || 'package not selected'}</p>
+    {/* Package Summary */}
+    {selectedPkg && (
+        <div className="bg-gray-100 rounded-lg p-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="font-semibold">{selectedPkg.name}</h3>
+              <p className="text-sm text-gray-600">{selectedPkg.description}</p>
+            </div>
+            <div className="font-bold text-xl text-green-600">
+              {selectedSchool.country === 'Tunisia' ? 
+                `${(selectedPkg.price / 2).toFixed(2)} TND` : 
+                `$${selectedPkg.price.toFixed(2)}`}
+            </div>
+          </div>
         </div>
-        <div className="font-bold text-xl text-green-600">
-  {selectedSchool.country === 'Tunisia' ? 
-    `${(calculatePackagePrice(selectedPkg?.price) / 2).toFixed(2)} TND` : 
-    `$${selectedPkg?.price.toFixed(2)}`}
-</div>
-      </div>
-    </div>
+      )}
 
         <form onSubmit={handleRegistrationSubmit} className="space-y-4">
         <AddressForm
