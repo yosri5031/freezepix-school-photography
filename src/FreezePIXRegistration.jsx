@@ -1262,19 +1262,43 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
   if (!isOpen) return null;
 
   const basicPackageImages = {
-    digital: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
+    digital: {
+      src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+      quantity: "Unlimited HD digital photos",
+      description: "High resolution digital photos sent by email"
+    }
   };
 
   const standardPackageImages = {
-    digital: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-    print8x10: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-    print5x7: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
-    wallets: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg"
+    digital: {
+      src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+      quantity: "Unlimited HD digital photos",
+      description: "High resolution digital photos sent by email"
+    },
+    print8x10: {
+      src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+      quantity: "1",
+      description: "Professional 8x10 print"
+    },
+    print5x7: {
+      src: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
+      quantity: "2",
+      description: "Professional 5x7 prints"
+    },
+    wallets: {
+      src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
+      quantity: "4",
+      description: "Wallet size prints (2.5 x 3.5)"
+    }
   };
 
   const premiumPackageImages = {
     ...standardPackageImages,
-    crystal: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911"
+    crystal: {
+      src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
+      quantity: "1",
+      description: "3D engraved crystal with LED base (3x2x2)"
+    }
   };
 
   const getPackageImages = () => {
@@ -1287,6 +1311,17 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         return premiumPackageImages;
       default:
         return basicPackageImages;
+    }
+  };
+
+  const getPackagePrice = () => {
+    switch (packageDetails.name) {
+      case 'Standard':
+        return '$50';
+      case 'Premium':
+        return '$100';
+      default:
+        return 'Contact for pricing';
     }
   };
 
@@ -1318,7 +1353,9 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
-            <h2 className="text-lg font-bold">{packageDetails.name} Package Details</h2>
+            <h2 className="text-lg font-bold">
+              {packageDetails.name} Package Details - {getPackagePrice()}
+            </h2>
             <button
               onClick={onClose}
               className="absolute top-4 right-4 p-2 hover:bg-gray-200 rounded-full"
@@ -1328,23 +1365,24 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
           </div>
 
           <div className="p-4 grid grid-cols-1 gap-4">
-            {Object.entries(getPackageImages()).map(([key, src]) => (
+            {Object.entries(getPackageImages()).map(([key, item]) => (
               <div key={key} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
                 <div className="grid grid-cols-2 p-4 items-center">
                   <div>
-                    <h3 className="font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
-                    <p className="text-sm text-gray-600">
-                      {key === 'digital' ? 'High resolution digital photo sent by email' :
-                       key === 'crystal' ? '3D engraved crystal with LED base' :
-                       `Professional print ${key.includes('print') ? key.replace('print', '') : ''}`}
+                    <h3 className="font-semibold capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                    </h3>
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                    <p className="text-sm font-medium text-blue-600 mt-1">
+                      Quantity: {item.quantity}
                     </p>
                   </div>
                   <div className="justify-self-center">
                     <img
-                      src={src}
+                      src={item.src}
                       alt={key}
                       className="h-32 w-32 object-cover cursor-pointer rounded-lg"
-                      onClick={() => setZoomedImage(src)}
+                      onClick={() => setZoomedImage(item.src)}
                     />
                   </div>
                 </div>
