@@ -1320,6 +1320,8 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         return '$50';
       case 'Premium':
         return '$100';
+      case 'Basic':
+        return '$25';
       default:
         return 'Contact for pricing';
     }
