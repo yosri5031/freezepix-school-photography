@@ -1406,17 +1406,17 @@ const PackageSelection = () => {
     Basic: {
       name: 'Basic',
       price: calculatePackagePrice(25),
-      description: 'digital photo'
+      description: 'digital photos'
     },
     Standard: {
       name: 'Standard',
       price: calculatePackagePrice(50),
-      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
     },
     Premium: {
       name: 'Premium',
       price: calculatePackagePrice(100),
-      description: 'digital photo, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
     }   
   };
 
