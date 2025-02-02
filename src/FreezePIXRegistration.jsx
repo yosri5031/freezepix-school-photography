@@ -1405,7 +1405,7 @@ const PackageSelection = () => {
   const calculatedPackages = {
     Basic: {
       name: 'Basic',
-      price: calculatePackagePrice(25),
+      price: calculatePackagePrice(20),
       description: 'digital photos'
     },
     Standard: {
