@@ -1,7 +1,8 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
+import { Dialog } from '@headlessui/react';
 import { loadStripe } from "@stripe/stripe-js";
 import {
   CardNumberElement,
