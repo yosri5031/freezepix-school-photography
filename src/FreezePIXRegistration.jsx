@@ -1017,17 +1017,17 @@ useEffect(() => {
         >
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-6 w-full">
-              <div className="flex justify-between items-center mb-4">
-                <Dialog.Title className="text-lg font-medium">Add New School</Dialog.Title>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+          <div className="fixed inset-0 flex items-center justify-center p-4 bg-black">
+    <Dialog.Panel className="mx-auto max-w-sm rounded bg-gray-800 p-6 w-full">
+        <div className="flex justify-between items-center mb-4">
+            <Dialog.Title className="text-lg font-medium text-white">Add New School</Dialog.Title>
+            <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+            >
+                <X className="w-5 h-5" />
+            </button>
+        </div>
   
               <form onSubmit={handleAddSchool} className="space-y-4">
                 <div>
@@ -1061,6 +1061,7 @@ useEffect(() => {
                     onChange={(e) => setNewSchool({...newSchool, city: e.target.value})}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2 border"
                   />
+                 
                 </div>
   
                 <div>
@@ -1070,6 +1071,39 @@ useEffect(() => {
                     required
                     value={newSchool.country}
                     onChange={(e) => setNewSchool({...newSchool, country: e.target.value})}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2 border"
+                  />
+                </div>
+
+                <div>
+                <label className="block text-sm font-medium text-gray-700">Responsable Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newSchool.responsable}
+                    onChange={(e) => setNewSchool({...newSchool,responsable: e.target.value})}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2 border"
+                  />
+                </div>
+
+                <div>
+                <label className="block text-sm font-medium text-gray-700">Responsable Phone</label>
+                  <input
+                    type="text"
+                    required
+                    value={newSchool.phone}
+                    onChange={(e) => setNewSchool({...newSchool,phone: e.target.value})}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2 border"
+                  />
+                </div>
+
+                <div>
+                <label className="block text-sm font-medium text-gray-700">Responsable Email</label>
+                  <input
+                    type="text"
+                    required
+                    value={newSchool.email}
+                    onChange={(e) => setNewSchool({...newSchool,email: e.target.value})}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2 border"
                   />
                 </div>
