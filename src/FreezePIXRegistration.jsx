@@ -798,6 +798,9 @@ useEffect(() => {
       name: '',
       location: '',
       city: '',
+      phone: '',
+      email: '',
+      responsable: '',
       country: ''
     });
   
@@ -921,7 +924,7 @@ useEffect(() => {
           
           // Close modal and reset form
           setIsModalOpen(false);
-          setNewSchool({ name: '', location: '', city: '', country: '' });
+          setNewSchool({ name: '', location: '', city: '', country: '', email: '', phone: '', responsable: ''});
           
           // Show success message (you can implement this according to your UI)
           alert('School added successfully!');
