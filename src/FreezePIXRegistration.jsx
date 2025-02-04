@@ -1017,17 +1017,17 @@ useEffect(() => {
         >
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           
-          <div className="fixed inset-0 flex items-center justify-center p-4 bg-black">
-    <Dialog.Panel className="mx-auto max-w-sm rounded bg-gray-800 p-6 w-full">
-        <div className="flex justify-between items-center mb-4">
-            <Dialog.Title className="text-lg font-medium text-white">Add New School</Dialog.Title>
-            <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-white"
-            >
-                <X className="w-5 h-5" />
-            </button>
-        </div>
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-6 w-full">
+              <div className="flex justify-between items-center mb-4">
+                <Dialog.Title className="text-lg font-medium">Add New School</Dialog.Title>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
   
               <form onSubmit={handleAddSchool} className="space-y-4">
                 <div>
