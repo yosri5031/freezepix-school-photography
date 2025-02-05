@@ -189,6 +189,7 @@ all_provinces: 'All Provinces'
       photo_package: 'Select Your Photo Package',
       school: 'Choose School',
       event: 'Pick Photo Event',
+      noevent: 'No events available for this school',
       registration: 'Complete Registration',
       package : 'Select Package',
       register :'Register Another Child'
@@ -299,6 +300,7 @@ all_provinces: 'All Provinces'
       school: 'Choisir l\'école',
       photo_package: 'Sélectionnez votre package',
       event: 'Choisir l\'événement Photo',
+      noevent: 'Aucun événement disponible pour cette école.',
       registration: 'Compléter l\'inscription',
       package : 'Sélectionner un offre',
       register :'Enregistrer un autre enfant'
@@ -1205,7 +1207,8 @@ useEffect(() => {
             ))
           ) : (
             <div className="text-center text-gray-500">
-              No events available for this school
+                        {t('steps.noevent')}
+
             </div>
           )}
         </div>
