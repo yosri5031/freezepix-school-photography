@@ -1555,7 +1555,8 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
 // Package Selection Component
 const PackageSelection = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
-
+  const [showDetailsPopup, setShowDetailsPopup] = useState(false);
+  const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
   const calculatedPackages = {
     Basic: {
       name: 'Basic',
@@ -1589,6 +1590,11 @@ const PackageSelection = () => {
       ]
     }   
   };
+  const handleDetailsClick = (e, packageData) => {
+    e.stopPropagation(); // Prevent package selection when clicking details
+    setSelectedPackageDetails(packageData);
+    setShowDetailsPopup(true);
+  };
 
   const handlePackageSelect = (packageKey, packageData) => {
     setSelectedPackage(packageKey);
@@ -1601,91 +1607,89 @@ const PackageSelection = () => {
     nextStep();
   };
 
-  return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">
-        {t('steps.photo_package')}
-      </h2>
-      <div className="space-y-4">
-        {Object.entries(calculatedPackages).map(([key, pkg]) => (
-          <div 
-            key={key}
-            className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
-              selectedPackage === key 
-                ? 'border-blue-500 bg-blue-50 shadow-md' 
-                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md'
-            }`}
-            onClick={() => handlePackageSelect(key, pkg)}
-          >
-            <div className="space-y-4">
-              {/* Header */}
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-full ${
-                    selectedPackage === key 
-                      ? 'bg-blue-100' 
-                      : 'bg-gray-100'
-                  }`}>
-                    {React.createElement(pkg.icon, {
-                      size: 24,
-                      className: `${
-                        selectedPackage === key 
-                          ? 'text-blue-600' 
-                          : 'text-gray-600'
-                      }`
-                    })}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                    <div className="font-bold text-xl text-yellow-500">
-                      {selectedSchool.country === 'Tunisia' ? 
-                        `${(pkg.price / 2).toFixed(2)} TND` : 
-                        `$${pkg.price.toFixed(2)}`}
-                    </div>
-                  </div>
-                </div>
-              </div>
+  const handleClosePopup = () => {
+    setShowDetailsPopup(false);
+    setSelectedPackageDetails(null);
+  };
 
-              {/* Features */}
-              <div className="border-t pt-4">
-                <div className="grid grid-cols-2 gap-3">
-                  {pkg.features.map((feature, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-center space-x-2 group"
-                      title={feature.tooltip}
-                    >
-                      {React.createElement(feature.icon, {
-                        size: 16,
-                        className: "text-gray-600 group-hover:text-blue-600"
+  return (
+    <>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800 text-center">
+          Select Your Package
+        </h2>
+        <div className="space-y-4">
+          {Object.entries(calculatedPackages).map(([key, pkg]) => (
+            <div 
+              key={key}
+              className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
+                selectedPackage === key 
+                  ? 'border-blue-500 bg-blue-50 shadow-md' 
+                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md'
+              }`}
+              onClick={() => handlePackageSelect(key, pkg)}
+            >
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-full ${
+                      selectedPackage === key 
+                        ? 'bg-blue-100' 
+                        : 'bg-gray-100'
+                    }`}>
+                      {React.createElement(pkg.icon, {
+                        size: 24,
+                        className: selectedPackage === key ? 'text-blue-600' : 'text-gray-600'
                       })}
-                      <span className="text-sm text-gray-600 group-hover:text-blue-600">
-                        {feature.text}
-                      </span>
                     </div>
-                  ))}
+                    <div>
+                      <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                      <div className="font-bold text-xl text-yellow-500">
+                        ${pkg.price.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <button
-                  onClick={(e) => handleDetailsClick(e, pkg)}
-                  className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
-                >
-                  Package Details
-                </button>
+
+                <div className="border-t pt-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {pkg.features.map((feature, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center space-x-2 group"
+                        title={feature.tooltip}
+                      >
+                        {React.createElement(feature.icon, {
+                          size: 16,
+                          className: "text-gray-600 group-hover:text-blue-600"
+                        })}
+                        <span className="text-sm text-gray-600 group-hover:text-blue-600">
+                          {feature.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={(e) => handleDetailsClick(e, pkg)}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline mt-4"
+                  >
+                    View Package Details
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="flex justify-between space-x-4">
-        <button 
-          onClick={previousStep} 
-          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
-        >
-          {t('buttons.previous')}
-        </button>
-      </div>
-    </div>
+      {showDetailsPopup && selectedPackageDetails && (
+        <PackageDetailsPopup
+          isOpen={showDetailsPopup}
+          onClose={handleClosePopup}
+          packageDetails={selectedPackageDetails}
+        />
+      )}
+    </>
   );
 };
 
