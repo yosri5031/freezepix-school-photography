@@ -192,8 +192,8 @@ all_provinces: 'All Provinces'
       noevent: 'No events available for this school',
       registration: 'Complete Registration',
       package : 'Select Package',
-      register :'Register Another Child'
-
+      register :'Register Another Child',
+      package_details: 'View Package Details'
     },
     buttons: {
       next: 'Next',
@@ -303,7 +303,8 @@ all_provinces: 'All Provinces'
       noevent: 'Aucun événement disponible pour cette école.',
       registration: 'Compléter l\'inscription',
       package : 'Sélectionner un offre',
-      register :'Enregistrer un autre enfant'
+      register :'Enregistrer un autre enfant',
+      package_details: 'Afficher les détails du package'
     },
     buttons: {
       next: 'Suivant',
@@ -1616,8 +1617,8 @@ const PackageSelection = () => {
     <>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          Select Your Package
-        </h2>
+        {t('steps.event')}
+                </h2>
         <div className="space-y-4">
           {Object.entries(calculatedPackages).map(([key, pkg]) => (
             <div 
@@ -1673,7 +1674,7 @@ const PackageSelection = () => {
                     onClick={(e) => handleDetailsClick(e, pkg)}
                     className="text-blue-600 hover:text-blue-800 text-sm underline mt-4"
                   >
-                    View Package Details
+                    {t('steps.package_details')}
                   </button>
                 </div>
               </div>
@@ -1681,7 +1682,15 @@ const PackageSelection = () => {
           ))}
         </div>
       </div>
-
+      <div className="flex justify-between space-x-4">
+        <button 
+          onClick={previousStep} 
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
+        >
+          {t('buttons.previous')}
+        </button>
+      </div>
+    
       {showDetailsPopup && selectedPackageDetails && (
         <PackageDetailsPopup
           isOpen={showDetailsPopup}
