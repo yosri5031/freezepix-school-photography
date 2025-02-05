@@ -1568,9 +1568,9 @@ const PackageSelection = () => {
       icon: Crown,
       features: [
         { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
-        { icon: Frame, text: '1 8x10 Print', tooltip: 'Professional quality print' },
+        { icon: Image, text: '1 8x10 Print', tooltip: 'Professional quality print' },
         { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
-        { icon: Wallet, text: '4 Wallet Size', tooltip: '4 wallet prints (2.5 x 3.5)' }
+        { icon: Wallet, text: '4 Wallet Prints', tooltip: '4 wallet prints (2.5 x 3.5)' }
       ]
     },
     Premium: {
@@ -1579,9 +1579,9 @@ const PackageSelection = () => {
       icon: Sparkles,
       features: [
         { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
-        { icon: Frame, text: '1 8x10 Print', tooltip: 'Professional quality print' },
+        { icon: Image, text: '1 8x10 Print', tooltip: 'Professional quality print' },
         { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
-        { icon: Wallet, text: '4 Wallet Size', tooltip: '4 wallet prints (2.5 x 3.5)' },
+        { icon: Wallet, text: '4 Wallet Prints', tooltip: '4 wallet prints (2.5 x 3.5)' },
         { icon: Box, text: '3D Crystal', tooltip: '1 3D engraved crystal with light 3x2x2' }
       ]
     }   
@@ -1634,7 +1634,7 @@ const PackageSelection = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                    <div className="font-bold text-xl text-blue-600">
+                    <div className="font-bold text-xl text-yellow-500">
                       {selectedSchool.country === 'Tunisia' ? 
                         `${(pkg.price / 2).toFixed(2)} TND` : 
                         `$${pkg.price.toFixed(2)}`}
