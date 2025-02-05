@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Cube ,Download} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -1551,27 +1551,39 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
 
 // Package Selection Component
 const PackageSelection = () => {
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const calculatedPackages = {
     Basic: {
       name: 'Basic',
       price: calculatePackagePrice(20),
-      description: 'digital photos',
-      icon: Camera
+      icon: Camera,
+      features: [
+        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' }
+      ]
     },
     Standard: {
       name: 'Standard',
       price: calculatePackagePrice(50),
-      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)',
-      icon: Crown
+      icon: Crown,
+      features: [
+        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
+        { icon: Frame, text: '1 8x10 Print', tooltip: 'Professional quality print' },
+        { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
+        { icon: Wallet, text: '4 Wallet Size', tooltip: '4 wallet prints (2.5 x 3.5)' }
+      ]
     },
     Premium: {
       name: 'Premium',
       price: calculatePackagePrice(100),
-      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2',
-      icon: Sparkles
+      icon: Sparkles,
+      features: [
+        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
+        { icon: Frame, text: '1 8x10 Print', tooltip: 'Professional quality print' },
+        { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
+        { icon: Wallet, text: '4 Wallet Size', tooltip: '4 wallet prints (2.5 x 3.5)' },
+        { icon: Cube, text: '3D Crystal', tooltip: '1 3D engraved crystal with light 3x2x2' }
+      ]
     }   
   };
 
@@ -1581,16 +1593,9 @@ const PackageSelection = () => {
       ...prev,
       packageSelection: packageKey,
       packagePrice: packageData.price,
-      packageName: packageData.name,
-      packageDescription: packageData.description
+      packageName: packageData.name
     }));
     nextStep();
-  };
-
-  const handleDetailsClick = (e, packageData) => {
-    e.stopPropagation();
-    setSelectedPackageDetails(packageData);
-    setShowDetails(true);
   };
 
   return (
@@ -1602,56 +1607,66 @@ const PackageSelection = () => {
         {Object.entries(calculatedPackages).map(([key, pkg]) => (
           <div 
             key={key}
-            className={`border rounded-lg p-4 cursor-pointer transition-colors duration-200 ${
+            className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
               selectedPackage === key 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                ? 'border-blue-500 bg-blue-50 shadow-md' 
+                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md'
             }`}
             onClick={() => handlePackageSelect(key, pkg)}
           >
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-3">
-                <div className={`p-2 rounded-full ${
-                  selectedPackage === key 
-                    ? 'bg-blue-100' 
-                    : 'bg-gray-100'
-                }`}>
-                  {React.createElement(pkg.icon, {
-                    size: 24,
-                    className: `${
-                      selectedPackage === key 
-                        ? 'text-blue-600' 
-                        : 'text-gray-600'
-                    }`
-                  })}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                  <button
-                    onClick={(e) => handleDetailsClick(e, pkg)}
-                    className="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 mt-1"
-                  >
-                    <Info size={16} className="mr-1" />
-                    <span>View details</span>
-                  </button>
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-full ${
+                    selectedPackage === key 
+                      ? 'bg-blue-100' 
+                      : 'bg-gray-100'
+                  }`}>
+                    {React.createElement(pkg.icon, {
+                      size: 24,
+                      className: `${
+                        selectedPackage === key 
+                          ? 'text-blue-600' 
+                          : 'text-gray-600'
+                      }`
+                    })}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                    <div className="font-bold text-xl text-blue-600">
+                      {selectedSchool.country === 'Tunisia' ? 
+                        `${(pkg.price / 2).toFixed(2)} TND` : 
+                        `$${pkg.price.toFixed(2)}`}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="font-bold text-xl">
-                {selectedSchool.country === 'Tunisia' ? 
-                  `${(pkg.price / 2).toFixed(2)} TND` : 
-                  `$${pkg.price.toFixed(2)}`}
+
+              {/* Features */}
+              <div className="border-t pt-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {pkg.features.map((feature, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-center space-x-2 group"
+                      title={feature.tooltip}
+                    >
+                      {React.createElement(feature.icon, {
+                        size: 16,
+                        className: "text-gray-600 group-hover:text-blue-600"
+                      })}
+                      <span className="text-sm text-gray-600 group-hover:text-blue-600">
+                        {feature.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-      
-      <PackageDetailsPopup
-        isOpen={showDetails}
-        onClose={() => setShowDetails(false)}
-        packageDetails={selectedPackageDetails}
-        country={selectedSchool.country}
-      />
 
       <div className="flex justify-between space-x-4">
         <button 
