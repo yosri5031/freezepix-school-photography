@@ -1665,6 +1665,12 @@ const PackageSelection = () => {
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={(e) => handleDetailsClick(e, pkg)}
+                  className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
+                >
+                  Package Details
+                </button>
               </div>
             </div>
           </div>
