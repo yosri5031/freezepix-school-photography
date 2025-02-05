@@ -1689,7 +1689,6 @@ const PackageSelection = () => {
   );
 };
 
-
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
   const selectedPkg = formData.packageSelection ? {
@@ -1697,9 +1696,8 @@ const handleRegistrationSubmit = async (e) => {
     price: formData.packagePrice,
     description: formData.packageDescription
   } : null;
-    console.log('Selected Package:', selectedPkg);
+  
   try {
-    // Explicitly override the payment method based on radio selection
     const registrationData = {
       parentFirstName: formData.parentFirstName,
       parentLastName: formData.parentLastName,
@@ -1712,6 +1710,7 @@ const handleRegistrationSubmit = async (e) => {
       province: formData.province,
       zip: formData.zip,
       studentGrade: formData.studentGrade,
+      package: formData.packageName, // Added package name here
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
             ? selectedSchool._id 
@@ -1722,7 +1721,6 @@ const handleRegistrationSubmit = async (e) => {
             ? selectedEvent._id 
             : selectedEvent._id.toString())
         : '',
-      // Force payment method based on radio selection
       paymentMethod: selectedSchool.country === 'Tunisia' 
         ? 'daycare' 
         : paymentMethod === 'interac' 
@@ -1732,9 +1730,6 @@ const handleRegistrationSubmit = async (e) => {
         ? 'payment_pending' 
         : 'open'
     };
-
-    // Log the data being sent to verify
-    console.log('Sending registration data:', registrationData);
 
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
@@ -1751,14 +1746,13 @@ const handleRegistrationSubmit = async (e) => {
       registrationId: response.data.registrationId
     });
     setCurrentStep(currentStep + 1);
-    window.removeHelcimPayIframe(); // Assuming this function exists
+    window.removeHelcimPayIframe();
   } catch (error) {
     console.error('Registration error details:', {
       message: error.message,
       response: error.response?.data,
       fullError: error
     });
-    
   } finally {
     setIsLoading(false);
   }
