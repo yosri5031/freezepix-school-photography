@@ -944,20 +944,7 @@ useEffect(() => {
       <div className="space-y-4">
           
         <div className="space-y-2">
-          <div className="text-center">
-            <select
-              value={selectedProvince}
-              onChange={(e) => handleProvinceSelect(e.target.value)}
-              className="px-4 py-2 border rounded"
-            >
-              <option value="all">{t('select.all_provinces')}</option>
-              {[...new Set(schoolsWithEvents.map(school => school.location))].map((location) => (
-                <option key={location} value={location}>
-                  {location}
-                </option>
-              ))}
-            </select>
-          </div>
+          
   
           <div className="text-center">
             <input
