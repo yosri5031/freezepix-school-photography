@@ -1617,7 +1617,7 @@ const PackageSelection = () => {
     <>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800 text-center">
-        {t('steps.event')}
+        {t('steps.package')}
                 </h2>
         <div className="space-y-4">
           {Object.entries(calculatedPackages).map(([key, pkg]) => (
