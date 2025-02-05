@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Cube ,Download} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -1582,7 +1582,7 @@ const PackageSelection = () => {
         { icon: Frame, text: '1 8x10 Print', tooltip: 'Professional quality print' },
         { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
         { icon: Wallet, text: '4 Wallet Size', tooltip: '4 wallet prints (2.5 x 3.5)' },
-        { icon: Cube, text: '3D Crystal', tooltip: '1 3D engraved crystal with light 3x2x2' }
+        { icon: Box, text: '3D Crystal', tooltip: '1 3D engraved crystal with light 3x2x2' }
       ]
     }   
   };
