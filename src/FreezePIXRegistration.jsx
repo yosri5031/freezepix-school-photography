@@ -1710,7 +1710,7 @@ const handleRegistrationSubmit = async (e) => {
       province: formData.province,
       zip: formData.zip,
       studentGrade: formData.studentGrade,
-      package: formData.packageName, // Added package name here
+      pkg: formData.packageName, // Added package name here
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
             ? selectedSchool._id 
