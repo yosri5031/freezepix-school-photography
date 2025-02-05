@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -1558,17 +1558,20 @@ const PackageSelection = () => {
     Basic: {
       name: 'Basic',
       price: calculatePackagePrice(20),
-      description: 'digital photos'
+      description: 'digital photos',
+      icon: Camera
     },
     Standard: {
       name: 'Standard',
       price: calculatePackagePrice(50),
-      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)'
+      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5)',
+      icon: Crown
     },
     Premium: {
       name: 'Premium',
       price: calculatePackagePrice(100),
-      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2'
+      description: 'digital photos, 1 8x10, 2 5x7, 4 wallets (2.5 x 3.5), 1 3D engraved crystal with light 3x2x2',
+      icon: Sparkles
     }   
   };
 
@@ -1599,20 +1602,39 @@ const PackageSelection = () => {
         {Object.entries(calculatedPackages).map(([key, pkg]) => (
           <div 
             key={key}
-            className={`border rounded-lg p-4 cursor-pointer ${
-              selectedPackage === key ? 'border rounded-lg p-4 cursor-pointer hover:bg-blue-50' : 'bg-white'
+            className={`border rounded-lg p-4 cursor-pointer transition-colors duration-200 ${
+              selectedPackage === key 
+                ? 'border-blue-500 bg-blue-50' 
+                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
             }`}
             onClick={() => handlePackageSelect(key, pkg)}
           >
             <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                <button
-                  onClick={(e) => handleDetailsClick(e, pkg)}
-                  className="text-blue-600 hover:text-blue-800 text-sm underline mt-1"
-                >
-                  Package Details
-                </button>
+              <div className="flex items-center space-x-3">
+                <div className={`p-2 rounded-full ${
+                  selectedPackage === key 
+                    ? 'bg-blue-100' 
+                    : 'bg-gray-100'
+                }`}>
+                  {React.createElement(pkg.icon, {
+                    size: 24,
+                    className: `${
+                      selectedPackage === key 
+                        ? 'text-blue-600' 
+                        : 'text-gray-600'
+                    }`
+                  })}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                  <button
+                    onClick={(e) => handleDetailsClick(e, pkg)}
+                    className="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 mt-1"
+                  >
+                    <Info size={16} className="mr-1" />
+                    <span>View details</span>
+                  </button>
+                </div>
               </div>
               <div className="font-bold text-xl">
                 {selectedSchool.country === 'Tunisia' ? 
@@ -1634,7 +1656,7 @@ const PackageSelection = () => {
       <div className="flex justify-between space-x-4">
         <button 
           onClick={previousStep} 
-          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
         >
           {t('buttons.previous')}
         </button>
@@ -1642,6 +1664,7 @@ const PackageSelection = () => {
     </div>
   );
 };
+
 
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
