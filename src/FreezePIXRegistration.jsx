@@ -1738,7 +1738,6 @@ const sendImagesToParent = async (registration) => {
         studentLastName: registration.studentLastName,
         schoolId: registration.schoolId,
         eventId: registration.eventId,
-        images: imagesResponse.data
       },
       emailTemplate: {
         subject: 'Your School Photos Are Ready!',
@@ -1750,7 +1749,7 @@ const sendImagesToParent = async (registration) => {
     };
 
     const response = await axios.post(
-      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/process-images/${registration._id}`,
+      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/send-parent/${registration._id}`,
       registrationData,
       {
         headers: {
