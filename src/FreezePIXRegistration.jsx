@@ -40,6 +40,9 @@ const FreezePIXRegistration = () => {
     }
   }, [selectedSchool]);
   const [language, setLanguage] = useState('en');
+  const [registrations, setRegistrations] = useState([]);
+  const [filteredRegistrations, setFilteredRegistrations] = useState([]);
+  const [isSending, setIsSending] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState('Standard'); // Default to 'standard'
   const [paymentMethod, setPaymentMethod] = useState('credit'); // Default payment method
   const [showIntro, setShowIntro] = useState(true);
@@ -72,7 +75,11 @@ const FreezePIXRegistration = () => {
   packageName: '',
   packageDescription: ''
   });
- 
+  const handleError = (error) => {
+    console.error('Operation failed:', error);
+    alert(error.response?.data?.error || error.message || 'Operation failed');
+  };
+
   const useEvents = (selectedSchool) => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(true);
