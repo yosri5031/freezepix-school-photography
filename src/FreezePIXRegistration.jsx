@@ -1689,6 +1689,20 @@ const PackageSelection = () => {
   );
 };
 
+const fetchRegistrations = async () => {
+  try {
+    const response = await axios.get('https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/registrations');
+    // Sort registrations by registrationDate in descending order (most recent first)
+    const sortedRegistrations = response.data.sort((a, b) => 
+      new Date(b.registrationDate) - new Date(a.registrationDate)
+    );
+    setRegistrations(sortedRegistrations);
+    setFilteredRegistrations(sortedRegistrations);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 const sendImagesToParent = async (registration) => {
   setIsSending(true);
   
@@ -1705,7 +1719,6 @@ const sendImagesToParent = async (registration) => {
     );
 
     if (!imagesResponse.data || imagesResponse.data.length === 0) {
-      toast.error('No images available to send');
       return;
     }
 
@@ -1741,7 +1754,6 @@ const sendImagesToParent = async (registration) => {
     );
 
     if (response.data.success) {
-      toast.success(`Successfully sent ${response.data.imagesSent} photos to parent!`);
       await fetchRegistrations();
     } else {
       throw new Error(response.data.message || 'Failed to process images');
@@ -1753,7 +1765,6 @@ const sendImagesToParent = async (registration) => {
                         error.response?.data?.error ||
                         error.message ||
                         'Failed to send photos to parent';
-    toast.error(errorMessage);
   } finally {
     setIsSending(false);
   }
@@ -1889,7 +1900,6 @@ const handleRegistrationSubmit = async (e) => {
     window.removeHelcimPayIframe();
   } catch (error) {
     console.error('Registration error:', error);
-    toast.error('Registration failed. Please try again.');
   } finally {
     setIsLoading(false);
   }
