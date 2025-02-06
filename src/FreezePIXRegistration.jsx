@@ -1714,21 +1714,7 @@ const sendImagesToParent = async (registration) => {
   setIsSending(true);
   
   try {
-    const imagesResponse = await axios.get(
-      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/registration-images/${registration._id}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        timeout: 15000
-      }
-    );
-
-    if (!imagesResponse.data || imagesResponse.data.length === 0) {
-      return;
-    }
-
+    
     const registrationData = {
       registration: {
         _id: registration._id,
@@ -1739,13 +1725,7 @@ const sendImagesToParent = async (registration) => {
         schoolId: registration.schoolId,
         eventId: registration.eventId,
       },
-      emailTemplate: {
-        subject: 'Your School Photos Are Ready!',
-        greeting: `Hi ${registration.parentFirstName},`,
-        body: `Here are the photos of ${registration.studentFirstName} from the recent school photo session.`,
-        ctaText: 'View Your Photos',
-        footerText: 'Thank you for choosing our service!'
-      }
+      
     };
 
     const response = await axios.post(
