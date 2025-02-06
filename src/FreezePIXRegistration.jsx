@@ -1689,13 +1689,163 @@ const PackageSelection = () => {
   );
 };
 
+const sendImagesToParent = async (registration) => {
+  setIsSending(true);
+  
+  try {
+    // First check if images exist
+    console.log('Fetching images for registration:', registration._id);
+    const imagesResponse = await axios.get(
+      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/registration-images/${registration._id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        timeout: 15000 // 15 second timeout
+      }
+    );
+
+    console.log('Images response:', imagesResponse.data);
+
+    if (!imagesResponse.data || imagesResponse.data.length === 0) {
+      toast.error('No images available to send', {
+        position: 'top-right',
+        autoClose: 3000
+      });
+      return;
+    }
+
+    // Prepare registration data
+    const registrationData = {
+      registration: {
+        _id: registration._id,
+        parentEmail: registration.parentEmail,
+        parentFirstName: registration.parentFirstName,
+        studentFirstName: registration.studentFirstName,
+        studentLastName: registration.studentLastName,
+        schoolId: registration.schoolId,
+        eventId: registration.eventId,
+        images: imagesResponse.data
+      }
+    };
+
+    console.log('Sending registration data:', registrationData);
+
+    // Send to new endpoint
+    const response = await axios.post(
+      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/process-images/${registration._id}`,
+      registrationData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 30000 // 30 second timeout
+      }
+    );
+
+    console.log('Process images response:', response.data);
+
+    if (response.data.success) {
+      toast.success(`Successfully sent ${response.data.imagesSent} photos to parent!`, {
+        position: 'top-right',
+        autoClose: 3000
+      });
+      
+      // Refresh the registration data
+      await fetchRegistrations();
+    } else {
+      throw new Error(response.data.message || 'Failed to process images');
+    }
+
+  } catch (error) {
+    console.error('Error sending photos:', error);
+    
+    // Enhanced error handling
+    const errorMessage = error.response?.data?.message || 
+                        error.response?.data?.error ||
+                        error.message ||
+                        'Failed to send photos to parent';
+    
+    toast.error(errorMessage, {
+      position: 'top-right',
+      autoClose: 5000
+    });
+  } finally {
+    setIsSending(false);
+  }
+};
+
+// Add these styles to your CSS
+const styles = `
+.tooltip-trigger {
+  position: relative;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.tooltip-trigger:hover .tooltip {
+  visibility: visible;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-close-button:hover {
+  color: #000;
+}
+`;
+
 const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
-  const selectedPkg = formData.packageSelection ? {
-    name: formData.packageName,
-    price: formData.packagePrice,
-    description: formData.packageDescription
-  } : null;
   
   try {
     const registrationData = {
@@ -1710,7 +1860,7 @@ const handleRegistrationSubmit = async (e) => {
       province: formData.province,
       zip: formData.zip,
       studentGrade: formData.studentGrade,
-      pkg: formData.packageName, // Added package name here
+      pkg: formData.packageName,
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
             ? selectedSchool._id 
@@ -1741,18 +1891,22 @@ const handleRegistrationSubmit = async (e) => {
       }
     );
 
+    // Send confirmation via sendImagesToParent
+    await sendImagesToParent({
+      _id: response.data.registrationId,
+      ...registrationData
+    });
+
     setRegistrationConfirmation({
       ...response.data,
       registrationId: response.data.registrationId
     });
+
     setCurrentStep(currentStep + 1);
     window.removeHelcimPayIframe();
   } catch (error) {
-    console.error('Registration error details:', {
-      message: error.message,
-      response: error.response?.data,
-      fullError: error
-    });
+    console.error('Registration error:', error);
+    toast.error('Registration failed. Please try again.');
   } finally {
     setIsLoading(false);
   }
