@@ -1693,8 +1693,6 @@ const sendImagesToParent = async (registration) => {
   setIsSending(true);
   
   try {
-    // First check if images exist
-    console.log('Fetching images for registration:', registration._id);
     const imagesResponse = await axios.get(
       `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/registration-images/${registration._id}`,
       {
@@ -1702,21 +1700,15 @@ const sendImagesToParent = async (registration) => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        timeout: 15000 // 15 second timeout
+        timeout: 15000
       }
     );
 
-    console.log('Images response:', imagesResponse.data);
-
     if (!imagesResponse.data || imagesResponse.data.length === 0) {
-      toast.error('No images available to send', {
-        position: 'top-right',
-        autoClose: 3000
-      });
+      toast.error('No images available to send');
       return;
     }
 
-    // Prepare registration data
     const registrationData = {
       registration: {
         _id: registration._id,
@@ -1727,12 +1719,16 @@ const sendImagesToParent = async (registration) => {
         schoolId: registration.schoolId,
         eventId: registration.eventId,
         images: imagesResponse.data
+      },
+      emailTemplate: {
+        subject: 'Your School Photos Are Ready!',
+        greeting: `Hi ${registration.parentFirstName},`,
+        body: `Here are the photos of ${registration.studentFirstName} from the recent school photo session.`,
+        ctaText: 'View Your Photos',
+        footerText: 'Thank you for choosing our service!'
       }
     };
 
-    console.log('Sending registration data:', registrationData);
-
-    // Send to new endpoint
     const response = await axios.post(
       `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/process-images/${registration._id}`,
       registrationData,
@@ -1740,19 +1736,12 @@ const sendImagesToParent = async (registration) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        timeout: 30000 // 30 second timeout
+        timeout: 30000
       }
     );
 
-    console.log('Process images response:', response.data);
-
     if (response.data.success) {
-      toast.success(`Successfully sent ${response.data.imagesSent} photos to parent!`, {
-        position: 'top-right',
-        autoClose: 3000
-      });
-      
-      // Refresh the registration data
+      toast.success(`Successfully sent ${response.data.imagesSent} photos to parent!`);
       await fetchRegistrations();
     } else {
       throw new Error(response.data.message || 'Failed to process images');
@@ -1760,17 +1749,11 @@ const sendImagesToParent = async (registration) => {
 
   } catch (error) {
     console.error('Error sending photos:', error);
-    
-    // Enhanced error handling
     const errorMessage = error.response?.data?.message || 
                         error.response?.data?.error ||
                         error.message ||
                         'Failed to send photos to parent';
-    
-    toast.error(errorMessage, {
-      position: 'top-right',
-      autoClose: 5000
-    });
+    toast.error(errorMessage);
   } finally {
     setIsSending(false);
   }
