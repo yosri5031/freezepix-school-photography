@@ -2067,13 +2067,13 @@ useEffect(() => {
     {/* Discount Code Input */}
   <div className="mb-4">
     <div className="flex space-x-2">
-     <input
+     {/*<input
   type="text"
   placeholder="Enter discount code"
   value={discountCode}
   onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
   className="flex-1 p-2 border rounded"
-/>
+/> */}
       <button
         onClick={() => validateDiscountCode(discountCode)}
         className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
