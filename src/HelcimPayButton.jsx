@@ -218,7 +218,7 @@ const HelcimPayButton = ({
       setCheckoutToken(response.checkoutToken);
       secretTokenRef.current = response.secretToken;
   
-      const timeoutDuration = 5000; // Set the timeout duration to 5 seconds for both PC and mobile
+      const timeoutDuration = 5500; // Set the timeout duration to 5 seconds for both PC and mobile
   
       processingTimeoutRef.current = setTimeout(() => {
         if (!document.querySelector('.helcim-pay-iframe')) {
@@ -229,7 +229,7 @@ const HelcimPayButton = ({
         }
       }, timeoutDuration);
   
-      const appendDelay = isMobile ? 1500 : 500;
+      const appendDelay = isMobile ? 5500 : 5500;
   
       setTimeout(() => {
         if (window.appendHelcimPayIframe) {
@@ -238,7 +238,7 @@ const HelcimPayButton = ({
           // Add a delay before resetting the loading status
           setTimeout(() => {
             setLoading(false);
-          }, 5000); // Adjust the duration to 5000 milliseconds (5 seconds)
+          }, 5500); // Adjust the duration to 5000 milliseconds (5 seconds)
         } else {
           throw new Error('Payment system not ready. Please refresh and try again.');
         }
