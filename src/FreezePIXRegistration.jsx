@@ -2073,13 +2073,13 @@ useEffect(() => {
   value={discountCode}
   onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
   className="flex-1 p-2 border rounded"
-/> */}
+/> 
       <button
         onClick={() => validateDiscountCode(discountCode)}
         className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
       >
         Apply
-      </button>
+      </button>*/}
     </div>
     {discountError && (
       <p className="text-red-500 text-sm mt-1">{discountError}</p>
