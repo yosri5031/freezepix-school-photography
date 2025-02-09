@@ -432,8 +432,8 @@ packages: {
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques',
-      print8x10: '1 Tirage 8x10',
-      print5x7: '2 Tirages 5x7',
+      print8x10: '1 Photo 8x10',
+      print5x7: '2 Photos 5x7',
       wallet: '4 Photos Format Portefeuille'
     }
   },
@@ -442,8 +442,8 @@ packages: {
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques',
-      print8x10: '1 Tirage 8x10',
-      print5x7: '2 Tirages 5x7',
+      print8x10: '1 Photo 8x10',
+      print5x7: '2 Photos 5x7',
       wallet: '4 Photos Format Portefeuille',
       crystal: '1 Cristal 3D'
     }
@@ -1509,7 +1509,7 @@ useEffect(() => {
   };
 
 //product details popup
-const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
+const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, t }) => {
   const [zoomedImage, setZoomedImage] = useState(null);
 
   if (!isOpen) return null;
@@ -1517,31 +1517,31 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
   const basicPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: "Unlimited HD digital photos",
-      description: "High resolution digital photos sent by email"
+      quantity: t('packages.basic.features.digital'),
+      description: t('packages.tooltips.digital')
     }
   };
 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: "Unlimited HD digital photos",
-      description: "High resolution digital photos sent by email"
+      quantity: t('packages.standard.features.digital'),
+      description: t('packages.tooltips.digital')
     },
     print8x10: {
       src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-      quantity: "1",
-      description: "Professional 8x10 print"
+      quantity: t('packages.standard.features.print8x10'),
+      description: t('packages.tooltips.print8x10')
     },
     print5x7: {
       src: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
-      quantity: "2",
-      description: "Professional 5x7 prints"
+      quantity: t('packages.standard.features.print5x7'),
+      description: t('packages.tooltips.print5x7')
     },
     wallets: {
       src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-      quantity: "4",
-      description: "Wallet size prints (2.5 x 3.5)"
+      quantity: t('packages.standard.features.wallet'),
+      description: t('packages.tooltips.wallet')
     }
   };
 
@@ -1549,34 +1549,21 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
     ...standardPackageImages,
     crystal: {
       src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
-      quantity: "1",
-      description: "3D engraved crystal with LED base (3x2x2)"
+      quantity: t('packages.premium.features.crystal'),
+      description: t('packages.tooltips.crystal')
     }
   };
 
   const getPackageImages = () => {
     switch (packageDetails.name) {
-      case 'Basic':
+      case t('packages.basic.name'):
         return basicPackageImages;
-      case 'Standard':
+      case t('packages.standard.name'):
         return standardPackageImages;
-      case 'Premium':
+      case t('packages.premium.name'):
         return premiumPackageImages;
       default:
         return basicPackageImages;
-    }
-  };
-
-  const getPackagePrice = () => {
-    switch (packageDetails.name) {
-      case 'Standard':
-        return '$50';
-      case 'Premium':
-        return '$100';
-      case 'Basic':
-        return '$25';
-      default:
-        return 'Contact for pricing';
     }
   };
 
@@ -1586,7 +1573,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="relative bg-white rounded-lg w-full max-w-xl">
             <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-bold">{packageDetails.image_preview}</h2>
+              <h2 className="text-lg font-bold">{t('packages.image_preview')}</h2>
               <button
                 onClick={() => setZoomedImage(null)}
                 className="p-2 hover:bg-gray-200 rounded-full"
@@ -1609,7 +1596,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
-              {packageDetails.name} {packageDetails.package_details} - {getPackagePrice()}
+              {packageDetails.name} {t('packages.package_details')}
             </h2>
             <button
               onClick={onClose}
@@ -1629,7 +1616,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
                     </h3>
                     <p className="text-sm text-gray-600">{item.description}</p>
                     <p className="text-sm font-medium text-blue-600 mt-1">
-                    {packageDetails.quantity}: {item.quantity}
+                      {t('packages.quantity')}: {item.quantity}
                     </p>
                   </div>
                   <div className="justify-self-center">
@@ -1829,12 +1816,13 @@ const PackageSelection = () => {
       </div>
     
       {showDetailsPopup && selectedPackageDetails && (
-        <PackageDetailsPopup
-          isOpen={showDetailsPopup}
-          onClose={handleClosePopup}
-          packageDetails={selectedPackageDetails}
-        />
-      )}
+  <PackageDetailsPopup
+    isOpen={showDetailsPopup}
+    onClose={handleClosePopup}
+    packageDetails={selectedPackageDetails}
+    t={t}
+  />
+)}
     </>
   );
 };
