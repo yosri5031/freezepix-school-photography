@@ -285,6 +285,50 @@ all_provinces: 'All Provinces'
     daycarePayment: 'Pay at Daycare',
     confirmationTitle: 'Registration Successful!',
     confirmationMessage: 'Your child is now registered.'
+  },
+  packages: {
+    title: 'Select Your Package',
+    package_details: 'Package Details',
+    image_preview: 'Image Preview',
+    quantity: 'Quantity',
+    basic: {
+      name: 'Basic',
+      price: 'Starting at $',
+      features: {
+        digital: 'Digital Photos'
+      }
+    },
+    standard: {
+      name: 'Standard',
+      price: 'Starting at $',
+      features: {
+        digital: 'Digital Photos',
+        print8x10: '1 8x10 Print',
+        print5x7: '2 5x7 Prints',
+        wallet: '4 Wallet Prints'
+      }
+    },
+    premium: {
+      name: 'Premium',
+      price: 'Starting at $',
+      features: {
+        digital: 'Digital Photos',
+        print8x10: '1 8x10 Print',
+        print5x7: '2 5x7 Prints',
+        wallet: '4 Wallet Prints',
+        crystal: '1 3D Crystal'
+      }
+    },
+    details: 'View Package Details',
+    tooltips: {
+      digital: 'High resolution digital photos',
+      print8x10: 'Professional quality print',
+      print5x7: 'Professional quality prints',
+      wallet: 'Wallet size prints (2.5 x 3.5)',
+      crystal: '3D engraved crystal with LED base (3x2x2)'
+    },
+    viewDetails: 'View Details',
+    previous: 'Previous'
   }
   },
   fr: {
@@ -370,9 +414,54 @@ tunisia: {
   daycarePayment: 'Payer à la garderie',
   confirmationTitle: 'Inscription Réussie !',
   confirmationMessage: 'Votre enfant est maintenant inscrit.'
+},
+packages: {
+  title: 'Sélectionnez Votre Forfait',
+  package_details: 'Détails du package',
+    image_preview: 'Aperçu de l\'image',
+    quantity: 'Quantité',
+  basic: {
+    name: 'Basique',
+    price: 'À partir de $',
+    features: {
+      digital: 'Photos Numériques'
+    }
+  },
+  standard: {
+    name: 'Standard',
+    price: 'À partir de $',
+    features: {
+      digital: 'Photos Numériques',
+      print8x10: '1 Tirage 8x10',
+      print5x7: '2 Tirages 5x7',
+      wallet: '4 Photos Format Portefeuille'
+    }
+  },
+  premium: {
+    name: 'Premium',
+    price: 'À partir de $',
+    features: {
+      digital: 'Photos Numériques',
+      print8x10: '1 Tirage 8x10',
+      print5x7: '2 Tirages 5x7',
+      wallet: '4 Photos Format Portefeuille',
+      crystal: '1 Cristal 3D'
+    }
+  },
+  details: 'Voir les détails du forfait',
+  tooltips: {
+    digital: 'Photos numériques haute résolution',
+    print8x10: 'Tirage professionnel',
+    print5x7: 'Tirages professionnels',
+    wallet: 'Photos format portefeuille (2.5 x 3.5)',
+    crystal: 'Cristal gravé en 3D avec base LED (3x2x2)'
+  },
+  viewDetails: 'Voir Détails',
+  previous: 'Précédent'
 }
-  }
+}
 };
+
 
 // Existing translation function
 const t = (key) => {
@@ -1497,7 +1586,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="relative bg-white rounded-lg w-full max-w-xl">
             <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-bold">Image Preview</h2>
+              <h2 className="text-lg font-bold">{packageDetails.image_preview}</h2>
               <button
                 onClick={() => setZoomedImage(null)}
                 className="p-2 hover:bg-gray-200 rounded-full"
@@ -1520,7 +1609,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
-              {packageDetails.name} Package Details - {getPackagePrice()}
+              {packageDetails.name} {packageDetails.package_details} - {getPackagePrice()}
             </h2>
             <button
               onClick={onClose}
@@ -1540,7 +1629,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, country }) => {
                     </h3>
                     <p className="text-sm text-gray-600">{item.description}</p>
                     <p className="text-sm font-medium text-blue-600 mt-1">
-                      Quantity: {item.quantity}
+                    {packageDetails.quantity}: {item.quantity}
                     </p>
                   </div>
                   <div className="justify-self-center">
@@ -1568,36 +1657,76 @@ const PackageSelection = () => {
   const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
   const calculatedPackages = {
     Basic: {
-      name: 'Basic',
+      name: t('packages.basic.name'),
       price: calculatePackagePrice(20),
       icon: Camera,
       features: [
-        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' }
+        { 
+          icon: Download, 
+          text: t('packages.basic.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        }
       ]
     },
     Standard: {
-      name: 'Standard',
+      name: t('packages.standard.name'),
       price: calculatePackagePrice(50),
       icon: Crown,
       features: [
-        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
-        { icon: Image, text: '1 8x10 Print', tooltip: 'Professional quality print' },
-        { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
-        { icon: Wallet, text: '4 Wallet Prints', tooltip: '4 wallet prints (2.5 x 3.5)' }
+        { 
+          icon: Download, 
+          text: t('packages.standard.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.standard.features.print8x10'), 
+          tooltip: t('packages.tooltips.print8x10') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.standard.features.print5x7'), 
+          tooltip: t('packages.tooltips.print5x7') 
+        },
+        { 
+          icon: Wallet, 
+          text: t('packages.standard.features.wallet'), 
+          tooltip: t('packages.tooltips.wallet') 
+        }
       ]
     },
     Premium: {
-      name: 'Premium',
+      name: t('packages.premium.name'),
       price: calculatePackagePrice(100),
       icon: Sparkles,
       features: [
-        { icon: Download, text: 'Digital Photos', tooltip: 'High resolution digital photos' },
-        { icon: Image, text: '1 8x10 Print', tooltip: 'Professional quality print' },
-        { icon: Image, text: '2 5x7 Prints', tooltip: 'Professional quality prints' },
-        { icon: Wallet, text: '4 Wallet Prints', tooltip: '4 wallet prints (2.5 x 3.5)' },
-        { icon: Box, text: '3D Crystal', tooltip: '1 3D engraved crystal with light 3x2x2' }
+        { 
+          icon: Download, 
+          text: t('packages.premium.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.premium.features.print8x10'), 
+          tooltip: t('packages.tooltips.print8x10') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.premium.features.print5x7'), 
+          tooltip: t('packages.tooltips.print5x7') 
+        },
+        { 
+          icon: Wallet, 
+          text: t('packages.premium.features.wallet'), 
+          tooltip: t('packages.tooltips.wallet') 
+        },
+        { 
+          icon: Box, 
+          text: t('packages.premium.features.crystal'), 
+          tooltip: t('packages.tooltips.crystal') 
+        }
       ]
-    }   
+    }
   };
   const handleDetailsClick = (e, packageData) => {
     e.stopPropagation(); // Prevent package selection when clicking details
