@@ -385,7 +385,7 @@ const t = (key) => {
   }
 };
 
-const AddressForm = ({ type, data, onChange }) => {
+const AddressForm = ({ type, data, onChange,selectedSchool }) => {
   const [localData, setLocalData] = useState({
     parentFirstName: data.parentFirstName || '',
     parentLastName: data.parentLastName || '',
@@ -593,6 +593,19 @@ const AddressForm = ({ type, data, onChange }) => {
           className="w-full p-2 border rounded"
           
         /> </div>
+
+         {/* Country (Fixed Value) */}
+      <div className="flex flex-col col-span-2">
+        <label className="mb-1 text-sm font-medium">
+          {t('form.country')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={selectedSchool.country}
+          readOnly
+          className="w-full p-2 border rounded bg-gray-200 cursor-not-allowed"
+        />
+      </div>
 
       {/* Grade Selection (Optional) */}
       <div className="col-span-2">
