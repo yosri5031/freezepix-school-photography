@@ -424,14 +424,14 @@ packages: {
     name: 'Basique',
     price: 'À partir de $',
     features: {
-      digital: 'Photos Numériques'
+      digital: 'Photos Numériques illimitées'
     }
   },
   standard: {
     name: 'Standard',
     price: 'À partir de $',
     features: {
-      digital: 'Photos Numériques',
+      digital: 'Photos Numériques illimitées',
       print8x10: '1 Photo 8x10',
       print5x7: '2 Photos 5x7',
       wallet: '4 Photos Format Portefeuille'
@@ -441,7 +441,7 @@ packages: {
     name: 'Premium',
     price: 'À partir de $',
     features: {
-      digital: 'Photos Numériques',
+      digital: 'Photos Numériques illimitées',
       print8x10: '1 Photo 8x10',
       print5x7: '2 Photos 5x7',
       wallet: '4 Photos Format Portefeuille',
@@ -1596,7 +1596,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, t }) => {
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
-              {packageDetails.name} {t('packages.package_details')}
+              {packageDetails.name} - {t('packages.package_details')}
             </h2>
             <button
               onClick={onClose}
