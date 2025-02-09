@@ -602,7 +602,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
         </label>
         <input
           type="text"
-          value={selectedSchool.country}
+          value={country}
           readOnly
           className="w-full p-2 border rounded bg-gray-200 cursor-not-allowed"
         />
