@@ -596,7 +596,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
         /> </div>
 
          {/* Country (Fixed Value) */}
-      <div className="flex flex-col col-span-2">
+      {/*<div className="flex flex-col col-span-2">
         <label className="mb-1 text-sm font-medium">
           {t('form.country')} <span className="text-red-500">*</span>
         </label>
@@ -606,7 +606,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           readOnly
           className="w-full p-2 border rounded bg-gray-200 cursor-not-allowed"
         />
-      </div>
+      </div>*/}
 
       {/* Grade Selection (Optional) */}
       <div className="col-span-2">
