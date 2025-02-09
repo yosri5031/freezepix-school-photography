@@ -386,6 +386,7 @@ const t = (key) => {
 };
 
 const AddressForm = ({ type, data, onChange,selectedSchool }) => {
+  const country = selectedSchool ? selectedSchool.country : '';
   const [localData, setLocalData] = useState({
     parentFirstName: data.parentFirstName || '',
     parentLastName: data.parentLastName || '',
