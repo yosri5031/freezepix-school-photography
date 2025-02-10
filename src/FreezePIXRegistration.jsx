@@ -2053,7 +2053,7 @@ const handleRegistrationSubmit = async (e) => {
         }
       };
       
-    const calculateTotal = () => {
+  const calculateTotal = () => {
   if (!selectedSchool?.country || !selectedPkg) return { subtotal: 0, total: 0 };
 
   const country = selectedSchool.country.toUpperCase();
@@ -2061,6 +2061,11 @@ const handleRegistrationSubmit = async (e) => {
 
   // Calculate subtotal based on the selected package price
   let subtotal = selectedPkg.price;
+
+  // Add shipping for Standard and Premium packages
+  const SHIPPING_COST = 9.99;
+  const needsShipping = ['Standard', 'Premium'].includes(selectedPkg.name);
+  const shippingCost = needsShipping ? SHIPPING_COST : 0;
 
   // Apply discount if available
   let discountAmount = 0;
@@ -2076,28 +2081,31 @@ const handleRegistrationSubmit = async (e) => {
     const provinceTaxRates = taxRates[province];
 
     if (provinceTaxRates) {
-      taxes = calculateTaxes(subtotal, provinceTaxRates); // Calculate taxes
+      // Calculate taxes on subtotal plus shipping
+      taxes = calculateTaxes(subtotal + shippingCost, provinceTaxRates);
     }
   } else if (country === 'TUNISIA' && taxRates) {
     const tunisiaTaxRate = taxRates.TND;
-    const discountedSubtotal = subtotal; // Use the subtotal after discount
+    const discountedSubtotal = subtotal;
 
     return {
       originalSubtotal: selectedPkg.price,
       discountAmount,
       subtotal: discountedSubtotal,
-      total: discountedSubtotal * (1 + tunisiaTaxRate) // Apply tax on the discounted subtotal
+      shippingCost: shippingCost,
+      total: (discountedSubtotal + shippingCost) * (1 + tunisiaTaxRate)
     };
   }
 
   return {
-  originalSubtotal: selectedPkg.price,
-  discountAmount,
-  subtotal,
-  tax: taxes.totalAmount,
-  taxDetails: taxes.taxDetails,  // Add this line
-  total: subtotal + taxes.totalAmount
-};
+    originalSubtotal: selectedPkg.price,
+    discountAmount,
+    subtotal,
+    shippingCost: shippingCost,
+    tax: taxes.totalAmount,
+    taxDetails: taxes.taxDetails,
+    total: subtotal + shippingCost + taxes.totalAmount
+  };
 };
       
       const calculateTaxes = (basePrice, taxRates) => {
@@ -2242,6 +2250,15 @@ useEffect(() => {
                 <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
             </div>
         )}
+ {/* Add Shipping & Handling line */}
+    {priceDetails.shippingCost > 0 && (
+      <div className="flex justify-between text-gray-600">
+        <span>Shipping & Handling:</span>
+        <span>
+          {priceDetails.shippingCost.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
+        </span>
+      </div>
+    )}
 
 {priceDetails.taxDetails &&
   Object.entries(priceDetails.taxDetails).map(([key, value]) => (
