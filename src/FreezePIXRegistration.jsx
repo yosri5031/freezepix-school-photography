@@ -509,38 +509,34 @@ const t = (key) => {
   }
 };
 
-const AddressForm = ({ type, data, onChange,selectedSchool }) => {
-  const country = selectedSchool ? selectedSchool.country : '';
+const AddressForm = ({ type, data, onChange, selectedSchool }) => {
+  const isBasicPackage = data.packageName === 'Basic' || data.packageName === 'Basique';
   const [localData, setLocalData] = useState({
     parentFirstName: data.parentFirstName || '',
     parentLastName: data.parentLastName || '',
     studentFirstName: data.studentFirstName || '',
     studentLastName: data.studentLastName || '',
     parentEmail: data.parentEmail || '',
-    parentPhone: data.parentPhone || '',     // Add this
+    parentPhone: data.parentPhone || '',
     studentGrade: data.studentGrade || '',
     street: data.street || '',
     city: data.city || '',
     province: data.province || '',
-    zip: data.zip || ''    // Add this
+    zip: data.zip || ''
   });
 
+  // Only include required address fields if not Basic package
   const requiredFields = [
     'parentFirstName', 
     'parentLastName', 
     'studentFirstName', 
     'studentLastName', 
     'parentEmail',
-    'street',
-    'city',
-    'province',
-    'zip'
+    ...(isBasicPackage ? [] : ['street', 'city', 'province', 'zip'])
   ];
 
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
-  
-    // Update local state
     setLocalData(prevData => ({
       ...prevData,
       [field]: newValue
@@ -548,14 +544,10 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
   };
   
   const handleInputComplete = (field) => () => {
-    // Check if the input for this field is complete (full word entered)
-    const currentValue = localData[field];
-    
-    // Only update parent form data when the input is complete
-    if (currentValue && currentValue.trim() !== '') {
+    if (localData[field] && localData[field].trim() !== '') {
       onChange({
         ...data,
-        [field]: currentValue
+        [field]: localData[field]
       });
     }
   };
@@ -565,7 +557,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
       {/* Parent First Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.firstName')}<span className="text-red-500">*</span>
+          {t('form.firstName')}<span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -574,14 +566,13 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onChange={handleInputChange('parentFirstName')}
           onBlur={handleInputComplete('parentFirstName')}
           className="w-full p-2 border rounded"
-          
         />
       </div>
-  
+
       {/* Parent Last Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.lastName')} <span className="text-red-500">*</span>
+          {t('form.lastName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -590,14 +581,13 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onChange={handleInputChange('parentLastName')}
           onBlur={handleInputComplete('parentLastName')}
           className="w-full p-2 border rounded"
-          
         />
       </div>
-  
+
       {/* Student First Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.studentName')} <span className="text-red-500">*</span>
+          {t('form.studentName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -606,14 +596,13 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onChange={handleInputChange('studentFirstName')}
           onBlur={handleInputComplete('studentFirstName')}
           className="w-full p-2 border rounded"
-          
         />
       </div>
-  
+
       {/* Student Last Name */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.studentLastName')} <span className="text-red-500">*</span>
+          {t('form.studentLastName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -622,14 +611,13 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onChange={handleInputChange('studentLastName')}
           onBlur={handleInputComplete('studentLastName')}
           className="w-full p-2 border rounded"
-          
         />
       </div>
-  
+
       {/* Parent Email */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.parentEmail')} <span className="text-red-500">*</span>
+          {t('form.parentEmail')} <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
@@ -638,21 +626,19 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onChange={handleInputChange('parentEmail')}
           onBlur={handleInputComplete('parentEmail')}
           className="w-full p-2 border rounded"
-          
         />
       </div>
-  
+
       {/* Parent Phone (Optional) */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-        {t('form.parentPhone')}
+          {t('form.parentPhone')}
         </label>
         <input
           type="tel"
           inputMode="numeric"
           value={localData.parentPhone || ''}
           onChange={(e) => {
-            // Only allow numbers
             const value = e.target.value.replace(/[^\d]/g, '');
             handleInputChange('parentPhone')({ target: { value } });
           }}
@@ -662,80 +648,75 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
         />
       </div>
 
-      {/* address */}
-      <div className="flex flex-col">
-        <label className="mb-1 text-sm font-medium">
-        {t('form.street')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          inputMode="text"
-          value={localData.street || ''}
-          onChange={handleInputChange('street')}
-          onBlur={handleInputComplete('street')}
-          className="w-full p-2 border rounded"
-          
-        /> </div>
+      {/* Address Fields - Only show if not Basic package */}
+      {!isBasicPackage && (
+        <>
+          {/* Street */}
+          <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.street')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.street || ''}
+              onChange={handleInputChange('street')}
+              onBlur={handleInputComplete('street')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
 
-        <div className="flex flex-col">
-        <label className="mb-1 text-sm font-medium">
-        {t('form.city')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          inputMode="text"
-          value={localData.city || ''}
-          onChange={handleInputChange('city')}
-          onBlur={handleInputComplete('city')}
-          className="w-full p-2 border rounded"
-          
-        /> </div>
+          {/* City */}
+          <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.city')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.city || ''}
+              onChange={handleInputChange('city')}
+              onBlur={handleInputComplete('city')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
 
-        <div className="flex flex-col">
-        <label className="mb-1 text-sm font-medium">
-        {t('form.province')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          inputMode="text"
-          value={localData.province || ''}
-          onChange={handleInputChange('province')}
-          onBlur={handleInputComplete('province')}
-          className="w-full p-2 border rounded"
-          
-        /> </div>
+          {/* Province */}
+          <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.province')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.province || ''}
+              onChange={handleInputChange('province')}
+              onBlur={handleInputComplete('province')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
 
-<div className="flex flex-col">
-        <label className="mb-1 text-sm font-medium">
-        {t('form.zip')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          inputMode="text"
-          value={localData.zip || ''}
-          onChange={handleInputChange('zip')}
-          onBlur={handleInputComplete('zip')}
-          className="w-full p-2 border rounded"
-          
-        /> </div>
-
-         {/* Country (Fixed Value) */}
-      {/*<div className="flex flex-col col-span-2">
-        <label className="mb-1 text-sm font-medium">
-          {t('form.country')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={country}
-          readOnly
-          className="w-full p-2 border rounded bg-gray-200 cursor-not-allowed"
-        />
-      </div>*/}
+          {/* Zip Code */}
+          <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.zip')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.zip || ''}
+              onChange={handleInputChange('zip')}
+              onBlur={handleInputComplete('zip')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+        </>
+      )}
 
       {/* Grade Selection (Optional) */}
       <div className="col-span-2">
         <label className="mb-1 text-sm font-medium block">
-        {t('select.student_grade')}
+          {t('select.student_grade')}
         </label>
         <select
           value={localData.studentGrade || ''}
@@ -743,8 +724,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
           onBlur={handleInputComplete('studentGrade')}
           className="w-full p-2 border rounded"
         >
-          <option value="">{t('select.select_grade')}
-          </option>
+          <option value="">{t('select.select_grade')}</option>
           {[...Array(10)].map((_, index) => (
             <option key={index + 1} value={index + 1}>
               {t('select.grade')} {index + 1}
@@ -755,6 +735,7 @@ const AddressForm = ({ type, data, onChange,selectedSchool }) => {
     </div>
   );
 };
+
 
 const verifyPayment = async (sessionId) => {
   try {
