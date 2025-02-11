@@ -2158,12 +2158,24 @@ const handleRegistrationSubmit = async (e) => {
 // Check if the form is filled whenever formData changes
 useEffect(() => {
   // Check if the address form is filled
-  if (formData.parentFirstName && formData.parentLastName && formData.studentFirstName && formData.studentLastName && formData.parentEmail && formData.street && formData.city && formData.province && formData.zip) {
+  if (
+    formData.parentFirstName &&
+    formData.parentLastName &&
+    formData.studentFirstName &&
+    formData.studentLastName &&
+    formData.parentEmail &&
+    formData.street &&
+    formData.city &&
+    formData.province &&
+    formData.zip
+  ) {
+    setIsFormFilled(true);
+  } else if (selectedPackage === 'Basic') {
     setIsFormFilled(true);
   } else {
     setIsFormFilled(false);
   }
-}, [formData]);
+}, [formData, selectedPackage]); // Include selectedPackage in the dependency array
     return (
       <div className="space-y-4">
     {/* Package Summary */}
