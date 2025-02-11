@@ -279,7 +279,7 @@ all_provinces: 'All Provinces'
     },
     canada : {
     options: 'Payment Options for Canada',
-    select : 'Select Payment Method:',
+    select : 'Payment Method:',
     interac: 'Interac E-Transfer',
     credit: 'Credit Card Payment',
     send: 'Send payment to:',
