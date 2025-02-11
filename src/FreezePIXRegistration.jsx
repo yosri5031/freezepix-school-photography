@@ -285,7 +285,12 @@ all_provinces: 'All Provinces'
     send: 'Send payment to:',
     placing: 'After completing the registration, complete the Interac E-Transfer to the provided email.',
     credit_c: 'Credit Card Payment',
-    message_c : 'Please complete your payment to place the order'
+    message_c : 'Please complete your payment to place the order',
+    summary: 'Order Summary',
+    subtotal: 'Subtotal',
+    shipping: 'Shipping & Handling',
+    total: 'Total',
+    discount: 'Discount'
 
   },
   
@@ -409,14 +414,20 @@ all_provinces: 'All Provinces'
       ]
     },
     canada: {
-      options: 'Options de paiement pour le Canada',
-      select : 'Sélectionnez le mode de paiement :',
+      options: 'Options de paiement ',
+      select : 'Mode de paiement :',
       interac: 'Virement Interac',
       credit: 'Paiement par carte de crédit',
       send: 'Envoyer le paiement à :',
       placing: 'Après avoir terminé l\'inscription, veuillez compléter le virement Interac à l\'adresse e-mail fournie.',
       credit_c: 'Paiement par carte de crédit',
-      message_c : 'Veuillez effectuer votre paiement pour passer la commande'
+      message_c : 'Veuillez effectuer votre paiement pour passer la commande',
+      summary: 'Récapitulatif de la commande',
+    subtotal: 'Sous-total',
+    shipping: 'Expédition et manutention',
+    total: 'Total',
+        discount: 'Remise'
+
   },
   checkout: {
     cardNumber: 'Numéro de carte',
@@ -2226,7 +2237,7 @@ useEffect(() => {
 
            {/* Order Summary  */}
            <div className="bg-white rounded-lg p-4 shadow-sm border">
-    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+    <h3 className="text-lg font-semibold mb-4">{t('canada.summary')}</h3>
     {/* Discount Code Input */}
   <div className="mb-4">
     <div className="flex space-x-2">
@@ -2253,7 +2264,7 @@ useEffect(() => {
     
     {priceDetails.discountAmount > 0 && (
       <div className="flex justify-between text-green-600">
-        <span>Discount:</span>
+        <span>{t('canada.discount')}:</span>
         <span>
         -{priceDetails.discountAmount.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
          </span>
@@ -2262,7 +2273,7 @@ useEffect(() => {
     </div>
     <div className="space-y-2">
         <div className="flex justify-between">
-            <span>Subtotal:</span>
+            <span>{t('canada.subtotal')}:</span>
             <span>
                 {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
             </span>
@@ -2277,7 +2288,7 @@ useEffect(() => {
  {/* Add Shipping & Handling line */}
     {priceDetails.shippingCost > 0 && (
       <div className="flex justify-between text-gray-600">
-        <span>Shipping & Handling:</span>
+        <span>{t('canada.shipping')}:</span>
         <span>
           {priceDetails.shippingCost.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
         </span>
