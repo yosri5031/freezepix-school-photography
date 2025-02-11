@@ -80,6 +80,30 @@ const FreezePIXRegistration = () => {
     alert(error.response?.data?.error || error.message || 'Operation failed');
   };
 
+  const usePreviousStepHandler = (currentStep, setCurrentStep) => {
+    useEffect(() => {
+      const handleBackButton = (event) => {
+        event.preventDefault();
+        previousStep();
+      };
+  
+      const previousStep = () => setCurrentStep(prev => prev - 1);
+  
+      // Push state when mounting
+      window.history.pushState(null, '', window.location.pathname);
+  
+      // Listen for back button
+      window.addEventListener('popstate', handleBackButton);
+  
+      return () => {
+        window.removeEventListener('popstate', handleBackButton);
+      };
+    }, [setCurrentStep]);
+  };
+
+  usePreviousStepHandler(currentStep, setCurrentStep);
+
+
   const useEvents = (selectedSchool) => {
     const [events, setEvents] = useState([]);
     const [eventsLoading, setEventsLoading] = useState(true);
