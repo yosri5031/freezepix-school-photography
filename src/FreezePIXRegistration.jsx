@@ -1683,15 +1683,40 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
 
   if (!isOpen) return null;
 
+  // Use package keys instead of translated names
+  const PACKAGE_KEYS = {
+    BASIC: 'Basic',
+    STANDARD: 'Standard',
+    PREMIUM: 'Premium'
+  };
+
+  // Helper function to get package key from translated name
+  const getPackageKey = (translatedName) => {
+    // Remove any spaces and convert to lowercase for comparison
+    const normalizedName = translatedName.toLowerCase().replace(/\s+/g, '');
+    
+    // Check against all possible translations
+    if (normalizedName === t('packages.basic.name').toLowerCase().replace(/\s+/g, '')) {
+      return PACKAGE_KEYS.BASIC;
+    }
+    if (normalizedName === t('packages.standard.name').toLowerCase().replace(/\s+/g, '')) {
+      return PACKAGE_KEYS.STANDARD;
+    }
+    if (normalizedName === t('packages.premium.name').toLowerCase().replace(/\s+/g, '')) {
+      return PACKAGE_KEYS.PREMIUM;
+    }
+    return null;
+  };
+
   const tunisiaPackageImages = {
-    Basic: {
+    [PACKAGE_KEYS.BASIC]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
         quantity: '∞'+ t('packages.basic.features.digital'),
         description: t('packages.tooltips.digital')
       }
     },
-    Standard: {
+    [PACKAGE_KEYS.STANDARD]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
         quantity: '∞'+ t('packages.standard.features.digital'),
@@ -1708,7 +1733,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         description: t('packages.tooltips.wallet')
       }
     },
-    Premium: {
+    [PACKAGE_KEYS.PREMIUM]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
         quantity: '∞'+ t('packages.premium.features.digital'),
@@ -1716,21 +1741,21 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity:  t('packages.premium.features.prints'),
+        quantity: t('packages.premium.features.prints'),
         description: t('packages.tooltips.prints')
       },
       wallets: {
         src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity:  t('packages.premium.features.wallet'),
+        quantity: t('packages.premium.features.wallet'),
         description: t('packages.tooltips.wallet')
       },
       keychain: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354", // Update with actual keychain image
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354",
         quantity: '1 ' + t('packages.premium.features.keychain'),
         description: t('packages.tooltips.keychain')
       },
       magnet: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355", // Update with actual magnet image
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355",
         quantity: '1 ' + t('packages.premium.features.magnet'),
         description: t('packages.tooltips.magnet')
       }
@@ -1748,7 +1773,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity:'∞'+ t('packages.standard.features.digital'),
+      quantity: '∞'+ t('packages.standard.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
@@ -1769,7 +1794,26 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   };
 
   const premiumPackageImages = {
-    ...standardPackageImages,
+    digital: {
+      src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+      quantity: '∞'+ t('packages.premium.features.digital'),
+      description: t('packages.tooltips.digital')
+    },
+    print8x10: {
+      src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+      quantity: t('packages.premium.features.print8x10'),
+      description: t('packages.tooltips.print8x10')
+    },
+    print5x7: {
+      src: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
+      quantity: t('packages.premium.features.print5x7'),
+      description: t('packages.tooltips.print5x7')
+    },
+    wallets: {
+      src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
+      quantity: t('packages.premium.features.wallet'),
+      description: t('packages.tooltips.wallet')
+    },
     crystal: {
       src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
       quantity: t('packages.premium.features.crystal'),
@@ -1782,16 +1826,22 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       return {};
     }
 
-    if (selectedSchool?.country === 'Tunisia') {
-      return tunisiaPackageImages[packageDetails.name] || {};
+    const packageKey = getPackageKey(packageDetails.name);
+    
+    if (!packageKey) {
+      return {};
     }
 
-    switch (packageDetails.name) {
-      case t('packages.basic.name'):
+    if (selectedSchool?.country === 'Tunisia') {
+      return tunisiaPackageImages[packageKey] || {};
+    }
+
+    switch (packageKey) {
+      case PACKAGE_KEYS.BASIC:
         return basicPackageImages;
-      case t('packages.standard.name'):
+      case PACKAGE_KEYS.STANDARD:
         return standardPackageImages;
-      case t('packages.premium.name'):
+      case PACKAGE_KEYS.PREMIUM:
         return premiumPackageImages;
       default:
         return {};
@@ -1825,7 +1875,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         </div>
       )}
 
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
@@ -1869,6 +1919,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     </>
   );
 };
+
 
 // Package Selection Component
 const PackageSelection = () => {
