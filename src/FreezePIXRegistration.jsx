@@ -494,6 +494,72 @@ packages: {
   viewDetails: 'Voir Détails',
   previous: 'Précédent'
 }
+},
+ar: {
+  select: {
+    grade: 'الصف',
+    select_grade: 'اختر الصف',
+    student_grade: 'صف الطالب',
+    all_provinces: 'كل المناطق'
+  },
+  steps: {
+    country: 'اختر البلد',
+    school: 'اختر المدرسة',
+    photo_package: 'اختر باقة الصور',
+    event: 'اختر موعد التصوير',
+    noevent: 'لا توجد مواعيد متاحة لهذه المدرسة',
+    registration: 'أكمل التسجيل',
+    package: 'اختر الباقة',
+    register: 'تسجيل طفل آخر',
+    package_details: 'تفاصيل الباقة'
+  },
+  form: {
+    firstName: 'اسم الوالد الأول',
+    lastName: 'اسم عائلة الوالد',
+    studentName: 'اسم الطالب الأول',
+    studentLastName: 'اسم عائلة الطالب',
+    parentEmail: 'البريد الإلكتروني للوالد',
+    parentPhone: 'هاتف الوالد',
+    street: 'الشارع',
+    city: 'المدينة',
+    province: 'المنطقة',
+    zip: 'الرمز البريدي'
+  },
+  packages: {
+    basic: {
+      name: 'الباقة الأساسية',
+      price: 'السعر: 10 دينار',
+      features: {
+        digital: 'صورة رقمية'
+      }
+    },
+    standard: {
+      name: 'الباقة القياسية',
+      price: 'السعر: 20 دينار',
+      features: {
+        digital: 'صورة رقمية',
+        wallet: '4 صور محفظة',
+        prints: '2 صور 15×22'
+      }
+    },
+    premium: {
+      name: 'الباقة المميزة',
+      price: 'السعر: 30 دينار',
+      features: {
+        digital: 'صورة رقمية',
+        wallet: '4 صور محفظة',
+        prints: '2 صور 15×22',
+        keychain: 'سلسلة مفاتيح',
+        magnet: 'مغناطيس'
+      }
+    }
+  },
+  tunisia: {
+    paymentNote: 'الدفع في الحضانة',
+    daycarePayment: 'الدفع في الحضانة',
+    confirmationTitle: 'تم التسجيل بنجاح!',
+    confirmationMessage: 'تم تسجيل طفلك بنجاح.'
+  }
 }
 };
 
@@ -1351,6 +1417,9 @@ useEffect(() => {
       >
         <option value="en">English</option>
         <option value="fr">Français</option>
+        
+          <option value="ar">العربية</option>
+       
       </select>
     </div>
   );
@@ -1658,7 +1727,38 @@ const PackageSelection = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
-  const calculatedPackages = {
+
+  const tunisiaPackages = {
+    Basic: {
+      name: t('packages.basic.name'),
+      price: 10,
+      features: [
+        { icon: Download, text: t('packages.basic.features.digital') }
+      ]
+    },
+    Standard: {
+      name: t('packages.standard.name'),
+      price: 20,
+      features: [
+        { icon: Download, text: t('packages.standard.features.digital') },
+        { icon: Wallet, text: t('packages.standard.features.wallet') },
+        { icon: Image, text: t('packages.standard.features.prints') }
+      ]
+    },
+    Premium: {
+      name: t('packages.premium.name'),
+      price: 30,
+      features: [
+        { icon: Download, text: t('packages.premium.features.digital') },
+        { icon: Wallet, text: t('packages.premium.features.wallet') },
+        { icon: Image, text: t('packages.premium.features.prints') },
+        { icon: Key, text: t('packages.premium.features.keychain') },
+        { icon: Magnet, text: t('packages.premium.features.magnet') }
+      ]
+    }
+  };
+
+  const regularPackages = {
     Basic: {
       name: t('packages.basic.name'),
       price: calculatePackagePrice(20),
@@ -1731,8 +1831,11 @@ const PackageSelection = () => {
       ]
     }
   };
+
+  const packages = selectedSchool?.country === 'Tunisia' ? tunisiaPackages : regularPackages;
+
   const handleDetailsClick = (e, packageData) => {
-    e.stopPropagation(); // Prevent package selection when clicking details
+    e.stopPropagation();
     setSelectedPackageDetails(packageData);
     setShowDetailsPopup(true);
   };
@@ -1743,7 +1846,8 @@ const PackageSelection = () => {
       ...prev,
       packageSelection: packageKey,
       packagePrice: packageData.price,
-      packageName: packageData.name
+      packageName: packageData.name,
+      packageDescription: packageData.features.map(f => f.text).join(', ')
     }));
     nextStep();
   };
@@ -1757,10 +1861,10 @@ const PackageSelection = () => {
     <>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800 text-center">
-        {t('steps.package')}
-                </h2>
+          {t('steps.package')}
+        </h2>
         <div className="space-y-4">
-          {Object.entries(calculatedPackages).map(([key, pkg]) => (
+          {Object.entries(packages).map(([key, pkg]) => (
             <div 
               key={key}
               className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
@@ -1786,7 +1890,9 @@ const PackageSelection = () => {
                     <div>
                       <h3 className="font-semibold text-lg">{pkg.name}</h3>
                       <div className="font-bold text-xl text-yellow-500">
-                        ${pkg.price.toFixed(2)}
+                        {selectedSchool?.country === 'Tunisia' 
+                          ? `${pkg.price} TND`
+                          : `$${pkg.price.toFixed(2)}`}
                       </div>
                     </div>
                   </div>
@@ -1822,7 +1928,8 @@ const PackageSelection = () => {
           ))}
         </div>
       </div>
-      <div className="flex justify-between space-x-4">
+      
+      <div className="flex justify-between space-x-4 mt-6">
         <button 
           onClick={previousStep} 
           className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
@@ -1830,15 +1937,15 @@ const PackageSelection = () => {
           {t('buttons.previous')}
         </button>
       </div>
-    
+
       {showDetailsPopup && selectedPackageDetails && (
-  <PackageDetailsPopup
-    isOpen={showDetailsPopup}
-    onClose={handleClosePopup}
-    packageDetails={selectedPackageDetails}
-    t={t}
-  />
-)}
+        <PackageDetailsPopup
+          isOpen={showDetailsPopup}
+          onClose={handleClosePopup}
+          packageDetails={selectedPackageDetails}
+          t={t}
+        />
+      )}
     </>
   );
 };
@@ -2310,17 +2417,7 @@ useEffect(() => {
     </div>
 </div>
 
-{/* Option de paiement Tunisia */}
-{selectedSchool.country === 'Tunisia' && (
-  <div className="p-4 bg-yellow-50 rounded-lg">
-            <h4 className="font-medium text-yellow-700">
-              {t('tunisia.daycarePayment')}
-            </h4>
-            <p className="text-sm text-yellow-600">
-            </p>
-          </div>
-)
-  }
+
  {selectedSchool.country !== 'Tunisia' && (
             <>
                   {/* Option de paiement Interac */}
@@ -2353,25 +2450,22 @@ useEffect(() => {
           {t('buttons.previous')}
         </button>
 
-        {selectedSchool.country === 'Tunisia' && (
-           <button 
-           type="submit"
-           onClick={handleRegistrationSubmit}
-           disabled={isLoading}
-           className={`w-1/2 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg shadow-md hover:bg-yellow-600 ${
-             isLoading ? 'opacity-50 cursor-not-allowed' : ''
-           }`}
-         >
-           {isLoading ? (
-             <div className="flex items-center justify-center">
-               <Loader className="animate-spin h-5 w-5 mr-2" />
-               Loading...
-             </div>
-           ) : (
-             `${t('buttons.submit')} (${priceDetails.total.toFixed(2)} TND)`
-           )}
-         </button>
-        )}
+{/* Option de paiement Tunisia */}
+
+        {selectedSchool?.country === 'Tunisia' && (
+  <div className="p-4 bg-yellow-50 rounded-lg">
+    <h4 className="font-medium text-yellow-700">
+      {t('tunisia.paymentNote')}
+    </h4>
+    <button 
+      type="submit"
+      onClick={handleRegistrationSubmit}
+      className="w-full mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg"
+    >
+      {t('buttons.submit')} ({selectedPkg?.price} TND)
+    </button>
+  </div>
+)}
 
 {selectedSchool.country !== 'Tunisia' && paymentMethod === 'interac' && (
   <button 
