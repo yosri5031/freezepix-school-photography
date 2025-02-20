@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download, Key} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -549,7 +549,7 @@ ar: {
         digital: 'صورة رقمية',
         wallet: '4 صور محفظة',
         prints: '2 صور 15×22',
-        keychain: 'سلسلة مفاتيح',
+        keychain: 'حاملة مفاتيح',
         magnet: 'مغناطيس'
       }
     }
@@ -1753,7 +1753,7 @@ const PackageSelection = () => {
         { icon: Wallet, text: t('packages.premium.features.wallet') },
         { icon: Image, text: t('packages.premium.features.prints') },
         { icon: Key, text: t('packages.premium.features.keychain') },
-        { icon: Magnet, text: t('packages.premium.features.magnet') }
+        { icon: Image, text: t('packages.premium.features.magnet') }
       ]
     }
   };
