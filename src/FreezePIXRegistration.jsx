@@ -224,7 +224,8 @@ all_provinces: 'All Provinces'
       registration: 'Complete Registration',
       package : 'Select Package',
       register :'Register Another Child',
-      package_details: 'View Package Details'
+      package_details: 'View Package Details',
+      confirmation: 'Confirmation'
     },
     buttons: {
       next: 'Next',
@@ -384,7 +385,8 @@ all_provinces: 'All Provinces'
       registration: 'Compléter l\'inscription',
       package : 'Sélectionner un offre',
       register :'Enregistrer un autre enfant',
-      package_details: 'Afficher les détails du package'
+      package_details: 'Afficher les détails du package',
+      confirmation: 'Confirmation'
     },
     buttons: {
       next: 'Suivant',
@@ -511,7 +513,8 @@ ar: {
     registration: 'أكمل التسجيل',
     package: 'اختر الباقة',
     register: 'تسجيل طفل آخر',
-    package_details: 'تفاصيل الباقة'
+    package_details: 'تفاصيل الباقة',
+    confirmation: 'تأكيد'
   },
   form: {
     firstName: 'اسم الوالد الأول',
@@ -2517,7 +2520,7 @@ useEffect(() => {
             { icon: Calendar, text: t('steps.event') },
             { icon: Package, text: t('steps.package') },
             { icon: CheckCircle, text: t('steps.registration') },
-            { icon: CalendarCheck2, text: 'Confirmation' }
+            { icon: CalendarCheck2, text: t('steps.confirmation') }
           ].map((step, index) => (
             <div 
               key={index} 
