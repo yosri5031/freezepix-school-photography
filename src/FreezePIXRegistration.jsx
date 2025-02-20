@@ -2538,15 +2538,13 @@ useEffect(() => {
 
         {selectedSchool?.country === 'Tunisia' && (
   <div className="p-4 bg-yellow-50 rounded-lg">
-    <h4 className="font-medium text-yellow-700">
-      {t('tunisia.paymentNote')}
-    </h4>
+   
     <button 
       type="submit"
       onClick={handleRegistrationSubmit}
       className="w-full mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg"
     >
-      {t('buttons.submit')} ({selectedPkg?.price} TND)
+      {t('buttons.submit')} 
     </button>
   </div>
 )}
