@@ -2283,15 +2283,9 @@ const styles = `
 `;
 
 const handleRegistrationSubmit = async (e) => {
-  if (e) e.preventDefault();
   setIsLoading(true);
   
   try {
-    // Determine payment method and status based on country
-    const isTunisia = selectedSchool.country === 'Tunisia';
-    const paymentMethodToUse = isTunisia ? 'daycare' : paymentMethod;
-    const paymentStatusToUse = isTunisia ? 'open' : 'completed';
-
     const registrationData = {
       parentFirstName: formData.parentFirstName,
       parentLastName: formData.parentLastName,
@@ -2315,11 +2309,16 @@ const handleRegistrationSubmit = async (e) => {
             ? selectedEvent._id 
             : selectedEvent._id.toString())
         : '',
-      paymentMethod: paymentMethodToUse,
-      paymentStatus: paymentStatusToUse
+      paymentMethod: selectedSchool.country === 'Tunisia' 
+        ? 'daycare' 
+        : paymentMethod === 'interac' 
+          ? 'interac' 
+          : 'credit',
+      paymentStatus: paymentMethod === 'interac' 
+        ? 'payment_pending' 
+        : 'open'
     };
 
-    // For Tunisian orders, directly submit to database
     const response = await axios.post(
       'https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/register',
       registrationData,
@@ -2330,7 +2329,7 @@ const handleRegistrationSubmit = async (e) => {
       }
     );
 
-    // Send confirmation email
+    // Send confirmation via sendImagesToParent
     await sendImagesToParent({
       _id: response.data.registrationId,
       ...registrationData
@@ -2341,17 +2340,10 @@ const handleRegistrationSubmit = async (e) => {
       registrationId: response.data.registrationId
     });
 
-    // Move to confirmation step
-    setCurrentStep(5);
-
-    // Clean up Helcim iframe if it exists
-    if (window.removeHelcimPayIframe) {
-      window.removeHelcimPayIframe();
-    }
-
+    setCurrentStep(currentStep + 1);
+    window.removeHelcimPayIframe();
   } catch (error) {
     console.error('Registration error:', error);
-    setError(error.response?.data?.message || 'Registration failed');
   } finally {
     setIsLoading(false);
   }
