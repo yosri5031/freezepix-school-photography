@@ -1778,8 +1778,12 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   };
 
   const getPackageImages = () => {
+    if (!packageDetails?.name) {
+      return {};
+    }
+
     if (selectedSchool?.country === 'Tunisia') {
-      return tunisiaPackageImages[packageDetails.name];
+      return tunisiaPackageImages[packageDetails.name] || {};
     }
 
     switch (packageDetails.name) {
@@ -1790,9 +1794,11 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       case t('packages.premium.name'):
         return premiumPackageImages;
       default:
-        return basicPackageImages;
+        return {};
     }
   };
+
+  const packageImages = getPackageImages();
 
   return (
     <>
@@ -1819,7 +1825,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         </div>
       )}
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
@@ -1834,7 +1840,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
           </div>
 
           <div className="p-4 grid grid-cols-1 gap-4">
-            {Object.entries(getPackageImages()).map(([key, item]) => (
+            {Object.entries(packageImages).map(([key, item]) => (
               <div key={key} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
                 <div className="grid grid-cols-2 p-4 items-center">
                   <div>
