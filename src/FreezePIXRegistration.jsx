@@ -321,6 +321,18 @@ all_provinces: 'All Provinces'
     package_details: 'Package Details',
     image_preview: 'Image Preview',
     quantity: 'Quantity',
+    tooltips: {
+      digital: "High-resolution digital copy of your photo delivered via email",
+      prints: "Professional quality printed photos",
+      wallet: "Wallet-sized printed photos (2.5 x 3.5 inches)",
+      keychain: "Durable acrylic keychain with your photo",
+      magnet: "High-quality photo magnet for your fridge or any magnetic surface",
+      print8x10: "Professional 8x10 inch printed photo",
+      print5x7: "Professional 5x7 inch printed photo",
+      crystal: "Elegant crystal photo with LED base",
+      image_preview: "Image Preview"
+    },
+
     basic: {
       name: 'Basic',
       price: 'Starting at $',
@@ -461,6 +473,17 @@ packages: {
   package_details: 'Détails du package',
     image_preview: 'Aperçu de l\'image',
     quantity: 'Quantité',
+    tooltips: {
+      digital: "Copie numérique haute résolution de votre photo envoyée par email",
+      prints: "Photos imprimées de qualité professionnelle",
+      wallet: "Photos format portefeuille (6,35 x 8,89 cm)",
+      keychain: "Porte-clés en acrylique durable avec votre photo",
+      magnet: "Aimant photo de haute qualité pour votre réfrigérateur ou toute surface magnétique",
+      print8x10: "Photo imprimée professionnelle 20,32 x 25,4 cm",
+      print5x7: "Photo imprimée professionnelle 12,7 x 17,78 cm",
+      crystal: "Photo en cristal élégante avec base LED",
+      image_preview: "Aperçu de l'image"
+    },
   basic: {
     name: 'Basique',
     price: 'À partir de $',
@@ -566,6 +589,21 @@ ar: {
     zip: 'الرمز البريدي'
   },
   packages: {
+    title: 'اختر باقتك',
+    package_details: 'تفاصيل الباقة',
+    image_preview: 'معاينة الصورة',
+    quantity: 'الكمية',
+    tooltips: {
+      digital: 'نسخة رقمية عالية الدقة من صورتك تُرسل عبر البريد الإلكتروني',
+      prints: 'صور مطبوعة بجودة احترافية',
+      wallet: 'صور بحجم محفظة (6.35 × 8.89 سم)',
+      keychain: 'مفتاح سلسلة من الأكريليك المتين مع صورتك',
+      magnet: 'مغناطيس صورة عالي الجودة لثلاجتك أو لأي سطح مغناطيسي',
+      print8x10: 'صورة مطبوعة احترافية 20.32 × 25.4 سم',
+      print5x7: 'صورة مطبوعة احترافية 12.7 × 17.78 سم',
+      crystal: 'صورة كريستالية أنيقة مع قاعدة LED',
+      image_preview: 'معاينة الصورة'
+    },
     basic: {
       name: 'الباقة الأساسية',
       price: 'السعر: 10 دينار',
