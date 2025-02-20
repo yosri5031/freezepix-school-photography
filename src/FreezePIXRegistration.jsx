@@ -1681,20 +1681,20 @@ useEffect(() => {
 const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, t }) => {
   const [zoomedImage, setZoomedImage] = useState(null);
 
-  if (!isOpen || !packageDetails) return null;
+  if (!isOpen) return null;
 
   const tunisiaPackageImages = {
     Basic: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞ ' + t('packages.basic.features.digital'),
+        quantity: '∞'+ t('packages.basic.features.digital'),
         description: t('packages.tooltips.digital')
       }
     },
     Standard: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞ ' + t('packages.standard.features.digital'),
+        quantity: '∞'+ t('packages.standard.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
@@ -1711,26 +1711,26 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     Premium: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞ ' + t('packages.premium.features.digital'),
+        quantity: '∞'+ t('packages.premium.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity: t('packages.premium.features.prints'),
+        quantity:  t('packages.premium.features.prints'),
         description: t('packages.tooltips.prints')
       },
       wallets: {
         src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity: t('packages.premium.features.wallet'),
+        quantity:  t('packages.premium.features.wallet'),
         description: t('packages.tooltips.wallet')
       },
       keychain: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354",
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354", // Update with actual keychain image
         quantity: '1 ' + t('packages.premium.features.keychain'),
         description: t('packages.tooltips.keychain')
       },
       magnet: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355",
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355", // Update with actual magnet image
         quantity: '1 ' + t('packages.premium.features.magnet'),
         description: t('packages.tooltips.magnet')
       }
@@ -1740,7 +1740,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const basicPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '∞ ' + t('packages.basic.features.digital'),
+      quantity: '∞'+ t('packages.basic.features.digital'),
       description: t('packages.tooltips.digital')
     }
   };
@@ -1748,7 +1748,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '∞ ' + t('packages.standard.features.digital'),
+      quantity:'∞'+ t('packages.standard.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
@@ -1778,21 +1778,20 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   };
 
   const getPackageImages = () => {
-    if (!packageDetails?.packageSelection) {
+    if (!packageDetails?.name) {
       return {};
     }
 
     if (selectedSchool?.country === 'Tunisia') {
-      return tunisiaPackageImages[packageDetails.packageSelection] || {};
+      return tunisiaPackageImages[packageDetails.name] || {};
     }
 
-    // Use packageSelection instead of translated name
-    switch (packageDetails.packageSelection) {
-      case 'Basic':
+    switch (packageDetails.name) {
+      case t('packages.basic.name'):
         return basicPackageImages;
-      case 'Standard':
+      case t('packages.standard.name'):
         return standardPackageImages;
-      case 'Premium':
+      case t('packages.premium.name'):
         return premiumPackageImages;
       default:
         return {};
@@ -1826,7 +1825,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         </div>
       )}
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div className="relative bg-white rounded-lg w-full max-w-xl h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white p-4 border-b">
             <h2 className="text-lg font-bold">
