@@ -1638,7 +1638,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity: t('packages.standard.features.prints') + ' 15x22',
+        quantity: t('packages.standard.features.prints'),
         description: t('packages.tooltips.prints')
       },
       wallets: {
@@ -1655,7 +1655,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity:  t('packages.premium.features.prints') + ' 15x22',
+        quantity:  t('packages.premium.features.prints'),
         description: t('packages.tooltips.prints')
       },
       wallets: {
