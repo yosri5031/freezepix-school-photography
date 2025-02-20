@@ -2294,7 +2294,8 @@ const handleRegistrationSubmit = async (e) => {
   } else if (country === 'TUNISIA' && taxRates) {
     const tunisiaTaxRate = taxRates.TND;
     const discountedSubtotal = subtotal;
-
+    const SHIPPING_COST = 8;
+    const shippingCost = needsShipping ? SHIPPING_COST : 0;
     return {
       originalSubtotal: selectedPkg.price,
       discountAmount,
