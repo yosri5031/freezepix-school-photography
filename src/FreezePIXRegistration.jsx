@@ -2380,7 +2380,7 @@ useEffect(() => {
             </div>
             <div className="font-bold text-xl text-green-600">
               {selectedSchool.country === 'Tunisia' ? 
-                `${(selectedPkg.price / 2).toFixed(2)} TND` : 
+                `${(selectedPkg.price).toFixed(2)} TND` : 
                 `$${selectedPkg.price.toFixed(2)}`}
             </div>
           </div>
