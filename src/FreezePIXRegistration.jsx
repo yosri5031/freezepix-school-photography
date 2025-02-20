@@ -335,7 +335,8 @@ all_provinces: 'All Provinces'
         digital: 'Digital Photos',
         print8x10: '1 8x10 Print',
         print5x7: '2 5x7 Prints',
-        wallet: '4 Wallet Prints'
+        wallet: '4 Wallet Prints',
+        prints: '2 Photos 15x22 cm'
       }
     },
     premium: {
@@ -348,7 +349,8 @@ all_provinces: 'All Provinces'
         wallet: '4 Wallet Prints',
         crystal: '1 3D Crystal',
         keychain: 'Keychain',
-        magnet: 'Magnet'
+        magnet: 'Magnet',
+        prints: '2 Photos 15x22 cm'
       }
     },
     details: 'View Package Details',
@@ -473,7 +475,8 @@ packages: {
       digital: 'Photos Numériques illimitées',
       print8x10: '1 Photo 8x10',
       print5x7: '2 Photos 5x7',
-      wallet: '4 Photos Format Portefeuille'
+      wallet: '4 Photos Format Portefeuille',
+      prints: '2 Photos 15x22 cm'
     }
   },
   premium: {
@@ -483,6 +486,7 @@ packages: {
       digital: 'Photos Numériques illimitées',
       print8x10: '1 Photo 8x10',
       print5x7: '2 Photos 5x7',
+      prints: '2 Photos 15x22 cm',
       wallet: '4 Photos Format Portefeuille',
       crystal: '1 Cristal 3D',
       keychain: 'Porte-clés',
@@ -552,7 +556,9 @@ ar: {
       features: {
         digital: 'صورة رقمية',
         wallet: '4 صور محفظة',
-        prints: '2 صور 15×22'
+        prints: '2 صور 15×22',
+        print8x10: 'صورة 8x10',
+      print5x7: '2 صور 5x7',
       }
     },
     premium: {
@@ -563,7 +569,11 @@ ar: {
         wallet: '4 صور محفظة',
         prints: '2 صور 15×22',
         keychain: 'حاملة مفاتيح',
-        magnet: 'مغناطيس'
+        magnet: 'مغناطيس',
+        print8x10: 'صورة 8x10',
+        print5x7: '2 صور 5x7',
+        crystal: '1 Cristal 3D',
+
       }
     }
   },
