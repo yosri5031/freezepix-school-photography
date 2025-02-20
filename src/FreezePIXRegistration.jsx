@@ -2028,6 +2028,7 @@ const PackageSelection = () => {
           onClose={handleClosePopup}
           packageDetails={selectedPackageDetails}
           t={t}
+          selectedSchool={selectedSchool}
         />
       )}
     </>
@@ -2543,7 +2544,7 @@ useEffect(() => {
     <button 
       type="submit"
       onClick={handleRegistrationSubmit}
-      className="w-full mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg"
+      className="w-1/2 mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg"
     >
       {t('buttons.submit')} 
     </button>
