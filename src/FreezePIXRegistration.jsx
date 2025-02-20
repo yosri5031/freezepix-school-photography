@@ -2028,6 +2028,8 @@ const PackageSelection = () => {
           onClose={handleClosePopup}
           packageDetails={selectedPackageDetails}
           t={t}
+          selectedSchool={selectedSchool}
+
         />
       )}
     </>
