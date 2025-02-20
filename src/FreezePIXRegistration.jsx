@@ -608,16 +608,16 @@ ar: {
       name: 'الباقة الأساسية',
       price: 'السعر: 10 دينار',
       features: {
-        digital: 'صورة رقمية'
+        digital: 'صور رقمية'
       }
     },
     standard: {
       name: 'الباقة القياسية',
       price: 'السعر: 20 دينار',
       features: {
-        digital: 'صورة رقمية',
+        digital: 'صور رقمية',
         wallet: '4 صور محفظة',
-        prints: '2 صور 15×22',
+        prints: '2 صور صم 15×22',
         print8x10: 'صورة 8x10',
       print5x7: '2 صور 5x7',
       }
@@ -626,9 +626,9 @@ ar: {
       name: 'الباقة المميزة',
       price: 'السعر: 30 دينار',
       features: {
-        digital: 'صورة رقمية',
+        digital: 'صور رقمية',
         wallet: '4 صور محفظة',
-        prints: '2 صور 15×22',
+        prints: '2 صور صم 15×22',
         keychain: 'حاملة مفاتيح',
         magnet: 'مغناطيس',
         print8x10: 'صورة 8x10',
