@@ -1626,51 +1626,51 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     Basic: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: t('packages.basic.features.digital'),
+        quantity: '∞'+ t('packages.basic.features.digital'),
         description: t('packages.tooltips.digital')
       }
     },
     Standard: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: t('packages.standard.features.digital'),
+        quantity: '∞'+ t('packages.standard.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity: '2 ' + t('packages.standard.features.prints') + ' 15x22',
+        quantity: t('packages.standard.features.prints') + ' 15x22',
         description: t('packages.tooltips.prints')
       },
       wallets: {
         src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity: '4 ' + t('packages.standard.features.wallet'),
+        quantity: t('packages.standard.features.wallet'),
         description: t('packages.tooltips.wallet')
       }
     },
     Premium: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: t('packages.premium.features.digital'),
+        quantity: '∞'+ t('packages.premium.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
         src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity: '2 ' + t('packages.premium.features.prints') + ' 15x22',
+        quantity:  t('packages.premium.features.prints') + ' 15x22',
         description: t('packages.tooltips.prints')
       },
       wallets: {
         src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity: '4 ' + t('packages.premium.features.wallet'),
+        quantity:  t('packages.premium.features.wallet'),
         description: t('packages.tooltips.wallet')
       },
       keychain: {
         src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354", // Update with actual keychain image
-        quantity: t('packages.premium.features.keychain'),
+        quantity: '1 ' + t('packages.premium.features.keychain'),
         description: t('packages.tooltips.keychain')
       },
       magnet: {
         src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355", // Update with actual magnet image
-        quantity: t('packages.premium.features.magnet'),
+        quantity: '1 ' + t('packages.premium.features.magnet'),
         description: t('packages.tooltips.magnet')
       }
     }
@@ -1679,7 +1679,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const basicPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: t('packages.basic.features.digital'),
+      quantity: '∞'+ t('packages.basic.features.digital'),
       description: t('packages.tooltips.digital')
     }
   };
@@ -1687,7 +1687,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: t('packages.standard.features.digital'),
+      quantity:'∞'+ t('packages.standard.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
