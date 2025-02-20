@@ -2532,7 +2532,7 @@ useEffect(() => {
         <button 
           type="button"
           onClick={previousStep} 
-          className="w-1/2 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
+          className="w-1/2 mt-4 px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg"
         >
           {t('buttons.previous')}
         </button>
