@@ -1262,9 +1262,7 @@ useEffect(() => {
                   key={country} 
                   className="border-t border-gray-200 pt-6 first:border-t-0 first:pt-0"
                 >
-                  <h2 className="text-xl font-bold mb-4 bg-gray-100 p-3 rounded-lg">
-                    {country}
-                  </h2>
+                  
                   <div className="grid gap-4">
                     {groupedSchools[country]
                       .sort((a, b) => a.name.localeCompare(b.name))
@@ -1278,7 +1276,7 @@ useEffect(() => {
                             <div>
                               <h3 className="font-semibold text-lg">{school.name}</h3>
                               <p className="text-sm text-gray-600">
-                                {school.location} - {school.city}
+                                {school.location} 
                               </p>
                             </div>
                           </div>
