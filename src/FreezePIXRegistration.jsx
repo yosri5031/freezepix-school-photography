@@ -2527,6 +2527,8 @@ useEffect(() => {
     } else {
       setIsFormFilled(false);
     }
+  } else if ((selectedSchool?.name?.toLowerCase().includes('elementary') && (selectedPkg.name === 'Standard' || selectedPkg.name === 'Digital Package') )) {
+    setIsFormFilled(true);
   } else {
     setIsFormFilled(true);
   }
