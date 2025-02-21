@@ -2507,21 +2507,28 @@ const handleRegistrationSubmit = async (e) => {
 useEffect(() => {
   // Check if the address form is filled
   if (
-    formData.parentFirstName &&
-    formData.parentLastName &&
-    formData.studentFirstName &&
-    formData.studentLastName &&
-    formData.parentEmail &&
-    formData.street &&
-    formData.city &&
-    formData.province &&
-    formData.zip
+    selectedPackage !== 'Basic' && 
+    selectedPackage !== 'Digital Package' && 
+    selectedPackage !== 'School Picture' 
   ) {
-    setIsFormFilled(true);
-  } else if (selectedPackage === 'Basic' || selectedPackage === 'School Picture' || selectedPackage === 'Digital Package') {
-    setIsFormFilled(true);
+    // Verify if the form data is filled
+    if (
+      formData.parentFirstName &&
+      formData.parentLastName &&
+      formData.studentFirstName &&
+      formData.studentLastName &&
+      formData.parentEmail &&
+      formData.street &&
+      formData.city &&
+      formData.province &&
+      formData.zip
+    ) {
+      setIsFormFilled(true);
+    } else {
+      setIsFormFilled(false);
+    }
   } else {
-    setIsFormFilled(false);
+    setIsFormFilled(true);
   }
 }, [formData, selectedPackage]); // Include selectedPackage in the dependency array
     return (
