@@ -1274,7 +1274,7 @@ useEffect(() => {
                         >
                           <div className="flex justify-between items-center">
                             <div>
-                              <h3 className="font-semibold text-lg">{school.name}</h3>
+                              <h3 className="font-semibold text-lg">{school.name} - {school.country}</h3>
                               <p className="text-sm text-gray-600">
                                 {school.location} 
                               </p>
