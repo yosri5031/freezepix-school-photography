@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download, Key, Book} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download, Key} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -1926,58 +1926,12 @@ const PackageSelection = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
-  const [yearBookConsent, setYearBookConsent] = useState(false);
-  const [showYearBookConsent, setShowYearBookConsent] = useState(false);
-
-  const elementaryPackages = {
-    Basic: {
-      name: 'School Picture',
-      price: 0,
-      icon: Camera,
-      features: [
-        { 
-          icon: Camera, 
-          text: 'School picture for school use only',
-          tooltip: 'This photo will only be used by the school for administrative purposes'
-        }
-      ]
-    },
-    Standard: {
-      name: 'Digital Package',
-      price: 20,
-      icon: Download,
-      features: [
-        { 
-          icon: Download, 
-          text: 'Digital Photos Package',
-          tooltip: 'High-resolution digital photos delivered electronically'
-        }
-      ]
-    },
-    Premium: {
-      name: 'Yearbook Package',
-      price: 50,
-      icon: Book,
-      features: [
-        { 
-          icon: Download, 
-          text: 'Digital Photos Package',
-          tooltip: 'High-resolution digital photos delivered electronically'
-        },
-        { 
-          icon: Book, 
-          text: 'School Yearbook',
-          tooltip: 'Your child will be included in the school yearbook'
-        }
-      ]
-    }
-  };
 
   const tunisiaPackages = {
     Basic: {
       name: t('packages.basic.name'),
       price: 10,
-      icon: Camera,
+      icon: Camera, // Added icon
       features: [
         { icon: Download, text: t('packages.basic.features.digital') }
       ]
@@ -1985,7 +1939,7 @@ const PackageSelection = () => {
     Standard: {
       name: t('packages.standard.name'),
       price: 20,
-      icon: Crown,
+      icon: Crown, // Added icon
       features: [
         { icon: Download, text: t('packages.standard.features.digital') },
         { icon: Wallet, text: t('packages.standard.features.wallet') },
@@ -1995,7 +1949,7 @@ const PackageSelection = () => {
     Premium: {
       name: t('packages.premium.name'),
       price: 30,
-      icon: Sparkles,
+      icon: Sparkles, // Added icon
       features: [
         { icon: Download, text: t('packages.premium.features.digital') },
         { icon: Wallet, text: t('packages.premium.features.wallet') },
@@ -2068,7 +2022,7 @@ const PackageSelection = () => {
         },
         { 
           icon: Wallet, 
-          text: t('packages.standard.features.wallet'), 
+          text: t('packages.premium.features.wallet'), 
           tooltip: t('packages.tooltips.wallet') 
         },
         { 
@@ -2080,49 +2034,29 @@ const PackageSelection = () => {
     }
   };
 
-  const getPackages = () => {
-    if (selectedSchool?.type === 'Elementary') {
-      return elementaryPackages;
-    }
-    if (selectedSchool?.country === 'Tunisia') {
-      return tunisiaPackages;
-    }
-    return regularPackages;
+  const packages = selectedSchool?.country === 'Tunisia' ? tunisiaPackages : regularPackages;
+
+  const handleDetailsClick = (e, packageData) => {
+    e.stopPropagation();
+    setSelectedPackageDetails(packageData);
+    setShowDetailsPopup(true);
   };
 
-  const packages = getPackages();
-
   const handlePackageSelect = (packageKey, packageData) => {
-    if (selectedSchool?.type === 'Elementary' && packageKey === 'Premium' && !yearBookConsent) {
-      setShowYearBookConsent(true);
-      return;
-    }
-
     setSelectedPackage(packageKey);
     setFormData(prev => ({
       ...prev,
       packageSelection: packageKey,
       packagePrice: packageData.price,
       packageName: packageData.name,
-      packageDescription: packageData.features.map(f => f.text).join(', '),
-      yearBookConsent: packageKey === 'Premium' && selectedSchool?.type === 'Elementary' ? yearBookConsent : null
+      packageDescription: packageData.features.map(f => f.text).join(', ')
     }));
     nextStep();
   };
 
-  const handleYearBookConsent = (consent) => {
-    setYearBookConsent(consent);
-    setShowYearBookConsent(false);
-    if (consent) {
-      handlePackageSelect('Premium', packages.Premium);
-    }
-  };
-
-  const formatPrice = (price) => {
-    if (selectedSchool?.country === 'Tunisia') {
-      return `${price} TND`;
-    }
-    return `$${price.toFixed(2)}`;
+  const handleClosePopup = () => {
+    setShowDetailsPopup(false);
+    setSelectedPackageDetails(null);
   };
 
   return (
@@ -2158,14 +2092,16 @@ const PackageSelection = () => {
                     <div>
                       <h3 className="font-semibold text-lg">{pkg.name}</h3>
                       <div className="font-bold text-xl text-yellow-500">
-                        {formatPrice(pkg.price)}
+                        {selectedSchool?.country === 'Tunisia' 
+                          ? `${pkg.price} TND`
+                          : `$${pkg.price.toFixed(2)}`}
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="border-t pt-4">
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     {pkg.features.map((feature, index) => (
                       <div 
                         key={index}
@@ -2182,47 +2118,19 @@ const PackageSelection = () => {
                       </div>
                     ))}
                   </div>
-                  {selectedSchool?.type === 'Elementary' && key === 'Premium' && (
-                    <div className="mt-3 flex items-start space-x-2 text-amber-600">
-                      <AlertCircle size={16} />
-                      <span className="text-sm">
-                        Requires parent consent for yearbook inclusion
-                      </span>
-                    </div>
-                  )}
+                  <button
+                    onClick={(e) => handleDetailsClick(e, pkg)}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline mt-4"
+                  >
+                    {t('steps.package_details')}
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {showYearBookConsent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4">Yearbook Consent Required</h3>
-            <p className="text-gray-600 mb-6">
-              By selecting this package, you agree to have your child's photo included in the school yearbook, 
-              which will be available to other families. Do you consent to this?
-            </p>
-            <div className="flex space-x-4">
-              <button
-                onClick={() => handleYearBookConsent(true)}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                I Consent
-              </button>
-              <button
-                onClick={() => handleYearBookConsent(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      
       <div className="flex justify-between space-x-4 mt-6">
         <button 
           onClick={previousStep} 
@@ -2231,10 +2139,20 @@ const PackageSelection = () => {
           {t('buttons.previous')}
         </button>
       </div>
+
+      {showDetailsPopup && selectedPackageDetails && (
+        <PackageDetailsPopup
+          isOpen={showDetailsPopup}
+          onClose={handleClosePopup}
+          packageDetails={selectedPackageDetails}
+          t={t}
+          selectedSchool={selectedSchool}
+
+        />
+      )}
     </>
   );
 };
-
 
 const fetchRegistrations = async () => {
   try {
