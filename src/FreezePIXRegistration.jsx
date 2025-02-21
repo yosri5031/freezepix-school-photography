@@ -661,8 +661,11 @@ const t = (key) => {
 };
 
 const AddressForm = ({ type, data, onChange, selectedSchool }) => {
-  const isBasicPackage = data.packageName === 'Basic' || data.packageName === 'Basique';
-  const [localData, setLocalData] = useState({
+  const isBasicPackage = 
+  data.packageName.toLowerCase() === 'basic' || 
+  data.packageName.toLowerCase() === 'basique' || 
+  (selectedSchool?.name?.toLowerCase().includes('elementary') && data.packageName.toLowerCase() === 'standard');
+    const [localData, setLocalData] = useState({
     parentFirstName: data.parentFirstName || '',
     parentLastName: data.parentLastName || '',
     studentFirstName: data.studentFirstName || '',
@@ -2516,7 +2519,8 @@ useEffect(() => {
     formData.zip
   ) {
     setIsFormFilled(true);
-  } else if (selectedPackage === 'Basic') {
+  } else if (selectedPackage === 'Basic' || 
+    (selectedSchool?.name?.toLowerCase().includes('elementary') && selectedPackage.toLowerCase() === 'standard')) {
     setIsFormFilled(true);
   } else {
     setIsFormFilled(false);
