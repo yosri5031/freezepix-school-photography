@@ -1,6 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,
-  PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download, Key, Book, AlertCircle} from 'lucide-react';
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown, Sparkles,Image,Frame,Wallet,Box ,Download, Key, Book} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
