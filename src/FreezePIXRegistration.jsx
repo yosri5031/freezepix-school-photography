@@ -2517,19 +2517,13 @@ useEffect(() => {
       formData.parentLastName &&
       formData.studentFirstName &&
       formData.studentLastName &&
-      formData.parentEmail &&
-      formData.street &&
-      formData.city &&
-      formData.province &&
-      formData.zip
+      formData.parentEmail 
     ) {
       setIsFormFilled(true);
     } else {
       setIsFormFilled(false);
     }
-  } else if ((selectedSchool?.name?.toLowerCase().includes('elementary') && (selectedPkg.name === 'Standard' || selectedPkg.name === 'Digital Package') )) {
-    setIsFormFilled(true);
-  } else {
+  }  else {
     setIsFormFilled(true);
   }
 }, [formData, selectedPackage]); // Include selectedPackage in the dependency array
