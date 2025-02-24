@@ -2772,7 +2772,7 @@ useEffect(() => {
         </div>
 
         {/* Registration Content */}
-        <div className="p-6">
+        <div className="p-7">
           {currentStep === 1 &&  <SchoolSelection
     t={t}
     setSelectedSchool={setSelectedSchool}
