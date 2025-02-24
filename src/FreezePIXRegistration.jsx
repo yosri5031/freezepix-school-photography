@@ -2752,7 +2752,7 @@ useEffect(() => {
         <LanguageSelector />
 
         {/* Registration Steps Indicator */}
-        <div className="flex justify-center space-x-3 pb-4">
+        <div className="flex justify-center space-x-4 pb-4">
           {[
             //{ icon: MapPin, text: t('steps.country') },
             { icon: CustomSchoolIcon, text: t('steps.school') },
