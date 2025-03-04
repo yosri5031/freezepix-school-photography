@@ -1836,97 +1836,357 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
 
 
 // Package Selection Component
-// Modified PackageSelection component
-const PackageSelection = ({ selectedSchool, setSelectedPackage, nextStep, previousStep }) => {
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const PackageSelection = () => {
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [showDetailsPopup, setShowDetailsPopup] = useState(false);
+  const [selectedPackageDetails, setSelectedPackageDetails] = useState(null);
+  const [yearBookConsent, setYearBookConsent] = useState(false);
+  const [showYearBookConsent, setShowYearBookConsent] = useState(false);
 
-  useEffect(() => {
-    fetchPackages();
-  }, [selectedSchool]);
+  const isElementarySchool = () => {
+    return selectedSchool?.type === 'Elementary' || 
+           selectedSchool?.name?.toLowerCase().includes('elementary');
+  };
 
-  const fetchPackages = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/packages/school/${selectedSchool._id}`
-      );
-      setPackages(response.data.filter(pkg => pkg.isActive));
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching packages:', error);
-      setError('Failed to load packages');
-      setLoading(false);
+  const elementaryPackages = {
+    Basic: {
+      name: 'School Picture',
+      price: 0,
+      icon: Camera,
+      description: 'Basic school photo package for administrative use',
+      features: [
+        { 
+          icon: Camera, 
+          text: 'School picture for school use only',
+          tooltip: 'This photo will only be used by the school for administrative purposes'
+        }
+      ]
+    },
+    Standard: {
+      name: 'Digital Package',
+      price: 20,
+      icon: Download,
+      description: 'Digital photos package with high-resolution images',
+      features: [
+        { 
+          icon: Download, 
+          text: 'Digital Photos Package',
+          tooltip: 'High-resolution digital photos delivered electronically'
+        }
+      ]
+    },
+    Premium: {
+      name: 'Yearbook Package',
+      price: 50,
+      icon: Book,
+      description: 'Complete package including digital photos and yearbook',
+      features: [
+        { 
+          icon: Download, 
+          text: 'Digital Photos Package',
+          tooltip: 'High-resolution digital photos delivered electronically'
+        },
+        { 
+          icon: Book, 
+          text: 'School Yearbook',
+          tooltip: 'Your child will be included in the school yearbook'
+        }
+      ]
     }
   };
 
-  const handlePackageSelect = (pkg) => {
-    setSelectedPackage(pkg);
+  const tunisiaPackages = {
+    Basic: {
+      name: t('packages.basic.name'),
+      price: 10,
+      icon: Camera,
+      description: t('packages.basic.description'),
+      features: [
+        { icon: Download, text: t('packages.basic.features.digital') }
+      ]
+    },
+    Standard: {
+      name: t('packages.standard.name'),
+      price: 20,
+      icon: Crown,
+      description: t('packages.standard.description'),
+      features: [
+        { icon: Download, text: t('packages.standard.features.digital') },
+        { icon: Wallet, text: t('packages.standard.features.wallet') },
+        { icon: Image, text: t('packages.standard.features.prints') }
+      ]
+    },
+    Premium: {
+      name: t('packages.premium.name'),
+      price: 30,
+      icon: Sparkles,
+      description: t('packages.premium.description'),
+      features: [
+        { icon: Download, text: t('packages.premium.features.digital') },
+        { icon: Wallet, text: t('packages.premium.features.wallet') },
+        { icon: Image, text: t('packages.premium.features.prints') },
+        { icon: Key, text: t('packages.premium.features.keychain') },
+        { icon: Image, text: t('packages.premium.features.magnet') }
+      ]
+    }
+  };
+
+  const regularPackages = {
+    Basic: {
+      name: t('packages.basic.name'),
+      price: calculatePackagePrice(20),
+      icon: Camera,
+      description: t('packages.basic.description'),
+      features: [
+        { 
+          icon: Download, 
+          text: t('packages.basic.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        }
+      ]
+    },
+    Standard: {
+      name: t('packages.standard.name'),
+      price: calculatePackagePrice(50),
+      icon: Crown,
+      description: t('packages.standard.description'),
+      features: [
+        { 
+          icon: Download, 
+          text: t('packages.standard.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.standard.features.print8x10'), 
+          tooltip: t('packages.tooltips.print8x10') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.standard.features.print5x7'), 
+          tooltip: t('packages.tooltips.print5x7') 
+        },
+        { 
+          icon: Wallet, 
+          text: t('packages.standard.features.wallet'), 
+          tooltip: t('packages.tooltips.wallet') 
+        }
+      ]
+    },
+    Premium: {
+      name: t('packages.premium.name'),
+      price: calculatePackagePrice(100),
+      icon: Sparkles,
+      description: t('packages.premium.description'),
+      features: [
+        { 
+          icon: Download, 
+          text: t('packages.premium.features.digital'), 
+          tooltip: t('packages.tooltips.digital') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.premium.features.print8x10'), 
+          tooltip: t('packages.tooltips.print8x10') 
+        },
+        { 
+          icon: Image, 
+          text: t('packages.premium.features.print5x7'), 
+          tooltip: t('packages.tooltips.print5x7') 
+        },
+        { 
+          icon: Wallet, 
+          text: t('packages.standard.features.wallet'), 
+          tooltip: t('packages.tooltips.wallet') 
+        },
+        { 
+          icon: Box, 
+          text: t('packages.premium.features.crystal'), 
+          tooltip: t('packages.tooltips.crystal') 
+        }
+      ]
+    }
+  };
+
+  const getPackages = () => {
+    if (isElementarySchool()) {
+      return elementaryPackages;
+    }
+    if (selectedSchool?.country === 'Tunisia') {
+      return tunisiaPackages;
+    }
+    return regularPackages;
+  };
+
+  const packages = getPackages();
+
+  const handleDetailsClick = (e, packageData) => {
+    e.stopPropagation();
+    setSelectedPackageDetails(packageData);
+    setShowDetailsPopup(true);
+  };
+
+  const handlePackageSelect = (packageKey, packageData) => {
+    if (isElementarySchool() && packageKey === 'Premium' && !yearBookConsent) {
+      setShowYearBookConsent(true);
+      return;
+    }
+
+    setSelectedPackage(packageKey);
     setFormData(prev => ({
       ...prev,
-      packageSelection: pkg._id,
-      packagePrice: pkg.basePrice,
-      packageName: pkg.name,
-      packageDescription: pkg.description
+      packageSelection: packageKey,
+      packagePrice: packageData.price,
+      packageName: packageData.name,
+      packageDescription: packageData.features.map(f => f.text).join(', '),
+      yearBookConsent: packageKey === 'Premium' && isElementarySchool() ? yearBookConsent : null
     }));
     nextStep();
   };
 
-  if (loading) return <div>Loading packages...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const handleYearBookConsent = (consent) => {
+    setYearBookConsent(consent);
+    setShowYearBookConsent(false);
+    if (consent) {
+      handlePackageSelect('Premium', packages.Premium);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowDetailsPopup(false);
+    setSelectedPackageDetails(null);
+  };
+
+  const formatPrice = (price) => {
+    if (selectedSchool?.country === 'Tunisia') {
+      return `${price} TND`;
+    }
+    return `$${price.toFixed(2)}`;
+  };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold text-center">{t('steps.package')}</h2>
-      
-      {packages.length > 0 ? (
-        packages.map((pkg) => (
-          <div
-            key={pkg._id}
-            className="border rounded-lg p-6 cursor-pointer hover:bg-blue-50"
-            onClick={() => handlePackageSelect(pkg)}
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                <p className="text-sm text-gray-600">{pkg.description}</p>
-                <div className="font-bold text-xl text-yellow-500">
-                  ${pkg.basePrice.toFixed(2)}
+    <>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800 text-center">
+          {t('steps.package')}
+        </h2>
+        <div className="space-y-4">
+          {Object.entries(packages).map(([key, pkg]) => (
+            <div 
+              key={key}
+              className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
+                selectedPackage === key 
+                  ? 'border-blue-500 bg-blue-50 shadow-md' 
+                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md'
+              }`}
+              onClick={() => handlePackageSelect(key, pkg)}
+            >
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-full ${
+                      selectedPackage === key 
+                        ? 'bg-blue-100' 
+                        : 'bg-gray-100'
+                    }`}>
+                      {React.createElement(pkg.icon, {
+                        size: 24,
+                        className: selectedPackage === key ? 'text-blue-600' : 'text-gray-600'
+                      })}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{pkg.name}</h3>
+                      <div className="font-bold text-xl text-yellow-500">
+                        {formatPrice(pkg.price)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="grid grid-cols-1 gap-3">
+                    {pkg.features.map((feature, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center space-x-2 group"
+                        title={feature.tooltip}
+                      >
+                        {React.createElement(feature.icon, {
+                          size: 16,
+                          className: "text-gray-600 group-hover:text-blue-600"
+                        })}
+                        <span className="text-sm text-gray-600 group-hover:text-blue-600">
+                          {feature.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={(e) => handleDetailsClick(e, pkg)}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline mt-4"
+                  >
+                    {t('steps.package_details')}
+                  </button>
+                  {isElementarySchool() && key === 'Premium' && (
+                    <div className="mt-3 flex items-start space-x-2 text-amber-600">
+                      <AlertCircle size={16} />
+                      <span className="text-sm">
+                        Requires parent consent for yearbook inclusion
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
-              {React.createElement(pkg.icon, {
-                size: 24,
-                className: "text-gray-600"
-              })}
             </div>
-            
-            {pkg.items && pkg.items.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {pkg.items.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <span>{item.quantity}x {item.item.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+          ))}
+        </div>
+      </div>
+
+      {showDetailsPopup && selectedPackageDetails && (
+        <PackageDetailsPopup
+          isOpen={showDetailsPopup}
+          onClose={handleClosePopup}
+          packageDetails={selectedPackageDetails}
+          t={t}
+          selectedSchool={selectedSchool}
+        />
+      )}
+
+      {showYearBookConsent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Yearbook Consent Required</h3>
+            <p className="text-gray-600 mb-6">
+              By selecting this package, you agree to have your child's photo included in the school yearbook, 
+              which will be available to other families. Do you consent to this?
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleYearBookConsent(true)}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                I Consent
+              </button>
+              <button
+                onClick={() => handleYearBookConsent(false)}
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-        ))
-      ) : (
-        <div className="text-center text-gray-500">
-          No packages available for this school
         </div>
       )}
 
-      <div className="flex justify-between mt-6">
-        <button
-          onClick={previousStep}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+      <div className="flex justify-between space-x-4 mt-6">
+        <button 
+          onClick={previousStep} 
+          className="w-full px-6 py-3 bg-gray-200 text-black font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200"
         >
           {t('buttons.previous')}
         </button>
       </div>
-    </div>
+    </>
   );
 };
 
