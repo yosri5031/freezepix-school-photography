@@ -2596,39 +2596,43 @@ const handleRegistrationSubmit = async (e) => {
 
     const priceDetails = calculateTotal();
 // Check if the form is filled whenever formData changes
+// Check if the form is filled whenever formData changes
 useEffect(() => {
   const isUniversity = selectedSchool?.name?.toLowerCase().includes('university');
+  const isGreenPackage = 
+    formData.packageName?.toLowerCase() === 'green' || 
+    formData.packageName?.toLowerCase() === 'vert' ||
+    formData.packageName?.toLowerCase() === 'basic' ||
+    formData.packageName?.toLowerCase() === 'school picture' ||
+    formData.packageName?.toLowerCase() === 'digital package';
   
-  if (
-    selectedPackage !== 'Basic' && 
-    selectedPackage !== 'Digital Package' && 
-    selectedPackage !== 'School Picture' && 
-    selectedPackage !== 'Green' 
-  ) {
-    // Basic required fields for all cases
-    const hasRequiredFields = 
-      formData.studentFirstName &&
-      formData.studentLastName &&
-      formData.parentEmail;
+  if (isGreenPackage) {
+    // For Green package, only check basic info
+    const hasBasicInfo = 
+      formData.studentFirstName?.trim() &&
+      formData.studentLastName?.trim() &&
+      formData.parentEmail?.trim();
 
-    // Additional parent fields check only for non-university
-    const hasParentFields = isUniversity || (
-      formData.parentFirstName &&
-      formData.parentLastName
-    );
+    setIsFormFilled(hasBasicInfo);
+  } else {
+    // For other packages, check all required fields
+    const hasRequiredFields = 
+      formData.studentFirstName?.trim() &&
+      formData.studentLastName?.trim() &&
+      formData.parentEmail?.trim();
+
+
 
     // Additional address fields check for non-basic packages
     const hasAddressFields = 
-      formData.street &&
-      formData.city &&
-      formData.province &&
-      formData.zip;
+      formData.street?.trim() &&
+      formData.city?.trim() &&
+      formData.province?.trim() &&
+      formData.zip?.trim();
 
-    setIsFormFilled(hasRequiredFields && hasParentFields && hasAddressFields);
-  } else {
-    setIsFormFilled(true);
+    setIsFormFilled(hasRequiredFields && hasAddressFields);
   }
-}, [formData, selectedPackage, selectedSchool]);// Include selectedPackage in the dependency array
+}, [formData, selectedSchool]);// Include selectedPackage in the dependency array
     return (
       <div className="space-y-4">
     {/* Package Summary */}
