@@ -267,8 +267,8 @@ all_provinces: 'All Provinces'
     ],
     
     form: {
-      firstName: 'Parent First Name',
-      lastName: 'Parent Last Name',
+      firstName: 'First Name',
+      lastName: 'Last Name',
       studentName: 'Student First Name',
       studentLastName: 'Student Last Name',
       parentEmail: 'Parent Email',
@@ -387,8 +387,8 @@ all_provinces: 'All Provinces'
     // French translations remain the same as in the original code
     select: { grade:'Classe', select_grade:'Sélectionner Classe', student_grade: 'Classe d\'élève', all_provinces: 'Tous les provinces' },
     form: {
-      firstName: 'Prénom du parent',
-      lastName: 'Nom de famille du parent',
+      firstName: 'Prénom ',
+      lastName: 'Nom',
       studentName: 'Prénom de d\'élève',
       studentLastName: 'Nom de famille de d\'élève',
       parentEmail: 'Email du parent',
@@ -491,14 +491,14 @@ packages: {
       image_preview: "Aperçu de l'image"
     },
   basic: {
-    name: 'Basique',
+    name: 'Verte',
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques '
     }
   },
   standard: {
-    name: 'Standard',
+    name: 'Populaire',
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques ',
@@ -511,7 +511,7 @@ packages: {
     }
   },
   premium: {
-    name: 'Premium',
+    name: 'Meilleure',
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques illimitées',
@@ -588,8 +588,8 @@ ar: {
     confirmation: 'تأكيد'
   },
   form: {
-    firstName: 'اسم الوالد الأول',
-    lastName: 'اسم عائلة الوالد',
+    firstName: 'الاسم',
+    lastName: 'اللقب',
     studentName: 'اسم الطالب الأول',
     studentLastName: 'اسم عائلة الطالب',
     parentEmail: 'البريد الإلكتروني للوالد',
@@ -731,7 +731,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
       {/* Student Information - Always show */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          First Name <span className="text-red-500">*</span>
+        {t('form.firstName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -745,7 +745,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
 
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          Last Name <span className="text-red-500">*</span>
+        {t('form.lastName')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
