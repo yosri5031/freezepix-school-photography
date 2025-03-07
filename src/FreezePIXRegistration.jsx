@@ -2000,7 +2000,6 @@ const PackageSelection = () => {
       description: t('packages.standard.description'),
       features: [
         { icon: Download, text: t('packages.standard.features.digital') },
-        { icon: Wallet, text: t('packages.standard.features.wallets') },
         { icon: Image, text: t('packages.standard.features.prints') },
         { icon: Image, text: t('packages.standard.features.prints10') }
 
@@ -2013,7 +2012,6 @@ const PackageSelection = () => {
       description: t('packages.premium.description'),
       features: [
         { icon: Download, text: t('packages.premium.features.digital') },
-        { icon: Wallet, text: t('packages.premium.features.wallets') },
         { icon: Image, text: t('packages.premium.features.prints') },
         { icon: Image, text: t('packages.standard.features.prints10') },
         { icon: Key, text: t('packages.premium.features.keychain') },
