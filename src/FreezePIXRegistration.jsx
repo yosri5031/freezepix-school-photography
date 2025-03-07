@@ -2602,7 +2602,8 @@ useEffect(() => {
   if (
     selectedPackage !== 'Basic' && 
     selectedPackage !== 'Digital Package' && 
-    selectedPackage !== 'School Picture' 
+    selectedPackage !== 'School Picture' && 
+    selectedPackage !== 'Green' 
   ) {
     // Basic required fields for all cases
     const hasRequiredFields = 
