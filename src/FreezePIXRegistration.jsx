@@ -36,7 +36,7 @@ const FreezePIXRegistration = () => {
     if (selectedSchool) {
       setFormData(prev => ({
         ...prev,
-        paymentMethod: selectedSchool.country === 'Tunisia' ? 'daycare' : ''
+        paymentMethod: selectedSchool.country === 'Tunisia' ? 'school' : ''
       }));
     }
   }, [selectedSchool]);
@@ -312,8 +312,8 @@ all_provinces: 'All Provinces'
   tryAgain: 'Try Again'
   },
   tunisia: {
-    paymentNote: 'Prices are in TND at half the USD rate',
-    daycarePayment: 'Pay at Daycare',
+    paymentNote: 'Prices are in TND ',
+    daycarePayment: 'Pay at School',
     confirmationTitle: 'Registration Successful!',
     confirmationMessage: 'Your child is now registered.'
   },
@@ -469,8 +469,8 @@ all_provinces: 'All Provinces'
     tryAgain: 'Réessayer'
 },
 tunisia: {
-  paymentNote: 'Les prix sont en TND à la moitié du taux USD',
-  daycarePayment: 'Payer à la garderie',
+  paymentNote: 'Les prix sont en TND ',
+  daycarePayment: 'Payer à l\'école',
   confirmationTitle: 'Inscription Réussie !',
   confirmationMessage: 'Votre enfant est maintenant inscrit.'
 },
@@ -655,8 +655,8 @@ ar: {
     }
   },
   tunisia: {
-    paymentNote: 'الدفع في الحضانة',
-    daycarePayment: 'الدفع في الحضانة',
+    paymentNote: 'الدفع عتد الاستلام',
+    daycarePayment: 'الدفع عتد الاستلام',
     confirmationTitle: 'تم التسجيل بنجاح!',
     confirmationMessage: 'تم تسجيل طفلك بنجاح.'
   }
@@ -2435,7 +2435,7 @@ const handleRegistrationSubmit = async (e) => {
             : selectedEvent._id.toString())
         : '',
       paymentMethod: selectedSchool.country === 'Tunisia' 
-        ? 'daycare' 
+        ? 'school' 
         : paymentMethod === 'interac' 
           ? 'interac' 
           : 'credit',
@@ -2819,15 +2819,24 @@ useEffect(() => {
 
 {/* Option de paiement Tunisia */}
 
-        {selectedSchool?.country === 'Tunisia' && (
+{selectedSchool?.country === 'Tunisia' && (
   <div className="p-4 bg-yellow-50 rounded-lg">
-   
     <button 
       type="submit"
       onClick={handleRegistrationSubmit}
-      className="w-full mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg"
+      disabled={isLoading}
+      className={`w-full mt-4 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg
+        hover:bg-yellow-600 transition-colors duration-200
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-      {t('buttons.submit')} 
+      {isLoading ? (
+        <div className="flex items-center justify-center space-x-2">
+          <Loader className="animate-spin h-5 w-5" />
+          <span>Processing...</span>
+        </div>
+      ) : (
+        t('buttons.submit')
+      )}
     </button>
   </div>
 )}
