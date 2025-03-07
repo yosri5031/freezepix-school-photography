@@ -667,10 +667,23 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
     data.packageName.toLowerCase() === 'school picture' || 
     data.packageName.toLowerCase() === 'digital package';
 
+  // For university students, set parent fields to empty strings by default
+  useEffect(() => {
+    if (isUniversity) {
+      onChange({
+        ...data,
+        parentFirstName: '',
+        parentLastName: '',
+        parentPhone: '',
+        parentEmail: data.parentEmail || '' // Keep email if exists
+      });
+    }
+  }, [isUniversity]);
+
   const [localData, setLocalData] = useState({
     parentFirstName: isUniversity ? '' : (data.parentFirstName || ''),
     parentLastName: isUniversity ? '' : (data.parentLastName || ''),
-    parentEmail: isUniversity ? '' : (data.parentEmail || ''),
+    parentEmail: data.parentEmail || '',
     parentPhone: isUniversity ? '' : (data.parentPhone || ''),
     studentFirstName: data.studentFirstName || '',
     studentLastName: data.studentLastName || '',
@@ -680,14 +693,6 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
     province: data.province || '',
     zip: data.zip || ''
   });
-
-  // Only include required fields based on package type and school type
-  const requiredFields = [
-    'studentFirstName', 
-    'studentLastName', 
-    'parentEmail',
-    ...(isBasicPackage ? [] : ['street', 'city', 'province', 'zip'])
-  ];
 
   const handleInputChange = (field) => (e) => {
     const newValue = e.target.value;
@@ -711,7 +716,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
       {/* Student Information - Always show */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          {t('form.studentName')} <span className="text-red-500">*</span>
+          First Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -725,7 +730,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
 
       <div className="flex flex-col">
         <label className="mb-1 text-sm font-medium">
-          {t('form.studentLastName')} <span className="text-red-500">*</span>
+          Last Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -737,61 +742,10 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
         />
       </div>
 
-      {/* Parent Information - Only show if not university */}
-      {!isUniversity && (
-        <>
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-medium">
-              {t('form.firstName')}<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="text"
-              value={localData.parentFirstName || ''}
-              onChange={handleInputChange('parentFirstName')}
-              onBlur={handleInputComplete('parentFirstName')}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-medium">
-              {t('form.lastName')} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="text"
-              value={localData.parentLastName || ''}
-              onChange={handleInputChange('parentLastName')}
-              onBlur={handleInputComplete('parentLastName')}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-medium">
-              {t('form.parentPhone')}
-            </label>
-            <input
-              type="tel"
-              inputMode="numeric"
-              value={localData.parentPhone || ''}
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^\d]/g, '');
-                handleInputChange('parentPhone')({ target: { value } });
-              }}
-              onBlur={handleInputComplete('parentPhone')}
-              className="w-full p-2 border rounded"
-              pattern="[0-9]*"
-            />
-          </div>
-        </>
-      )}
-
-      {/* Email - Always show but label changes based on school type */}
+      {/* Email - Always show */}
       <div className="flex flex-col col-span-2">
         <label className="mb-1 text-sm font-medium">
-          {isUniversity ? 'Email' : t('form.parentEmail')} <span className="text-red-500">*</span>
+          Email <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
