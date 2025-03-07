@@ -1557,19 +1557,33 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
 
   if (!isOpen) return null;
 
+    // Add check for daycare/garderie
+    const isDaycare = selectedSchool?.name?.toLowerCase().match(/(daycare|garderie)/);
+    const isElementary = selectedSchool?.name?.toLowerCase().includes('elementary');
+
+
   // Use package keys instead of translated names
   const PACKAGE_KEYS = {
     BASIC: 'Basic',
     STANDARD: 'Standard',
-    PREMIUM: 'Premium'
+    PREMIUM: 'Premium',
+    SCHOOL_PICTURE: 'School Picture',
+    DIGITAL_PACKAGE: 'Digital Package',
+    YEARBOOK_PACKAGE: 'Yearbook Package'
   };
 
   // Helper function to get package key from translated name
   const getPackageKey = (translatedName) => {
-    // Remove any spaces and convert to lowercase for comparison
     const normalizedName = translatedName.toLowerCase().replace(/\s+/g, '');
     
-    // Check against all possible translations
+    // Elementary school specific packages
+    if (isElementary) {
+      if (normalizedName.includes('schoolpicture')) return PACKAGE_KEYS.SCHOOL_PICTURE;
+      if (normalizedName.includes('digitalpackage')) return PACKAGE_KEYS.DIGITAL_PACKAGE;
+      if (normalizedName.includes('yearbook')) return PACKAGE_KEYS.YEARBOOK_PACKAGE;
+    }
+    
+    // Regular packages
     if (normalizedName === t('packages.basic.name').toLowerCase().replace(/\s+/g, '')) {
       return PACKAGE_KEYS.BASIC;
     }
@@ -1582,6 +1596,105 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     return null;
   };
 
+  // Elementary school package images (using the same daycare images temporarily)
+  const elementaryPackageImages = {
+    [PACKAGE_KEYS.SCHOOL_PICTURE]: {
+      digital: {
+        src: 'https://www.waldenu.edu/media/4978/seo-1497-bs-at-school-6043408-1200x675',
+                quantity: '1 School Photo',
+        description: 'Official school photo for administrative use'
+      }
+    },
+    [PACKAGE_KEYS.DIGITAL_PACKAGE]: {
+      digital: {
+        src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+        quantity: '3 Digital Photos',
+        description: 'High-resolution digital photos'
+      },
+      print8x10: {
+        src: "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_6/v1687979780/kleinisdnet/fknsq8xq86u3idmhjk0q/School_ClubsOrganizations_Ehrhardt.png",
+        quantity: '3 8x10 Prints',
+        description: 'Professional quality prints'
+      }
+    },
+    [PACKAGE_KEYS.YEARBOOK_PACKAGE]: {
+      digital: {
+        src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+        quantity: '3 Digital Photos',
+        description: 'High-resolution digital photos'
+      },
+      yearbook: {
+        src: "https://schoolannual.com/wp-content/uploads/2017/12/elementary-school-yearbook-example.jpg",
+        quantity: '1 Yearbook',
+        description: 'School yearbook inclusion'
+      },
+      prints: {
+        src: "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_6/v1687979780/kleinisdnet/fknsq8xq86u3idmhjk0q/School_ClubsOrganizations_Ehrhardt.png",
+        quantity: '4 Professional Prints',
+        description: 'Professional quality prints'
+      }
+    }
+  };
+
+  const daycarePackageImages = {
+    [PACKAGE_KEYS.BASIC]: {
+      digital: {
+        src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+        quantity: '3 '+ t('packages.basic.features.digital'),
+        description: t('packages.tooltips.digital')
+      }
+    },
+    [PACKAGE_KEYS.STANDARD]: {
+      digital: {
+        src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+        quantity: '3 '+ t('packages.standard.features.digital'),
+        description: t('packages.tooltips.digital')
+      },
+      print8x10: {
+        src: "https://media.istockphoto.com/id/505936347/photo/student-painting-in-class.jpg?s=612x612&w=0&k=20&c=kddByhzuPiUKEh0gOqEMMvwgL7CPHsGGcQcPe0lUl7g=",
+        quantity: t('packages.standard.features.print8x10'),
+        description: t('packages.tooltips.print8x10')
+      },
+      print5x7: {
+        src: "https://freedphoto.com/wp-content/uploads/FRE_Blog_PreK-1536x1024.jpg",
+        quantity: t('packages.standard.features.print5x7'),
+        description: t('packages.tooltips.print5x7')
+      },
+      print4x6: {
+        src: "https://static.showit.co/1600/NpqN0cvWRuam2CGD1HYh8Q/137591/minneapoliskidspersonalityportraits-february_08_2023001.jpg",
+        quantity: t('packages.standard.features.wallet'),
+        description: t('packages.tooltips.wallet')
+      }
+    },
+    [PACKAGE_KEYS.PREMIUM]: {
+      digital: {
+        src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
+        quantity: '3 '+ t('packages.premium.features.digital'),
+        description: t('packages.tooltips.digital')
+      },
+      print8x10: {
+        src: "https://media.istockphoto.com/id/505936347/photo/student-painting-in-class.jpg?s=612x612&w=0&k=20&c=kddByhzuPiUKEh0gOqEMMvwgL7CPHsGGcQcPe0lUl7g=",
+        quantity: t('packages.premium.features.print8x10'),
+        description: t('packages.tooltips.print8x10')
+      },
+      print5x7: {
+        src: "https://freedphoto.com/wp-content/uploads/FRE_Blog_PreK-1536x1024.jpg",
+        quantity: t('packages.premium.features.print5x7'),
+        description: t('packages.tooltips.print5x7')
+      },
+      print4x6: {
+        src: "https://static.showit.co/1600/NpqN0cvWRuam2CGD1HYh8Q/137591/minneapoliskidspersonalityportraits-february_08_2023001.jpg",
+        quantity: t('packages.premium.features.wallet'),
+        description: t('packages.tooltips.wallet')
+      },
+      crystal: {
+        src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
+        quantity: t('packages.premium.features.crystal'),
+        description: t('packages.tooltips.crystal')
+      }
+    }
+  };
+  
   const tunisiaPackageImages = {
     [PACKAGE_KEYS.BASIC]: {
       digital: {
@@ -1704,6 +1817,14 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     
     if (!packageKey) {
       return {};
+    }
+
+    if (isElementary) {
+      return elementaryPackageImages[packageKey] || {};
+    }
+
+    if (isDaycare) {
+      return daycarePackageImages[packageKey] || {};
     }
 
     if (selectedSchool?.country === 'Tunisia') {
