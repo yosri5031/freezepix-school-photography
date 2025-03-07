@@ -1661,7 +1661,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.print5x7')
     },
     print4x6: {
-      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/Untitled_14.jpg?v=1741338696",
+      src: "https://i.imgur.com/TrUlm5M.jpeg",
       quantity: t('packages.standard.features.wallet'),
       description: t('packages.tooltips.wallet')
     }
@@ -1684,7 +1684,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.print5x7')
     },
     print4x6: {
-      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/Untitled_14.jpg?v=1741338696",
+      src: "https://i.imgur.com/TrUlm5M.jpeg",
       quantity: t('packages.premium.features.wallet'),
       description: t('packages.tooltips.wallet')
     },
