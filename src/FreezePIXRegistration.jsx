@@ -1661,7 +1661,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.print5x7')
     },
     wallets: {
-      src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
+      src: "https://foryou.ie/wp-content/uploads/2024/01/P0104I01_3-scaled.jpg",
       quantity: t('packages.standard.features.wallet'),
       description: t('packages.tooltips.wallet')
     }
@@ -1684,7 +1684,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.print5x7')
     },
     wallets: {
-      src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
+      src: "https://foryou.ie/wp-content/uploads/2024/01/P0104I01_3-scaled.jpg",
       quantity: t('packages.premium.features.wallet'),
       description: t('packages.tooltips.wallet')
     },
