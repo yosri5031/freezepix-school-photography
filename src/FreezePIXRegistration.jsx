@@ -346,9 +346,9 @@ all_provinces: 'All Provinces'
       price: 'Starting at $',
       features: {
         digital: 'Digital Photos',
-        print8x10: '1 8x10 Print',
-        print5x7: '2 5x7 Prints',
-        wallet: '4 Wallet Prints',
+        print8x10: '3 8x10 Print',
+        print5x7: '3 5x7 Prints',
+        wallet: '3 4x6 Prints',
         prints: '2 Photos 15x22 cm'
       }
     },
@@ -357,9 +357,9 @@ all_provinces: 'All Provinces'
       price: 'Starting at $',
       features: {
         digital: 'Digital Photos',
-        print8x10: '1 8x10 Print',
-        print5x7: '2 5x7 Prints',
-        wallet: '4 Wallet Prints',
+        print8x10: '3 8x10 Print',
+        print5x7: '3 5x7 Prints',
+        wallet: '3 4x6 Prints',
         crystal: '1 3D Crystal',
         keychain: 'Keychain',
         magnet: 'Magnet',
@@ -371,7 +371,7 @@ all_provinces: 'All Provinces'
       digital: 'High resolution digital photos',
       print8x10: 'Professional quality print',
       print5x7: 'Professional quality prints',
-      wallet: 'Wallet size prints (2.5 x 3.5)',
+      wallet: 'High resolution digital photos',
       crystal: '3D engraved crystal with LED base (3x2x2)'
     },
     viewDetails: 'View Details',
@@ -497,9 +497,9 @@ packages: {
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques illimitées',
-      print8x10: '1 Photo 8x10',
-      print5x7: '2 Photos 5x7',
-      wallet: '4 Photos Format Portefeuille',
+      print8x10: '3 Photos 8x10',
+      print5x7: '3 Photos 5x7',
+      wallet: '3 Photos 4x6',
       prints: '2 Photos 15x22 cm'
     }
   },
@@ -508,10 +508,10 @@ packages: {
     price: 'À partir de $',
     features: {
       digital: 'Photos Numériques illimitées',
-      print8x10: '1 Photo 8x10',
-      print5x7: '2 Photos 5x7',
+      print8x10: '3 Photos 8x10',
+      print5x7: '3 Photos 5x7',
       prints: '2 Photos 15x22 cm',
-      wallet: '4 Photos Format Portefeuille',
+      wallet: '3 Photos 4x6',
       crystal: '1 Cristal 3D',
       keychain: 'Porte-clés',
         magnet: 'Aimant'
@@ -522,7 +522,7 @@ packages: {
     digital: 'Photos numériques haute résolution',
     print8x10: 'Tirage professionnel',
     print5x7: 'Tirages professionnels',
-    wallet: 'Photos format portefeuille (2.5 x 3.5)',
+    wallet: 'Tirages professionnels',
     crystal: 'Cristal gravé en 3D avec base LED (3x2x2)'
   },
   viewDetails: 'Voir Détails',
@@ -597,11 +597,11 @@ ar: {
     tooltips: {
       digital: 'نسخة رقمية عالية الدقة من صورتك تُرسل عبر البريد الإلكتروني',
       prints: 'صور مطبوعة بجودة احترافية',
-      wallet: 'صور بحجم محفظة (6.35 × 8.89 سم)',
+      wallet: 'صور مطبوعة بجودة احترافية',
       keychain: 'مفتاح سلسلة من الأكريليك المتين مع صورتك',
       magnet: 'مغناطيس صورة عالي الجودة لثلاجتك أو لأي سطح مغناطيسي',
-      print8x10: 'صورة مطبوعة احترافية 20.32 × 25.4 سم',
-      print5x7: 'صورة مطبوعة احترافية 12.7 × 17.78 سم',
+      print8x10: 'صور مطبوعة احترافية 20.32 × 25.4 سم',
+      print5x7: 'صور مطبوعة احترافية 12.7 × 17.78 سم',
       crystal: 'صورة كريستالية أنيقة مع قاعدة LED',
       image_preview: 'معاينة الصورة'
     },
@@ -617,10 +617,10 @@ ar: {
       price: 'السعر: 20 دينار',
       features: {
         digital: 'صور رقمية',
-        wallet: '4 صور محفظة',
-        prints: '2 صور صم 15×22',
-        print8x10: 'صورة 8x10',
-      print5x7: '2 صور 5x7',
+        print8x10: '3 Photos 8x10',
+        print5x7: '3 Photos 5x7',
+        wallet: '3 Photos 4x6',
+        prints: '2 Photos 15x22 cm'
       }
     },
     premium: {
@@ -628,12 +628,12 @@ ar: {
       price: 'السعر: 30 دينار',
       features: {
         digital: 'صور رقمية',
-        wallet: '4 صور محفظة',
+        wallet: '3 Photos 4x6',
         prints: '2 صور صم 15×22',
         keychain: 'حاملة مفاتيح',
         magnet: 'مغناطيس',
-        print8x10: 'صورة 8x10',
-        print5x7: '2 صور 5x7',
+        print8x10: '3 Photos 8x10',
+        print5x7: '3 Photos 5x7',
         crystal: '1 Cristal 3D',
 
       }
@@ -1578,14 +1578,14 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     [PACKAGE_KEYS.BASIC]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞'+ t('packages.basic.features.digital'),
+        quantity: '3'+ t('packages.basic.features.digital'),
         description: t('packages.tooltips.digital')
       }
     },
     [PACKAGE_KEYS.STANDARD]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞'+ t('packages.standard.features.digital'),
+        quantity: '3'+ t('packages.standard.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
@@ -1602,7 +1602,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     [PACKAGE_KEYS.PREMIUM]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '∞'+ t('packages.premium.features.digital'),
+        quantity: '3'+ t('packages.premium.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
@@ -1631,7 +1631,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const basicPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '∞'+ t('packages.basic.features.digital'),
+      quantity: '3'+ t('packages.basic.features.digital'),
       description: t('packages.tooltips.digital')
     }
   };
@@ -1639,7 +1639,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '∞'+ t('packages.standard.features.digital'),
+      quantity: '3'+ t('packages.standard.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
@@ -1662,7 +1662,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const premiumPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '∞'+ t('packages.premium.features.digital'),
+      quantity: '3'+ t('packages.premium.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
@@ -1864,7 +1864,7 @@ const PackageSelection = () => {
       description: t('packages.standard.description'),
       features: [
         { icon: Download, text: t('packages.standard.features.digital') },
-        { icon: Wallet, text: t('packages.standard.features.wallet') },
+        { icon: Image, text: t('packages.standard.features.wallet') },
         { icon: Image, text: t('packages.standard.features.prints') }
       ]
     },
@@ -1875,7 +1875,7 @@ const PackageSelection = () => {
       description: t('packages.premium.description'),
       features: [
         { icon: Download, text: t('packages.premium.features.digital') },
-        { icon: Wallet, text: t('packages.premium.features.wallet') },
+        { icon: Image, text: t('packages.premium.features.wallet') },
         { icon: Image, text: t('packages.premium.features.prints') },
         { icon: Key, text: t('packages.premium.features.keychain') },
         { icon: Image, text: t('packages.premium.features.magnet') }
@@ -1919,7 +1919,7 @@ const PackageSelection = () => {
           tooltip: t('packages.tooltips.print5x7') 
         },
         { 
-          icon: Wallet, 
+          icon: Image, 
           text: t('packages.standard.features.wallet'), 
           tooltip: t('packages.tooltips.wallet') 
         }
@@ -1947,7 +1947,7 @@ const PackageSelection = () => {
           tooltip: t('packages.tooltips.print5x7') 
         },
         { 
-          icon: Wallet, 
+          icon: Image, 
           text: t('packages.standard.features.wallet'), 
           tooltip: t('packages.tooltips.wallet') 
         },
