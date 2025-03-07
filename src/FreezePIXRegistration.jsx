@@ -350,7 +350,8 @@ all_provinces: 'All Provinces'
         print5x7: '3 5x7 Prints',
         wallet: '3 4x6 Prints',
         wallets: '4 Photo wallets',
-        prints: '2 Photos 15x22 cm'
+        prints: '3 Photos 15x22 cm',
+        prints10: '3 Photos 10x15 cm'
       }
     },
     premium: {
@@ -365,7 +366,9 @@ all_provinces: 'All Provinces'
         crystal: '1 3D Crystal',
         keychain: 'Keychain',
         magnet: 'Magnet',
-        prints: '2 Photos 15x22 cm'
+        prints: '3 Photos 15x22 cm',
+        prints10: '3 Photos 10x15 cm'
+
       }
     },
     details: 'View Package Details',
@@ -502,7 +505,8 @@ packages: {
       print8x10: '3 Photos 8x10',
       print5x7: '3 Photos 5x7',
       wallet: '3 Photos 4x6',
-      prints: '2 Photos 15x22 cm',
+      prints: "3 Photos 15x22 cm",
+      prints10: "3 Photos 10x15 cm",
       wallets:  '4 Photo wallets',
     }
   },
@@ -513,7 +517,8 @@ packages: {
       digital: 'Photos Numériques illimitées',
       print8x10: '3 Photos 8x10',
       print5x7: '3 Photos 5x7',
-      prints: '2 Photos 15x22 cm',
+      prints: "3 Photos 15x22 cm",
+      prints10: "3 Photos 10x15 cm",
       wallet: '3 Photos 4x6',
       crystal: '1 Cristal 3D',
       keychain: 'Porte-clés',
@@ -625,7 +630,8 @@ ar: {
         print8x10: '3 Photos 8x10',
         print5x7: '3 Photos 5x7',
         wallet: '3 Photos 4x6',
-        prints: '2 Photos 15x22 cm',
+        prints: "3 صور 15x22 سم",
+        prints10: "3 صور 10x15 سم",
         wallets: '4 صور بحجم المحفظة',
       }
     },
@@ -635,7 +641,8 @@ ar: {
       features: {
         digital: 'صور رقمية',
         wallet: '3 Photos 4x6',
-        prints: '2 صور صم 15×22',
+        prints: "3 صور 15x22 سم",
+        prints10: "3 صور 10x15 سم",
         keychain: 'حاملة مفاتيح',
         magnet: 'مغناطيس',
         print8x10: '3 Photos 8x10',
@@ -1709,15 +1716,15 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         quantity: '3 '+ t('packages.standard.features.digital'),
         description: t('packages.tooltips.digital')
       },
-      prints: {
-        src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+      prints15x22: {
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/kwJfOLkNTJagCpe9FRgOdA.jpg?v=1741338692",
         quantity: t('packages.standard.features.prints'),
         description: t('packages.tooltips.prints')
       },
-      wallets: {
-        src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity: t('packages.standard.features.wallets'),
-        description: t('packages.tooltips.wallet')
+      prints10x15: {
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/5w4wQpzxSEmf7q2FJJbdjQ.jpg?v=1741338693",
+        quantity: t('packages.standard.features.prints10'),
+        description: t('packages.tooltips.prints')
       }
     },
     [PACKAGE_KEYS.PREMIUM]: {
@@ -1726,15 +1733,15 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         quantity: '3 '+ t('packages.premium.features.digital'),
         description: t('packages.tooltips.digital')
       },
-      prints: {
-        src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
-        quantity: t('packages.premium.features.prints'),
+      prints15x22: {
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/kwJfOLkNTJagCpe9FRgOdA.jpg?v=1741338692",
+        quantity: t('packages.standard.features.prints'),
         description: t('packages.tooltips.prints')
       },
-      wallets: {
-        src: "https://prd-static.sf-cdn.com/resources/images/store/2024/1140x1140/WF-894706_SNAP_US_Prints_Photo_Paper_Update_Wallet_1_1140x1140.jpg",
-        quantity: t('packages.premium.features.wallets'),
-        description: t('packages.tooltips.wallet')
+      prints10x15: {
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/5w4wQpzxSEmf7q2FJJbdjQ.jpg?v=1741338693",
+        quantity: t('packages.standard.features.prints10'),
+        description: t('packages.tooltips.prints')
       },
       keychain: {
         src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354",
@@ -1979,7 +1986,7 @@ const PackageSelection = () => {
   const tunisiaPackages = {
     Basic: {
       name: t('packages.basic.name'),
-      price: 10,
+      price: 40,
       icon: Camera,
       description: t('packages.basic.description'),
       features: [
@@ -1988,24 +1995,27 @@ const PackageSelection = () => {
     },
     Standard: {
       name: t('packages.standard.name'),
-      price: 20,
+      price: 80,
       icon: Crown,
       description: t('packages.standard.description'),
       features: [
         { icon: Download, text: t('packages.standard.features.digital') },
         { icon: Wallet, text: t('packages.standard.features.wallets') },
-        { icon: Image, text: t('packages.standard.features.prints') }
+        { icon: Image, text: t('packages.standard.features.prints') },
+        { icon: Image, text: t('packages.standard.features.prints10') }
+
       ]
     },
     Premium: {
       name: t('packages.premium.name'),
-      price: 30,
+      price: 100,
       icon: Sparkles,
       description: t('packages.premium.description'),
       features: [
         { icon: Download, text: t('packages.premium.features.digital') },
         { icon: Wallet, text: t('packages.premium.features.wallets') },
         { icon: Image, text: t('packages.premium.features.prints') },
+        { icon: Image, text: t('packages.standard.features.prints10') },
         { icon: Key, text: t('packages.premium.features.keychain') },
         { icon: Image, text: t('packages.premium.features.magnet') }
       ]
