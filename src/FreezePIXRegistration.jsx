@@ -827,7 +827,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
       )}
 
       {/* Grade Selection (Optional) */}
-      <div className="col-span-2">
+      <div className="col-span-2 hidden">
         <label className="mb-1 text-sm font-medium block">
           {t('select.student_grade')}
         </label>
