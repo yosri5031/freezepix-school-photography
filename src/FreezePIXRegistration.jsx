@@ -335,14 +335,14 @@ all_provinces: 'All Provinces'
     },
 
     basic: {
-      name: 'Basic',
+      name: 'Green',
       price: 'Starting at $',
       features: {
         digital: 'Digital Photos'
       }
     },
     standard: {
-      name: 'Standard',
+      name: 'Popular',
       price: 'Starting at $',
       features: {
         digital: 'Digital Photos',
@@ -353,7 +353,7 @@ all_provinces: 'All Provinces'
       }
     },
     premium: {
-      name: 'Premium',
+      name: 'Best Value',
       price: 'Starting at $',
       features: {
         digital: 'Digital Photos',
@@ -1886,7 +1886,7 @@ const PackageSelection = () => {
   const regularPackages = {
     Basic: {
       name: t('packages.basic.name'),
-      price: calculatePackagePrice(20),
+      price: calculatePackagePrice(30),
       icon: Camera,
       description: t('packages.basic.description'),
       features: [
@@ -1899,7 +1899,7 @@ const PackageSelection = () => {
     },
     Standard: {
       name: t('packages.standard.name'),
-      price: calculatePackagePrice(50),
+      price: calculatePackagePrice(70),
       icon: Crown,
       description: t('packages.standard.description'),
       features: [
