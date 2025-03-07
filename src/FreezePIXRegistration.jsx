@@ -1578,14 +1578,14 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     [PACKAGE_KEYS.BASIC]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '3'+ t('packages.basic.features.digital'),
+        quantity: '3 '+ t('packages.basic.features.digital'),
         description: t('packages.tooltips.digital')
       }
     },
     [PACKAGE_KEYS.STANDARD]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '3'+ t('packages.standard.features.digital'),
+        quantity: '3 '+ t('packages.standard.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
@@ -1602,7 +1602,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
     [PACKAGE_KEYS.PREMIUM]: {
       digital: {
         src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-        quantity: '3'+ t('packages.premium.features.digital'),
+        quantity: '3 '+ t('packages.premium.features.digital'),
         description: t('packages.tooltips.digital')
       },
       prints: {
@@ -1631,7 +1631,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const basicPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '3'+ t('packages.basic.features.digital'),
+      quantity: '3 '+ t('packages.basic.features.digital'),
       description: t('packages.tooltips.digital')
     }
   };
@@ -1639,7 +1639,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const standardPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '3'+ t('packages.standard.features.digital'),
+      quantity: '3 '+ t('packages.standard.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
@@ -1662,7 +1662,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
   const premiumPackageImages = {
     digital: {
       src: "https://static.vecteezy.com/system/resources/previews/006/697/974/non_2x/mail-email-icon-template-black-color-editable-mail-email-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg",
-      quantity: '3'+ t('packages.premium.features.digital'),
+      quantity: '3 '+ t('packages.premium.features.digital'),
       description: t('packages.tooltips.digital')
     },
     print8x10: {
