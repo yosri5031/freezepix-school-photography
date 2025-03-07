@@ -371,9 +371,9 @@ all_provinces: 'All Provinces'
     details: 'View Package Details',
     tooltips: {
       digital: 'High resolution digital photos',
-      print8x10: 'Professional quality print',
+      print8x10: 'Professional quality prints',
       print5x7: 'Professional quality prints',
-      wallet: 'Professional quality print',
+      wallet: 'Professional quality prints',
       crystal: '3D engraved crystal with LED base (3x2x2)'
     },
     viewDetails: 'View Details',
