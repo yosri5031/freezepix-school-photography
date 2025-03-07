@@ -2666,6 +2666,23 @@ useEffect(() => {
                 />
                 {t('canada.credit')}
               </label>
+
+              <label className="block mb-4">
+      <input
+        type="radio"
+        value="interac"
+        checked={paymentMethod === 'interac'}
+        onChange={handlePaymentMethodChange}
+        className="mr-2"
+      />
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2Baacu5xmieM5gOoqDhyXilZ4mIsc8tV_Tw&s"
+        alt="Interac Logo"
+        className="inline-block w-6 h-6 mr-2"
+      />
+      {t('canada.interac')}
+    </label>
+
             </div>
           )}
 
@@ -2755,7 +2772,15 @@ useEffect(() => {
  {selectedSchool.country !== 'Tunisia' && (
             <>
                   {/* Option de paiement Interac */}
-                  
+                   {paymentMethod === 'interac' && (
+    <div className="p-4 bg-yellow-50 rounded-lg">
+      <h4 className="font-semibold text-yellow-700">{t('canada.send')}</h4>
+      <p className="text-sm text-gray-700">
+        {t('canada.placing')} <br />
+        <b>Email:</b> info@freezepix.com
+      </p>
+    </div>
+  )}
       
                   {/* Option de paiement par carte de crédit */}
                   {paymentMethod === 'credit' && isFormFilled && (
@@ -2817,7 +2842,7 @@ useEffect(() => {
         Loading...
       </div>
     ) : (
-      `${t('buttons.submit')} ($${priceDetails.total.toFixed(2)})`
+      `${t('buttons.submit')} `
     )}
   </button>
 )}
