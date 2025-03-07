@@ -1651,17 +1651,17 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.digital')
     },
     print8x10: {
-      src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/kwJfOLkNTJagCpe9FRgOdA.jpg?v=1741338692",
       quantity: t('packages.standard.features.print8x10'),
       description: t('packages.tooltips.print8x10')
     },
     print5x7: {
-      src: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/5w4wQpzxSEmf7q2FJJbdjQ.jpg?v=1741338693",
       quantity: t('packages.standard.features.print5x7'),
       description: t('packages.tooltips.print5x7')
     },
     print4x6: {
-      src: "https://foryou.ie/wp-content/uploads/2024/01/P0104I01_3-scaled.jpg",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/Untitled_14.jpg?v=1741338696",
       quantity: t('packages.standard.features.wallet'),
       description: t('packages.tooltips.wallet')
     }
@@ -1674,17 +1674,17 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.digital')
     },
     print8x10: {
-      src: "https://static.wixstatic.com/media/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg/v1/fill/w_980,h_980,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933430_04efaaf0246146da9b78c68fa64255df~mv2_d_2717_2717_s_4_2.jpg",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/kwJfOLkNTJagCpe9FRgOdA.jpg?v=1741338692",
       quantity: t('packages.premium.features.print8x10'),
       description: t('packages.tooltips.print8x10')
     },
     print5x7: {
-      src: "https://www.nationsphotolab.com/cdn/shop/files/1040w_Metaobject_Photo-Prints_7x10_b383d64f-72af-4152-9e07-d2db46c3eff3.jpg?height=477&v=1712857313",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/5w4wQpzxSEmf7q2FJJbdjQ.jpg?v=1741338693",
       quantity: t('packages.premium.features.print5x7'),
       description: t('packages.tooltips.print5x7')
     },
     print4x6: {
-      src: "https://foryou.ie/wp-content/uploads/2024/01/P0104I01_3-scaled.jpg",
+      src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/Untitled_14.jpg?v=1741338696",
       quantity: t('packages.premium.features.wallet'),
       description: t('packages.tooltips.wallet')
     },
