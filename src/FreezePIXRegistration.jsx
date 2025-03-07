@@ -349,6 +349,7 @@ all_provinces: 'All Provinces'
         print8x10: '3 8x10 Print',
         print5x7: '3 5x7 Prints',
         wallet: '3 4x6 Prints',
+        wallets: '4 Photo wallets',
         prints: '2 Photos 15x22 cm'
       }
     },
@@ -360,6 +361,7 @@ all_provinces: 'All Provinces'
         print8x10: '3 8x10 Print',
         print5x7: '3 5x7 Prints',
         wallet: '3 4x6 Prints',
+        wallets: '4 Photo wallets',
         crystal: '1 3D Crystal',
         keychain: 'Keychain',
         magnet: 'Magnet',
@@ -371,7 +373,7 @@ all_provinces: 'All Provinces'
       digital: 'High resolution digital photos',
       print8x10: 'Professional quality print',
       print5x7: 'Professional quality prints',
-      wallet: 'High resolution digital photos',
+      wallet: 'Professional quality print',
       crystal: '3D engraved crystal with LED base (3x2x2)'
     },
     viewDetails: 'View Details',
@@ -477,7 +479,7 @@ packages: {
     tooltips: {
       digital: "Copie numérique haute résolution de votre photo envoyée par email",
       prints: "Photos imprimées de qualité professionnelle",
-      wallet: "Photos format portefeuille (6,35 x 8,89 cm)",
+      wallet: "Photos imprimées de qualité professionnelle",
       keychain: "Porte-clés en acrylique durable avec votre photo",
       magnet: "Aimant photo de haute qualité pour votre réfrigérateur ou toute surface magnétique",
       print8x10: "Photo imprimée professionnelle 20,32 x 25,4 cm",
@@ -489,18 +491,19 @@ packages: {
     name: 'Basique',
     price: 'À partir de $',
     features: {
-      digital: 'Photos Numériques illimitées'
+      digital: 'Photos Numériques '
     }
   },
   standard: {
     name: 'Standard',
     price: 'À partir de $',
     features: {
-      digital: 'Photos Numériques illimitées',
+      digital: 'Photos Numériques ',
       print8x10: '3 Photos 8x10',
       print5x7: '3 Photos 5x7',
       wallet: '3 Photos 4x6',
-      prints: '2 Photos 15x22 cm'
+      prints: '2 Photos 15x22 cm',
+      wallets:  '4 Photo wallets',
     }
   },
   premium: {
@@ -514,7 +517,9 @@ packages: {
       wallet: '3 Photos 4x6',
       crystal: '1 Cristal 3D',
       keychain: 'Porte-clés',
-        magnet: 'Aimant'
+        magnet: 'Aimant',
+        wallets:  '4 Photo wallets',
+
     }
   },
   details: 'Voir les détails du forfait',
@@ -620,7 +625,8 @@ ar: {
         print8x10: '3 Photos 8x10',
         print5x7: '3 Photos 5x7',
         wallet: '3 Photos 4x6',
-        prints: '2 Photos 15x22 cm'
+        prints: '2 Photos 15x22 cm',
+        wallets: '4 صور بحجم المحفظة',
       }
     },
     premium: {
@@ -635,6 +641,8 @@ ar: {
         print8x10: '3 Photos 8x10',
         print5x7: '3 Photos 5x7',
         crystal: '1 Cristal 3D',
+        wallets: '4 صور بحجم المحفظة',
+
 
       }
     }
@@ -1864,7 +1872,7 @@ const PackageSelection = () => {
       description: t('packages.standard.description'),
       features: [
         { icon: Download, text: t('packages.standard.features.digital') },
-        { icon: Image, text: t('packages.standard.features.wallet') },
+        { icon: Wallet, text: t('packages.standard.features.wallets') },
         { icon: Image, text: t('packages.standard.features.prints') }
       ]
     },
@@ -1875,7 +1883,7 @@ const PackageSelection = () => {
       description: t('packages.premium.description'),
       features: [
         { icon: Download, text: t('packages.premium.features.digital') },
-        { icon: Image, text: t('packages.premium.features.wallet') },
+        { icon: Wallet, text: t('packages.premium.features.wallets') },
         { icon: Image, text: t('packages.premium.features.prints') },
         { icon: Key, text: t('packages.premium.features.keychain') },
         { icon: Image, text: t('packages.premium.features.magnet') }
