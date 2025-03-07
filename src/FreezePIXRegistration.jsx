@@ -276,7 +276,7 @@ all_provinces: 'All Provinces'
       street:'Street',
       city: 'City',
       province: 'Province',
-      zip: 'Zip Code'
+      zip: ' Postal Code'
       
     },
     canada : {
@@ -300,7 +300,7 @@ all_provinces: 'All Provinces'
     cardNumber: 'Card Number',
   expiryDate: 'Expiry Date', 
   cvc: 'CVC',
-  zipCode: 'Zip Code',
+  zipCode: ' Postal Code',
   postalCode: 'Postal Code',
   postalCodeRequired: 'Postal code is required',
   invalidPostalCode: 'Invalid postal code for the selected country',
