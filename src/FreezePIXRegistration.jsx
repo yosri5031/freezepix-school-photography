@@ -2015,7 +2015,7 @@ const PackageSelection = () => {
   const regularPackages = {
     Basic: {
       name: t('packages.basic.name'),
-      price: calculatePackagePrice(30),
+      price: calculatePackagePrice(40),
       icon: Camera,
       description: t('packages.basic.description'),
       features: [
@@ -2028,7 +2028,7 @@ const PackageSelection = () => {
     },
     Standard: {
       name: t('packages.standard.name'),
-      price: calculatePackagePrice(70),
+      price: calculatePackagePrice(80),
       icon: Crown,
       description: t('packages.standard.description'),
       features: [
@@ -2056,7 +2056,7 @@ const PackageSelection = () => {
     },
     Premium: {
       name: t('packages.premium.name'),
-      price: calculatePackagePrice(100),
+      price: calculatePackagePrice(120),
       icon: Sparkles,
       description: t('packages.premium.description'),
       features: [
