@@ -679,6 +679,9 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
   const isUniversity = selectedSchool?.name?.toLowerCase().includes('university');
   const isBasicPackage = 
     data.packageName.toLowerCase() === 'basic' || 
+    data.packageName.toLowerCase() === 'green' ||
+    data.packageName.toLowerCase() === 'vert' || 
+    data.packageName.toLowerCase() === 'baique' ||  
     data.packageName.toLowerCase() === 'school picture' || 
     data.packageName.toLowerCase() === 'digital package';
 
