@@ -45,8 +45,8 @@ const RegistrationSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ['payment_pending', 'completed', 'failed_payment','open','picture_uploaded','picture_sent','cancled','archived','awaiting_daycare_payment'],
-    default: 'payment_pending'
+    enum: ['payment_pending', 'completed', 'failed_payment','open','picture_uploaded','picture_sent','cancled','archived','awaiting_daycare_payment','waiting_editing'],
+    default: 'open'
   },
   registrationDate: {
     type: Date,
