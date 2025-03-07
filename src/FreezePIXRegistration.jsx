@@ -2446,11 +2446,18 @@ const handleRegistrationSubmit = async (e) => {
       }
     );
 
+    if (paymentMethod === 'interac') {
+      alert(
+        'Thank you for registering! Please send your payment to info@freezepix.com via Interac to complete your order.'
+      );
+    }
+    
     // Send confirmation via sendImagesToParent
     await sendImagesToParent({
       _id: response.data.registrationId,
       ...registrationData
     });
+
 
     setRegistrationConfirmation({
       ...response.data,
@@ -2650,129 +2657,49 @@ useEffect(() => {
 
           {/* Payment Method Selection */}
           <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
-          {selectedSchool.country !== 'Tunisia' && (
-            <div className="mb-4">
-              <h4 className="font-medium">{t('canada.select')}</h4>
-              
-              <label className="block">
-                <input
-                  type="radio"
-                  value="credit"
-                  checked={paymentMethod === 'credit'}
-                  onChange={handlePaymentMethodChange}
-                  defaultChecked // Add this line to set the radio button as checked by default
-                  className="mr-2"
-                />
-                {t('canada.credit')}
-              </label>
-            </div>
-          )}
+  <div className="p-4 bg-gray-50 rounded-lg">
+    <h4 className="font-medium">{t('canada.select')}</h4>
 
-           {/* Order Summary  */}
-           <div className="bg-white rounded-lg p-4 shadow-sm border">
-    <h3 className="text-lg font-semibold mb-4">{t('canada.summary')}</h3>
-    {/* Discount Code Input */}
-  <div className="mb-4">
-    <div className="flex space-x-2">
-     {/*<input
-  type="text"
-  placeholder="Enter discount code"
-  value={discountCode}
-  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-  className="flex-1 p-2 border rounded"
-/> 
-      <button
-        onClick={() => validateDiscountCode(discountCode)}
-        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
-      >
-        Apply
-      </button>*/}
-    </div>
-    {discountError && (
-      <p className="text-red-500 text-sm mt-1">{discountError}</p>
-    )}
+    {/* Interac Payment Option */}
+    <label className="block mb-4">
+      <input
+        type="radio"
+        value="interac"
+        checked={paymentMethod === 'interac'}
+        onChange={handlePaymentMethodChange}
+        className="mr-2"
+      />
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2Baacu5xmieM5gOoqDhyXilZ4mIsc8tV_Tw&s"
+        alt="Interac Logo"
+        className="inline-block w-6 h-6 mr-2"
+      />
+      {t('canada.interac')}
+    </label>
+
+    {/* Credit Card Payment Option */}
+    <label className="block">
+      <input
+        type="radio"
+        value="credit"
+        checked={paymentMethod === 'credit'}
+        onChange={handlePaymentMethodChange}
+        className="mr-2"
+      />
+      {t('canada.credit')}
+    </label>
   </div>
 
-  <div className="space-y-2">
-    
-    {priceDetails.discountAmount > 0 && (
-      <div className="flex justify-between text-green-600">
-        <span>{t('canada.discount')}:</span>
-        <span>
-        -{priceDetails.discountAmount.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
-         </span>
-      </div>
-    )}
+  {paymentMethod === 'interac' && (
+    <div className="p-4 bg-yellow-50 rounded-lg">
+      <h4 className="font-semibold text-yellow-700">{t('canada.send')}</h4>
+      <p className="text-sm text-gray-700">
+        {t('canada.placing')} <br />
+        <b>Email:</b> info@freezepix.com
+      </p>
     </div>
-    <div className="space-y-2">
-        <div className="flex justify-between">
-            <span>{t('canada.subtotal')}:</span>
-            <span>
-                {priceDetails.subtotal.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
-            </span>
-        </div>
-
-        {selectedSchool.country === 'Tunisia' && (
-            <div className="flex justify-between text-gray-600">
-                <span>TVA (19%):</span>
-                <span>{(priceDetails.subtotal * 0.19).toFixed(2)} TND</span>
-            </div>
-        )}
- {/* Add Shipping & Handling line */}
-    {priceDetails.shippingCost > 0 && (
-      <div className="flex justify-between text-gray-600">
-        <span>{t('canada.shipping')}:</span>
-        <span>
-          {priceDetails.shippingCost.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
-        </span>
-      </div>
-    )}
-
-{priceDetails.taxDetails &&
-  Object.entries(priceDetails.taxDetails).map(([key, value]) => (
-    <div key={key} className="flex justify-between text-gray-600">
-      <span>{key} ({value.rate}%):</span>
-      <span>
-        {selectedSchool.country !== 'Tunisia' ? `$${value.amount.toFixed(2)}` : ''}
-      </span>
-    </div>
-  ))
-}
-
-        <div className="border-t pt-2 mt-2">
-            <div className="flex justify-between font-bold">
-                <span>Total:</span>
-                <span>
-                    {priceDetails.total.toFixed(2)} {selectedSchool.country === 'Tunisia' ? 'TND' : selectedSchool.country === 'CA' ? 'CAD' : 'USD'}
-                </span>
-            </div>
-        </div>
-    </div>
+  )}
 </div>
-
-
- {selectedSchool.country !== 'Tunisia' && (
-            <>
-                  {/* Option de paiement Interac */}
-                  
-      
-                  {/* Option de paiement par carte de crédit */}
-                  {paymentMethod === 'credit' && isFormFilled && (
-  <HelcimPayButton 
-    onPaymentSuccess={handleRegistrationSubmit}
-    isProcessing={isProcessingOrder}
-    selectedCountry={selectedCountry}
-    total={priceDetails.total}
-    setError={setError}
-    setIsProcessingOrder={setIsProcessingOrder}
-  />
-)}
- </>
-              )}
-                </div>
-               
-              </div>
 
           
       <div className="flex justify-between space-x-4">
