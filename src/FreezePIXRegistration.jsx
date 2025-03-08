@@ -2435,6 +2435,25 @@ const styles = `
 `;
 
 const handleRegistrationSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Check required fields
+  const requiredFields = {
+    'First Name': formData.studentFirstName?.trim(),
+    'Last Name': formData.studentLastName?.trim(),
+    'Email': formData.parentEmail?.trim(),
+    'Student ID': formData.studentid?.trim()
+  };
+
+  const missingFields = Object.entries(requiredFields)
+    .filter(([_, value]) => !value)
+    .map(([field]) => field);
+
+  if (missingFields.length > 0) {
+    alert(`Please fill in the following required fields:\n${missingFields.join('\n')}`);
+    return;
+  }
+
   setIsLoading(true);
   
   try {
@@ -2497,6 +2516,7 @@ const handleRegistrationSubmit = async (e) => {
     window.removeHelcimPayIframe();
   } catch (error) {
     console.error('Registration error:', error);
+    alert('Registration failed. Please try again.');
   } finally {
     setIsLoading(false);
   }
