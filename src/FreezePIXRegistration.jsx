@@ -781,6 +781,20 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
         />
       </div>
 
+      <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.studentid')} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.studentid || ''}
+              onChange={handleInputChange('studentid')}
+              onBlur={handleInputComplete('studentid')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
       {/* Address Fields - Only show if not Basic package */}
       {!isBasicPackage && (
         <>
@@ -840,19 +854,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-medium">
-              {t('form.studentid')} 
-            </label>
-            <input
-              type="text"
-              inputMode="text"
-              value={localData.studentid || ''}
-              onChange={handleInputChange('studentid')}
-              onBlur={handleInputComplete('studentid')}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+         
         </>
       )}
 
@@ -2634,7 +2636,8 @@ useEffect(() => {
     const hasBasicInfo = 
       formData.studentFirstName?.trim() &&
       formData.studentLastName?.trim() &&
-      formData.parentEmail?.trim();
+      formData.parentEmail?.trim() &&
+      formData.studentid?.trim();
 
     setIsFormFilled(hasBasicInfo);
   } else {
