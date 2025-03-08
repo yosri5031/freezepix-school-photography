@@ -1747,12 +1747,12 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         description: t('packages.tooltips.prints')
       },
       keychain: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/980PB-1031x1031.jpg?v=1729272354",
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/keychain_graduation.png?v=1741429487",
         quantity: '1 ' + t('packages.premium.features.keychain'),
         description: t('packages.tooltips.keychain')
       },
       magnet: {
-        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/922-1-1_940x940_97d94f4e-3c92-4884-906f-337ae016e38f.jpg?v=1729272355",
+        src: "https://cdn.shopify.com/s/files/1/0671/1387/7804/files/magnet_graduation.png?v=1741429488",
         quantity: '1 ' + t('packages.premium.features.magnet'),
         description: t('packages.tooltips.magnet')
       }
