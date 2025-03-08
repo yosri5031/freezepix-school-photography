@@ -68,6 +68,7 @@ const FreezePIXRegistration = () => {
     city: '',
     province: '',
     zip:'',
+    studentid:'',
     paymentMethod: 'credit',
     schoolId: selectedSchool?._id || '',
     eventId: selectedEvent?._id || '',
@@ -276,7 +277,8 @@ all_provinces: 'All Provinces'
       street:'Street',
       city: 'City',
       province: 'Province',
-      zip: ' Postal Code'
+      zip: ' Postal Code',
+      studentid: ' Student ID'
       
     },
     canada : {
@@ -396,7 +398,9 @@ all_provinces: 'All Provinces'
     street:'Adresse',
       city: 'Ville',
       province: 'Province',
-      zip: 'Code postal'
+      zip: 'Code postal',
+      studentid: ' ID étudiant'
+
   },
     steps: {
       country: 'Sélectionner le Pays',
@@ -597,7 +601,8 @@ ar: {
     street: 'الشارع',
     city: 'المدينة',
     province: 'المنطقة',
-    zip: 'الرمز البريدي'
+    zip: 'الرمز البريدي',
+    studentid: ' معرف الطالب'
   },
   packages: {
     title: 'اختر باقتك',
@@ -709,7 +714,8 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
     street: data.street || '',
     city: data.city || '',
     province: data.province || '',
-    zip: data.zip || ''
+    zip: data.zip || '',
+    studentid: data.studentid || ''
   });
 
   const handleInputChange = (field) => (e) => {
@@ -830,6 +836,20 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
               value={localData.zip || ''}
               onChange={handleInputChange('zip')}
               onBlur={handleInputComplete('zip')}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="mb-1 text-sm font-medium">
+              {t('form.studentid')} 
+            </label>
+            <input
+              type="text"
+              inputMode="text"
+              value={localData.studentid || ''}
+              onChange={handleInputChange('studentid')}
+              onBlur={handleInputComplete('studentid')}
               className="w-full p-2 border rounded"
             />
           </div>
@@ -2425,6 +2445,7 @@ const handleRegistrationSubmit = async (e) => {
       city: formData.city,
       province: formData.province,
       zip: formData.zip,
+      studentid: formData.studentid || '',
       studentGrade: formData.studentGrade,
       pkg: formData.packageName,
       schoolId: selectedSchool._id 
