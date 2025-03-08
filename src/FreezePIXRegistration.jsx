@@ -2516,7 +2516,6 @@ const handleRegistrationSubmit = async (e) => {
     window.removeHelcimPayIframe();
   } catch (error) {
     console.error('Registration error:', error);
-    alert('Registration failed. Please try again.');
   } finally {
     setIsLoading(false);
   }
