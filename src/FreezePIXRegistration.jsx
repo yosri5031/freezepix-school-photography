@@ -781,7 +781,7 @@ const AddressForm = ({ type, data, onChange, selectedSchool }) => {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col col-span-2">
             <label className="mb-1 text-sm font-medium">
               {t('form.studentid')} <span className="text-red-500">*</span>
             </label>
