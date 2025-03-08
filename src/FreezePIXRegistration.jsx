@@ -1257,25 +1257,27 @@ useEffect(() => {
                 >
                   
                   <div className="grid gap-4">
-                    {groupedSchools[country]
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map(school => (
-                        <div
-                          key={school._id}
-                          onClick={() => handleSchoolSelect(school)}
-                          className="border rounded-lg p-4 cursor-pointer hover:bg-yellow-50 transition-colors"
-                        >
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <h3 className="font-semibold text-lg">{school.name} - {school.country}</h3>
-                              <p className="text-sm text-gray-600">
-                                {school.location} 
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
+  {groupedSchools[country]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(school => (
+      <div
+        key={school._id}
+        onClick={() => handleSchoolSelect(school)}
+        className="border rounded-lg p-4 cursor-pointer hover:bg-yellow-50 transition-colors"
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-lg">
+              {school.name} - {school.country === 'Tunisia' ? 'TN' : school.country}
+            </h3>
+            <p className="text-sm text-gray-600">
+              {school.location} 
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
+</div>
                 </div>
               ))}
             </div>
