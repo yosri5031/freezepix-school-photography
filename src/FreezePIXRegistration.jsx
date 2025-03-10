@@ -1722,9 +1722,10 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         description: t('packages.tooltips.wallet')
       },
       crystal: {
-        src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
+        src: "crystal.gif",
         quantity: t('packages.premium.features.crystal'),
-        description: t('packages.tooltips.crystal')
+        description: t('packages.tooltips.crystal'),   
+         isGif: true 
       }
     }
   };
@@ -1836,9 +1837,10 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.wallet')
     },
     crystal: {
-      src: "https://abcrystalcollection.ca/cdn/shop/files/WhatsAppImage2024-01-25a14.16.21_f9fdd818.jpg?v=1715856911",
+      src: "crystal.gif",
       quantity: t('packages.premium.features.crystal'),
-      description: t('packages.tooltips.crystal')
+      description: t('packages.tooltips.crystal'),
+      isGif: true 
     }
   };
 
@@ -1932,13 +1934,25 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
                     </p>
                   </div>
                   <div className="justify-self-center">
-                    <img
-                      src={item.src}
-                      alt={key}
-                      className="h-32 w-32 object-cover cursor-pointer rounded-lg"
-                      onClick={() => setZoomedImage(item.src)}
-                    />
-                  </div>
+        {item.isGif ? (
+          <img
+            src={item.src}
+            alt={key}
+            className="h-32 w-32 object-cover rounded-lg"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setZoomedImage(item.src)}
+            autoPlay
+            loop
+          />
+        ) : (
+          <img
+            src={item.src}
+            alt={key}
+            className="h-32 w-32 object-cover cursor-pointer rounded-lg"
+            onClick={() => setZoomedImage(item.src)}
+          />
+        )}
+      </div>
                 </div>
               </div>
             ))}
