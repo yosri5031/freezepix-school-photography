@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import {HelcimPayButton } from './HelcimPayButton';
 import { initializeHelcimPayCheckout } from './helcimService';
 import mongoose from 'mongoose';
+import gifcrystal from './crystal.gif';
 
 
 
@@ -1722,7 +1723,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
         description: t('packages.tooltips.wallet')
       },
       crystal: {
-        src: "crystal.gif",
+        src: gifcrystal,
         quantity: t('packages.premium.features.crystal'),
         description: t('packages.tooltips.crystal'),   
          isGif: true 
@@ -1837,7 +1838,7 @@ const PackageDetailsPopup = ({ isOpen, onClose, packageDetails, selectedSchool, 
       description: t('packages.tooltips.wallet')
     },
     crystal: {
-      src: "crystal.gif",
+      src: gifcrystal,
       quantity: t('packages.premium.features.crystal'),
       description: t('packages.tooltips.crystal'),
       isGif: true 
