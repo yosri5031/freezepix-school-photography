@@ -1,6 +1,6 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, Package, CheckCircle, Globe, MapPin, Calendar,Users,ArrowLeft,Clock,AlertTriangle, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown,
-   Sparkles,Image,Frame,Wallet,Box ,Download, Key,AlertCircle,Book} from 'lucide-react';
+   Sparkles,Image,Frame,Wallet,Box ,Download, Key,AlertCircle,Book, Sun, Sunset, Moon} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
 import { Dialog } from '@headlessui/react';
@@ -1299,6 +1299,112 @@ useEffect(() => {
     );
   };
 
+  const TimeSlotSelector = ({ dateSlots, onTimeSlotSelect }) => {
+    const [selectedPeriod, setSelectedPeriod] = useState('morning');
+  
+    const periods = {
+      morning: {
+        label: 'Morning',
+        icon: Sun,
+        timeRange: '9:00 AM - 11:50 AM',
+        filter: (time) => {
+          const hour = parseInt(time.split(':')[0]);
+          return hour >= 9 && hour < 12;
+        }
+      },
+      afternoon: {
+        label: 'Afternoon',
+        icon: Sunset,
+        timeRange: '12:00 PM - 2:50 PM',
+        filter: (time) => {
+          const hour = parseInt(time.split(':')[0]);
+          return hour >= 12 && hour < 15;
+        }
+      },
+      evening: {
+        label: 'Evening',
+        icon: Moon,
+        timeRange: '3:00 PM - 5:00 PM',
+        filter: (time) => {
+          const hour = parseInt(time.split(':')[0]);
+          return hour >= 15 && hour <= 17;
+        }
+      }
+    };
+  
+    const formatTime = (time) => {
+      return new Date(`1970/01/01 ${time}`).toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    };
+  
+    const getTimeSlots = (timeSlots, periodFilter) => {
+      return timeSlots.filter(slot => periodFilter(slot.time));
+    };
+  
+    return (
+      <div className="max-w-2xl mx-auto">
+        {/* Time Period Tabs */}
+        <div className="flex space-x-2 mb-6">
+          {Object.entries(periods).map(([key, period]) => {
+            const Icon = period.icon;
+            return (
+              <button
+                key={key}
+                onClick={() => setSelectedPeriod(key)}
+                className={`flex-1 flex items-center justify-center space-x-2 p-3 rounded-lg transition-all ${
+                  selectedPeriod === key
+                    ? 'bg-yellow-500 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+              >
+                <Icon size={20} />
+                <span className="font-medium">{period.label}</span>
+              </button>
+            );
+          })}
+        </div>
+  
+        {/* Time Range Info */}
+        <div className="text-center mb-6">
+          <p className="text-gray-600">
+            <Clock className="inline-block w-4 h-4 mr-2" />
+            {periods[selectedPeriod].timeRange}
+          </p>
+        </div>
+  
+        {/* Time Slots Grid */}
+        <div className="grid grid-cols-3 gap-3">
+          {dateSlots.map((dateSlot) => 
+            getTimeSlots(dateSlot.timeSlots, periods[selectedPeriod].filter).map((slot, index) => (
+              <button
+                key={index}
+                onClick={() => onTimeSlotSelect(slot)}
+                disabled={!slot.available || slot.remainingSpots <= 0}
+                className={`p-4 rounded-lg border transition-all ${
+                  !slot.available || slot.remainingSpots <= 0
+                    ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'bg-white border-gray-200 hover:border-yellow-500 hover:bg-yellow-50 active:bg-yellow-100'
+                }`}
+              >
+                <div className="text-center">
+                  <span className="font-medium block">
+                    {formatTime(slot.time)}
+                  </span>
+                  <span className="text-sm text-gray-600 mt-1 block">
+                    {slot.remainingSpots} spots
+                  </span>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const EventSelection = ({ 
     selectedSchool, 
     setSelectedEvent, 
@@ -1522,40 +1628,17 @@ useEffect(() => {
               ) : (
                 <div className="space-y-6">
                   {timeSlotAvailability.dates?.map((dateSlot, dateIndex) => (
-                    <div key={dateIndex} className="space-y-2">
-                      <h4 className="font-medium text-gray-700 flex items-center">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {formatDate(dateSlot.date)}
-                      </h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        {dateSlot.timeSlots.map((slot, timeSlotIndex) => (
-                          <button
-                          key={timeSlotIndex}
-                          onClick={() => handleTimeSlotSelect(slot, dateIndex, timeSlotIndex)}
-                          disabled={!slot.available || slot.remainingSpots <= 0}
-                          className={`p-4 rounded-lg border transition-all ${
-                            !slot.available || slot.remainingSpots <= 0
-                              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
-                              : 'bg-white border-gray-200 hover:border-yellow-500 hover:bg-yellow-50 active:bg-yellow-100'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center space-x-2">
-                              <Clock size={16} className="text-gray-500" />
-                              <span className="font-medium">{formatTime(slot.time)}</span>
-                            </div>
-                            <div className="flex items-center space-x-2 text-sm">
-                              <Users size={16} className="text-gray-500" />
-                              <span className="text-gray-600">
-                                {slot.remainingSpots} spots
-                              </span>
-                            </div>
-                          </div>
-                        </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+  <div key={dateIndex} className="space-y-2">
+    <h4 className="font-medium text-gray-700 flex items-center">
+      <Calendar className="w-4 h-4 mr-2" />
+      {formatDate(dateSlot.date)}
+    </h4>
+    <TimeSlotSelector 
+      dateSlots={[dateSlot]}
+      onTimeSlotSelect={(slot) => handleTimeSlotSelect(slot, dateIndex, dateSlot.timeSlots.indexOf(slot))}
+    />
+  </div>
+))}
                 </div>
               )}
             </div>
