@@ -1530,34 +1530,28 @@ useEffect(() => {
                       <div className="grid grid-cols-2 gap-4">
                         {dateSlot.timeSlots.map((slot, timeSlotIndex) => (
                           <button
-                            key={timeSlotIndex}
-                            onClick={() => handleTimeSlotSelect(slot, dateIndex, timeSlotIndex)}
-                            disabled={!slot.available || slot.remainingSpots <= 0}
-                            className={`p-4 rounded-lg border transition-all ${
-                              !slot.available || slot.remainingSpots <= 0
-                                ? 'bg-gray-100 cursor-not-allowed'
-                                : slot.remainingSpots <= 2
-                                ? 'border-yellow-500 bg-yellow-50 hover:bg-yellow-100'
-                                : 'hover:border-blue-500 hover:bg-blue-50'
-                            }`}
-                          >
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center space-x-2">
-                                <Clock size={16} className="text-gray-500" />
-                                <span className="font-medium">{formatTime(slot.time)}</span>
-                              </div>
-                              <div className="flex items-center space-x-2 text-sm">
-                                <Users size={16} className={
-                                  slot.remainingSpots <= 2 ? 'text-yellow-500' : 'text-gray-500'
-                                } />
-                                <span className={
-                                  slot.remainingSpots <= 2 ? 'text-yellow-600' : 'text-gray-600'
-                                }>
-                                  {slot.remainingSpots} spots
-                                </span>
-                              </div>
+                          key={timeSlotIndex}
+                          onClick={() => handleTimeSlotSelect(slot, dateIndex, timeSlotIndex)}
+                          disabled={!slot.available || slot.remainingSpots <= 0}
+                          className={`p-4 rounded-lg border transition-all ${
+                            !slot.available || slot.remainingSpots <= 0
+                              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                              : 'bg-white border-gray-200 hover:border-yellow-500 hover:bg-yellow-50 active:bg-yellow-100'
+                          }`}
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center space-x-2">
+                              <Clock size={16} className="text-gray-500" />
+                              <span className="font-medium">{formatTime(slot.time)}</span>
                             </div>
-                          </button>
+                            <div className="flex items-center space-x-2 text-sm">
+                              <Users size={16} className="text-gray-500" />
+                              <span className="text-gray-600">
+                                {slot.remainingSpots} spots
+                              </span>
+                            </div>
+                          </div>
+                        </button>
                         ))}
                       </div>
                     </div>
