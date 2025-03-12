@@ -1,5 +1,5 @@
 import React,{ memo, useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Package, CheckCircle, Globe, MapPin, Calendar, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown,
+import { Camera, Package, CheckCircle, Globe, MapPin, Calendar,Users,ArrowLeft,Clock,AlertTriangle, DollarSign,Loader,CalendarCheck2,PlusCircle,Info,Crown,
    Sparkles,Image,Frame,Wallet,Box ,Download, Key,AlertCircle,Book} from 'lucide-react';
 import { useKeyboardFix } from './useKeyboardFix';
 import { School as CustomSchoolIcon,X} from 'lucide-react';
@@ -1296,13 +1296,78 @@ useEffect(() => {
     );
   };
 
-  const EventSelection = ({ selectedSchool, setSelectedEvent, nextStep, previousStep, language, t, setFormData }) => {
-    const { events, eventsLoading, eventsError } = useEvents(selectedSchool);
+  const EventSelection = ({ 
+    selectedSchool, 
+    setSelectedEvent, 
+    nextStep, 
+    previousStep, 
+    language, 
+    t, 
+    setFormData 
+  }) => {
+    const [events, setEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(true);
+    const [eventsError, setEventsError] = useState(null);
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+    const [showTimeSlots, setShowTimeSlots] = useState(false);
+    const [selectedEventData, setSelectedEventData] = useState(null);
+    const [timeSlotAvailability, setTimeSlotAvailability] = useState({});
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   
-    console.log('Selected school in EventSelection:', selectedSchool);
-    console.log('Events:', events);
+    // Fetch events when selectedSchool changes
+    useEffect(() => {
+      fetchEvents();
+    }, [selectedSchool]);
   
-    // Function to format date to English alphabetic format
+    // Fetch real-time availability when showing time slots
+    useEffect(() => {
+      if (selectedEventData && showTimeSlots) {
+        checkTimeSlotAvailability();
+      }
+    }, [selectedEventData, showTimeSlots]);
+  
+    const fetchEvents = async () => {
+      if (!selectedSchool?._id) return;
+  
+      setEventsLoading(true);
+      setEventsError(null);
+  
+      try {
+        const response = await axios.get(
+          `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedSchool._id}`
+        );
+        
+        // Filter out past events and sort by date
+        const now = new Date();
+        const filteredEvents = response.data
+          .filter(event => new Date(event.date) > now)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+        setEvents(filteredEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setEventsError(error.message);
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+  
+    const checkTimeSlotAvailability = async () => {
+      if (!selectedEventData?._id) return;
+      
+      setIsCheckingAvailability(true);
+      try {
+        const response = await axios.get(
+          `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedEventData._id}/availability`
+        );
+        setTimeSlotAvailability(response.data);
+      } catch (error) {
+        console.error('Error checking availability:', error);
+      } finally {
+        setIsCheckingAvailability(false);
+      }
+    };
+  
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       const months = [
@@ -1317,35 +1382,86 @@ useEffect(() => {
       return `${day} ${month} ${year}`;
     };
   
-    const handleEventSelect = (event) => {
-      if (!event) return;
+    const formatTime = (time) => {
+      return new Date(`1970/01/01 ${time}`).toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    };
   
-      const eventId = typeof event._id === 'string' ? event._id : event._id.toString();
+    const handleEventSelect = async (event) => {
+      setSelectedEventData(event);
+      setShowTimeSlots(true);
       
-      setSelectedEvent(event);
-      setFormData(prev => ({
-        ...prev,
-        eventId: eventId
-      }));
-      nextStep();
+      // Pre-fetch availability
+      try {
+        const response = await axios.get(
+          `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${event._id}/availability`
+        );
+        setTimeSlotAvailability(response.data);
+      } catch (error) {
+        console.error('Error fetching availability:', error);
+      }
+    };
+  
+    const handleTimeSlotSelect = async (timeSlot, index) => {
+      // Double-check availability before proceeding
+      try {
+        const response = await axios.get(
+          `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${selectedEventData._id}/availability`
+        );
+        
+        const currentSlot = response.data.timeSlots[index];
+        
+        if (!currentSlot.available || currentSlot.remainingSpots <= 0) {
+          alert('Sorry, this time slot is no longer available.');
+          await checkTimeSlotAvailability(); // Refresh availability
+          return;
+        }
+  
+        setSelectedTimeSlot(timeSlot);
+        const eventId = typeof selectedEventData._id === 'string' 
+          ? selectedEventData._id 
+          : selectedEventData._id.toString();
+  
+        setSelectedEvent({
+          ...selectedEventData,
+          selectedTimeSlot: timeSlot,
+          timeSlotIndex: index
+        });
+  
+        setFormData(prev => ({
+          ...prev,
+          eventId: eventId,
+          timeSlot: timeSlot.time,
+          timeSlotIndex: index
+        }));
+  
+        nextStep();
+      } catch (error) {
+        console.error('Error selecting time slot:', error);
+        alert('Unable to verify time slot availability. Please try again.');
+      }
     };
   
     if (eventsLoading) {
       return (
-        <div className="text-center">
-          <Loader className="animate-spin inline-block" />
-          <p>Loading events...</p>
+        <div className="text-center py-8">
+          <Loader className="animate-spin inline-block w-8 h-8 text-yellow-500 mb-4" />
+          <p className="text-gray-600">Loading events...</p>
         </div>
       );
     }
   
     if (eventsError) {
       return (
-        <div className="text-center text-red-500">
-          <p>Error loading events: {eventsError}</p>
+        <div className="text-center py-8">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-500 mb-4">Error loading events: {eventsError}</p>
           <button 
-            onClick={() => window.location.reload()}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={fetchEvents}
+            className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition-colors"
           >
             Retry
           </button>
@@ -1354,42 +1470,121 @@ useEffect(() => {
     }
   
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-800 text-center">
-          {t('steps.event')}
+          {showTimeSlots ? t('Select Time Slot') : t('steps.event')}
         </h2>
-        
-        <div className="space-y-4">
-          {events && events.length > 0 ? (
-            events.map((event) => (
-              <div
-                key={event._id}
-                className="border rounded-lg p-4 cursor-pointer hover:bg-blue-50"
-                onClick={() => handleEventSelect(event)}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-semibold text-lg">{event.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      <Calendar className="inline-block w-4 h-4 mr-2" />
-                      {formatDate(event.date)}
-                    </p>
-                  </div>
+  
+        {showTimeSlots ? (
+          <div className="space-y-4">
+            <button
+              onClick={() => setShowTimeSlots(false)}
+              className="text-blue-600 flex items-center space-x-2 hover:text-blue-700 transition-colors"
+            >
+              <ArrowLeft size={16} />
+              <span>Back to Events</span>
+            </button>
+  
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold text-lg">{selectedEventData.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    <Calendar className="inline-block w-4 h-4 mr-2" />
+                    {formatDate(selectedEventData.date)}
+                  </p>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-500">
-                        {t('steps.noevent')}
-
+  
+              {isCheckingAvailability ? (
+                <div className="text-center py-8">
+                  <Loader className="animate-spin inline-block w-6 h-6 text-yellow-500 mb-2" />
+                  <p className="text-gray-600">Checking availability...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  {timeSlotAvailability.timeSlots?.map((slot, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleTimeSlotSelect(slot, index)}
+                      disabled={!slot.available || slot.remainingSpots <= 0}
+                      className={`p-4 rounded-lg border transition-all ${
+                        !slot.available || slot.remainingSpots <= 0
+                          ? 'bg-gray-100 cursor-not-allowed'
+                          : slot.remainingSpots <= 2
+                          ? 'border-yellow-500 bg-yellow-50 hover:bg-yellow-100'
+                          : 'hover:border-blue-500 hover:bg-blue-50'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <Clock size={16} className="text-gray-500" />
+                          <span className="font-medium">{formatTime(slot.time)}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <Users size={16} className={
+                            slot.remainingSpots <= 2 ? 'text-yellow-500' : 'text-gray-500'
+                          } />
+                          <span className={
+                            slot.remainingSpots <= 2 ? 'text-yellow-600' : 'text-gray-600'
+                          }>
+                            {slot.remainingSpots} spots
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {events.length > 0 ? (
+              events.map((event) => (
+                <div
+                  key={event._id}
+                  className={`bg-white rounded-lg p-4 border transition-all ${
+                    event.remainingCapacity <= 0 
+                      ? 'bg-gray-100 cursor-not-allowed border-gray-200' 
+                      : 'cursor-pointer hover:border-yellow-500 hover:shadow-md border-gray-200'
+                  }`}
+                  onClick={() => event.remainingCapacity > 0 && handleEventSelect(event)}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-lg">{event.name}</h3>
+                      <p className="text-sm text-gray-600">
+                        <Calendar className="inline-block w-4 h-4 mr-2" />
+                        {formatDate(event.date)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users size={16} className={
+                        event.remainingCapacity <= 20 ? 'text-red-500' : 'text-gray-500'
+                      } />
+                      <span className={`${
+                        event.remainingCapacity <= 20 ? 'text-red-500' : 'text-gray-600'
+                      }`}>
+                        {event.remainingCapacity} spots left
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+                <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500">{t('steps.noevent')}</p>
+              </div>
+            )}
+          </div>
+        )}
   
         <div className="flex justify-between mt-6">
           <button
             onClick={previousStep}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
           >
             {t('buttons.previous')}
           </button>
@@ -1397,7 +1592,6 @@ useEffect(() => {
       </div>
     );
   };
-    
   
 
   const LanguageSelector = () => (
@@ -2472,6 +2666,17 @@ const handleRegistrationSubmit = async (e) => {
   setIsLoading(true);
   
   try {
+    const availabilityCheck = await axios.get(
+      `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${formData.eventId}/availability`
+    );
+
+    const selectedSlot = availabilityCheck.data.timeSlots[formData.timeSlotIndex];
+    if (!selectedSlot.available || selectedSlot.remainingSpots <= 0) {
+      alert('Sorry, this time slot is no longer available. Please select another time.');
+      setCurrentStep(2); // Go back to event selection
+      return;
+    }
+
     const registrationData = {
       parentFirstName: formData.parentFirstName,
       parentLastName: formData.parentLastName,
@@ -2486,6 +2691,8 @@ const handleRegistrationSubmit = async (e) => {
       studentid: formData.studentid || '',
       studentGrade: formData.studentGrade,
       pkg: formData.packageName,
+      timeSlot: formData.timeSlot,
+      timeSlotIndex: formData.timeSlotIndex,
       schoolId: selectedSchool._id 
         ? (typeof selectedSchool._id === 'string' 
             ? selectedSchool._id 
@@ -2515,7 +2722,13 @@ const handleRegistrationSubmit = async (e) => {
         }
       }
     );
-
+  // Update time slot capacity
+  await axios.patch(
+    `https://freezepix-database-server-c95d4dd2046d.herokuapp.com/api/events/${formData.eventId}/timeslots/${formData.timeSlotIndex}`,
+    {
+      bookedCount: selectedSlot.bookedCount + 1
+    }
+  );
     // Send confirmation via sendImagesToParent
     await sendImagesToParent({
       _id: response.data.registrationId,
